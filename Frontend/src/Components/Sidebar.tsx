@@ -18,6 +18,7 @@ export default function Sidebar() {
       <div className="sidebar-footer">
         <ul className="nav-links">
           <li className="nav-item">Profile</li>
+          <li className='nav-item'>Help</li>
           <li className="nav-item">Settings</li>
         </ul>
       </div>
