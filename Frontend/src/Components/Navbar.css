@@ -1,0 +1,53 @@
+.topbar {
+  height: 80px;
+  background-color: #f4f7fe; /* Matches body background so it blends */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+}
+
+.topbar-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #2b3674;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: white;
+  padding: 0.5rem 1rem;
+  border-radius: 30px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.02);
+}
+
+.search-input {
+  border: none;
+  background: #f4f7fe;
+  padding: 0.6rem 1rem;
+  border-radius: 20px;
+  outline: none;
+  font-size: 0.9rem;
+}
+
+.profile-widget {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.avatar {
+  width: 35px;
+  height: 35px;
+  background-color: #4318ff;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
