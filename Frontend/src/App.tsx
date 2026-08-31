@@ -2,6 +2,7 @@ import Sidebar from './Components/Sidebar';
 import Navbar from './Components/Navbar';
 
 import './App.css';
+import Home from './Home';
 
 function App() {
   return (
@@ -12,7 +13,7 @@ function App() {
         <Navbar />
         
         <main className="dashboard-content">
-          
+          <Home></Home>
         </main>
       </div>
     </div>

@@ -9,7 +9,7 @@ export default function Navbar() {
       
       <div className="topbar-actions">
         <div className="School-Fees">
-          Pay Your School Fees
+          Status
         </div>
         <div className="search-container">
           <span style={{ marginRight: '8px', color: '#a3aed1' }}>🔍</span>
