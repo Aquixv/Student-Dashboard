@@ -1,0 +1,56 @@
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.page-header h2 { color: #2b3674; font-size: 1.5rem; margin-bottom: 0.4rem; }
+.page-header p { color: #718096; font-size: 0.95rem; }
+
+.content-card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
+.card-title { color: #2b3674; font-size: 1.1rem; margin-bottom: 1.5rem; }
+
+/* Table Styles */
+.results-table { width: 100%; border-collapse: collapse; margin-bottom: 2rem; }
+.results-table th { text-align: left; padding: 1rem; border-bottom: 2px solid #e2e8f0; color: #718096; font-weight: 600; font-size: 0.9rem; }
+.results-table td { padding: 1rem; border-bottom: 1px solid #edf2f7; color: #2b3674; font-size: 0.95rem; }
+.text-blue { color: #095DC5; }
+.font-bold { font-weight: 700; }
+.grade-A { color: #16a34a; font-weight: bold; }
+.grade-B { color: #095DC5; font-weight: bold; }
+.grade-C { color: #d97706; font-weight: bold; }
+
+.results-summary { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #e2e8f0; padding-top: 1rem; }
+.results-summary span { font-size: 1.1rem; color: #2b3674; }
+
+/* Profile Styles */
+.profile-card { position: relative; padding-top: 0; overflow: hidden; }
+.profile-header-banner { height: 120px; background: linear-gradient(135deg, #111c44 0%, #095DC5 100%); margin: 0 -1.5rem; }
+.profile-avatar-large { width: 80px; height: 80px; background: #ffffff; border: 4px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; color: #095DC5; margin-top: -40px; margin-bottom: 1.5rem; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+.profile-details-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
+.detail-group label { display: block; font-size: 0.8rem; color: #718096; margin-bottom: 0.3rem; text-transform: uppercase; }
+.detail-group p { font-size: 1rem; color: #2b3674; font-weight: 600; }
+
+/* Help & Settings */
+.help-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
+.faq-item { margin-bottom: 1.5rem; }
+.faq-item h4 { color: #2b3674; margin-bottom: 0.4rem; font-size: 1rem; }
+.faq-item p { color: #718096; font-size: 0.9rem; line-height: 1.4; }
+.contact-methods { display: flex; flex-direction: column; gap: 0.8rem; margin-top: 1rem; }
+.contact-pill { background: #f8fafc; padding: 0.8rem; border-radius: 8px; font-size: 0.9rem; color: #2b3674; border: 1px solid #edf2f7; font-weight: 500; }
+
+.settings-form { max-width: 600px; }
+.input-group { margin-bottom: 1.5rem; }
+.input-group label { display: block; margin-bottom: 0.5rem; color: #4a5568; font-size: 0.9rem; font-weight: 500; }
+.input-group input { width: 100%; padding: 0.8rem 1rem; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; font-size: 0.95rem; }
+.input-group input:focus { border-color: #095DC5; }
+
+.primary-btn-sm { background: #095DC5; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 600; cursor: pointer; }
