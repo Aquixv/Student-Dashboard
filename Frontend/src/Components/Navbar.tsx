@@ -4,15 +4,15 @@ export default function Navbar() {
   return (
     <header className="topbar">
       <div className="topbar-title">
-        Dashboard
       </div>
       
       <div className="topbar-actions">
-        <div className="School-Fees">
-          Status
-        </div>
+        <button className="status-btn">
+          <span style={{ fontSize: '1.1rem' }}>⛙</span> Status
+        </button>
+        
         <div className="search-container">
-          <span style={{ marginRight: '8px', color: '#a3aed1' }}>🔍</span>
+          <span style={{ color: '#a3aed1', fontSize: '1.1rem' }}>🔍</span>
           <input 
             type="text" 
             placeholder="Search here..." 
@@ -20,9 +20,9 @@ export default function Navbar() {
           />
         </div>
 
-        <div className="notification-icon">
+        <button className="notification-icon">
           🔔
-        </div>
+        </button>
 
         <div className="profile-widget">
           <div className="avatar">JD</div>

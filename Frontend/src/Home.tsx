@@ -22,7 +22,7 @@ export default function Home() {
         </div>
         <div className="stat-card">
           <h3>Academic Advisor</h3>
-          <p className="stat-value text-sm">Dan-star</p>
+          <p className="stat-value text-sm">Alamu.O</p>
           <span className="stat-subtitle">Computer Science Dept.</span>
         </div>
       </div>

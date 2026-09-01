@@ -7,7 +7,6 @@
 
 body {
   background-color: #f4f7fe;
-  color: #2b3674;
 }
 
 .layout-container {
@@ -26,4 +25,10 @@ body {
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
+}
+.Intro {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #095DC5;
+  
 }
