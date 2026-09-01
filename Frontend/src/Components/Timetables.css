@@ -1,0 +1,158 @@
+.timetable-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: fadeIn 0.4s ease-in;
+}
+
+.timetable-header h2 {
+  color: #2b3674;
+  font-size: 1.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.timetable-header p {
+  color: #718096;
+  font-size: 0.95rem;
+}
+
+.timetable-container {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* --- Day Tabs --- */
+.day-selector {
+  display: flex;
+  gap: 1rem;
+  border-bottom: 2px solid #edf2f7;
+  padding-bottom: 1rem;
+  overflow-x: auto; /* Allows scrolling on small screens */
+}
+
+.day-tab {
+  background: none;
+  border: none;
+  color: #a0aec0;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.day-tab:hover {
+  background: #f8fafc;
+  color: #4a5568;
+}
+
+.day-tab.active {
+  background: #ebf4ff;
+  color: #095DC5;
+}
+
+/* --- Session Cards --- */
+.schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  max-width: 800px;
+}
+
+.session-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  /* border: 1px solid #edf2f7; */
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.session-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-color: #cbd5e0;
+}
+
+.session-course-code {
+  color: #095DC5; /* Matched to the blue text in the reference */
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+}
+
+.session-title {
+  color: #2b3674;
+  font-size: 1.1rem;
+  margin-bottom: 0.8rem;
+}
+
+.session-details {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.detail-item {
+  color: #718096;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.detail-item .icon {
+  font-size: 1rem;
+}
+
+/* --- The Blue Square Button --- */
+.reminder-btn {
+  background: #095DC5;
+  color: white;
+  border: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 8px; /* Square with rounded corners like the reference */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  box-shadow: 0 4px 10px rgba(9, 93, 197, 0.2);
+}
+
+.reminder-btn:hover {
+  background: #0747a1;
+}
+
+/* --- Empty State --- */
+.empty-schedule {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: none;
+  border-radius: 12px;
+  border: none;
+}
+
+.empty-schedule p {
+  color: #4a5568;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.empty-schedule span {
+  color: #a0aec0;
+  font-size: 0.9rem;
+}

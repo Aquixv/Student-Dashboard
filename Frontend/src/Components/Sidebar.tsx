@@ -48,7 +48,7 @@ export default function Sidebar() {
       <div className="sidebar-footer">
         <div className="nav-links">
           <NavLink to="/profile" className="nav-item">Profile</NavLink>
-          <NavLink to="/profile" className="nav-item">Help</NavLink>
+          <NavLink to="/help" className="nav-item">Help</NavLink>
           <NavLink to="/settings" className="nav-item">Settings</NavLink>
         </div>
       </div>
