@@ -5,7 +5,7 @@ export default function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="sidebar-logo">
-        🏫 <span>EduPortal</span>
+         <span>EPortal</span>
       </div>
       
       <div className="nav-links">

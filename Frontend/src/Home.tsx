@@ -27,13 +27,11 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Main Content Split */}
       <div className="dashboard-main-split">
         
-        {/* Left Column: Fees */}
         <div className="content-card fees-section">
           <div className="card-header">
-            <h2>Current Fee Breakdown</h2>
+            <h2>Current Fee </h2>
             <button className="text-link">View History</button>
           </div>
           
