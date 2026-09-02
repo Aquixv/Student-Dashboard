@@ -3,7 +3,9 @@ import './Home.css';
 export default function Home() {
   return (
     <div className="dashboard-container">
-      {/* Top Stat Cards */}
+      <div className="fees-header">
+        <h2>Welcome, User</h2>
+      </div>
       <div className="stats-grid">
         <div className="stat-card alert">
           <h3>Outstanding Balance</h3>
