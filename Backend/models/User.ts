@@ -1,18 +1,21 @@
 import mongoose, { Document, Model, Schema } from 'mongoose';
+import Course from './Courses';
 import bcrypt from 'bcryptjs';
+
 export interface IUser extends Document {
   name: string;
   email: string;
   password?: string; 
   avatar: string;
+  matricNumber?: string; 
   resetPasswordToken?: string;
   resetPasswordExpire?: Date;
-  googleId?: string;
-  githubId?: string;
-  authProvider: 'local' | 'google' | 'github';
-  role: 'customer' | 'admin' | 'seller';
-  favorites: mongoose.Types.ObjectId[];
+  authProvider: 'local';
+  role: 'Student' | 'Professor';
+  registeredCourses: mongoose.Types.ObjectId[];
+  hasPaidFees: boolean;
 }
+
 export interface IUserMethods {
   matchPassword(enteredPassword: string): Promise<boolean>;
 }
@@ -24,28 +27,41 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>(
     name: { type: String, required: [true, 'Please add a name'] },
     email: { type: String, required: [true, 'Please add an email'], unique: true },
     password: { type: String },
+    matricNumber: { type: String, unique: true },
     avatar: { 
       type: String, 
       default: 'https://res.cloudinary.com/your-cloud-name/image/upload/v1234567/default-avatar.png' 
     },
     resetPasswordToken: { type: String, required: false },
     resetPasswordExpire: { type: Date, required: false },
-    googleId: { type: String, sparse: true },
-    githubId: { type: String, sparse: true },
-    authProvider: { type: String, enum: ['local', 'google', 'github'], default: 'local' },
-    role: { type: String, enum: ['customer', 'admin', 'seller'], default: 'customer' },
-    favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }]
+    authProvider: { type: String, enum: ['local'], default: 'local' },
+    role: { type: String, enum: ['Student', 'Professor'], default: 'Student' },
+    registeredCourses: [{ type: Schema.Types.ObjectId, ref: 'Course' }],
+    hasPaidFees: {type: Boolean, required: true}
   }, 
   { timestamps: true }
 );
-userSchema.pre('save', async function(this: IUser) {
-  if (!this.isModified('password')) {
+userSchema.pre('save', async function () {
+  if (!this.isNew || this.matricNumber) {
     return;
   }
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password!, salt);
-});
 
+  const lastUser = await mongoose.model('User').findOne().sort({ createdAt: -1 });
+
+  let nextSequence = 1;
+  
+  if (lastUser && lastUser.matricNumber) {
+    const lastNumberString = lastUser.matricNumber.split('/')[1];
+    const lastNumber = parseInt(lastNumberString, 10);
+    
+    if (!isNaN(lastNumber)) {
+      nextSequence = lastNumber + 1;
+    }
+  }
+
+  const paddedNumber = nextSequence.toString().padStart(4, '0');
+  this.matricNumber = `PROF/${paddedNumber}`;
+});
 
 userSchema.methods.matchPassword = async function(this: IUser, enteredPassword: string) {
   return await bcrypt.compare(enteredPassword, this.password!); 

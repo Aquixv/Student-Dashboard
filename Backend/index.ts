@@ -5,8 +5,19 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { resolvers } from './resolvers';
 import { typeDefs } from './typeDefs';
+import dns from "node:dns";
+import { setServers } from 'node:dns';
 
 dotenv.config();
+
+setServers(['8.8.8.8', '1.1.1.1']);
+dns.setDefaultResultOrder('ipv4first'); 
+mongoose.connect(process.env.URI as string, {
+  family: 4,
+})
+
+.then(() => console.log('Connected to MongoDB!'))
+.catch(err => console.error('MongoDB connection error:', err));
 
 const startServer = async () => {
   const app = express();
@@ -27,10 +38,10 @@ const startServer = async () => {
 
   // Connect to MongoDB
   const PORT = process.env.PORT || 4000;
-  const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/eduportal';
+  const URI = process.env.URI || 'mongodb://localhost:27017/eduportal';
 
   try {
-    await mongoose.connect(MONGO_URI);
+    await mongoose.connect(URI);
     console.log('📦 Connected to MongoDB');
     
     app.listen(PORT, () => {
