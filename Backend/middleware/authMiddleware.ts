@@ -36,7 +36,7 @@ export const protect = async (req: AuthRequest, res: Response, next: NextFunctio
 };
 
 export const isAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
-  if (req.user && req.user.role === 'admin') {
+  if (req.user && req.user.role === 'Student') {
     next(); 
   } else {
     res.status(403).json({ message: "Access denied. Admin only." });
@@ -44,7 +44,7 @@ export const isAdmin = (req: AuthRequest, res: Response, next: NextFunction) => 
 };
 
 export const isSeller = (req: AuthRequest, res: Response, next: NextFunction) => {
-  if (req.user && (req.user.role === 'seller' || req.user.role === 'admin')) {
+  if (req.user && (req.user.role === 'Professor')) {
     next(); 
   } else {
     res.status(403).json({ message: "Access denied. Seller only." });

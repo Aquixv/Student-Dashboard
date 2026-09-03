@@ -18,7 +18,10 @@ export const typeDefs = gql`
     units: Int!
     type: String!
   }
-
+type AuthPayload {
+  token: String!
+  user: User!
+}
   type Query {
     # Fetch the current user to determine if they hit the lockout screen
     me: User
@@ -28,10 +31,8 @@ export const typeDefs = gql`
   }
 
   type Mutation {
-    # We will wire this up to Firebase Auth or a custom JWT later
-    registerUser(fullName: String!, email: String!, uid: String!): User!
-    
-    # Triggered when the payment gateway sends a success webhook
-    updateFeeStatus(userId: ID!, status: Boolean!): User!
-  }
+  registerUser(fullName: String!, email: String!, password: String!): AuthPayload!
+  login(email: String!, password: String!): AuthPayload!
+  updateFeeStatus(userId: ID!, status: Boolean!): User!
+}
 `;
