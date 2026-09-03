@@ -7,6 +7,7 @@ import { resolvers } from './resolvers';
 import { typeDefs } from './typeDefs';
 import dns from "node:dns";
 import { setServers } from 'node:dns';
+import { seedCourses } from './seeder';
 
 dotenv.config();
 
@@ -36,13 +37,13 @@ const startServer = async () => {
   await apolloServer.start();
   apolloServer.applyMiddleware({ app: app as any, path: '/graphql' });
 
-  // Connect to MongoDB
   const PORT = process.env.PORT || 4000;
   const URI = process.env.URI || 'mongodb://localhost:27017/eduportal';
 
   try {
     await mongoose.connect(URI);
     console.log('📦 Connected to MongoDB');
+    await seedCourses()
     
     app.listen(PORT, () => {
       console.log(`🚀 Server ready at http://localhost:${PORT}${apolloServer.graphqlPath}`);
