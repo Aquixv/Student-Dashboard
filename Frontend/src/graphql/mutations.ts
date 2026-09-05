@@ -39,3 +39,12 @@ export const UPDATE_FEE_STATUS = gql`
     }
   }
 `;
+export const REGISTER_COURSES = gql`
+  mutation RegisterCourses($courseIds: [ID!]!) {
+    registerCourses(courseIds: $courseIds) {
+      id
+      hasPaidFees
+      # We fetch this so the Apollo Cache automatically updates the user's unit count elsewhere
+    }
+  }
+`;

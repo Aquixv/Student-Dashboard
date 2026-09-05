@@ -74,5 +74,21 @@ export const resolvers = {
 
       return updatedUser;
     },
+    registerCourses: async (_parent: any, { courseIds }: any, context: any) => {
+    if (!context.user) {
+      throw new Error('Not authenticated');
+    }
+    const updatedUser = await User.findByIdAndUpdate(
+      context.user.id,
+      { $set: { registeredCourses: courseIds } },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      throw new Error('User not found');
+    }
+
+    return updatedUser;
+  },
   },
 };

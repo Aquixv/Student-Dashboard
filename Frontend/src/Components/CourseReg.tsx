@@ -1,34 +1,48 @@
 import { useState } from 'react';
+import { useQuery } from '@apollo/client/react';
+import { GET_ME, GET_AVAILABLE_COURSES } from '../graphql/queries';
+import type { Course, GetAvailableCoursesResponse, GetMeResponse } from '../types';
 import './CourseReg.css';
-import { useNavigate } from 'react-router-dom';
 
 export default function CourseRegistration() {
-  // Toggle to true to see the UI clear up and become interactive
-  const [isFeesPaid, setIsFeesPaid] = useState(false);
-  const navigate = useNavigate()
-  const availableCourses = [
-    { code: 'CSC 201', title: 'Computer Programming I', units: 3, type: 'Compulsory' },
-    { code: 'CSC 203', title: 'Introduction to Databases', units: 3, type: 'Compulsory' },
-    { code: 'MTH 201', title: 'Mathematical Methods I', units: 3, type: 'Compulsory' },
-    { code: 'PHY 205', title: 'General Physics III', units: 2, type: 'Elective' },
-  ];
+  const { data: userData, loading: userLoading } = useQuery<GetMeResponse>(GET_ME);
+  const { data: coursesData, loading: coursesLoading } = useQuery<GetAvailableCoursesResponse>(GET_AVAILABLE_COURSES);
+
+  // 1. Add state to track which courses are selected
+  const [selectedCourseIds, setSelectedCourseIds] = useState<string[]>([]);
+
+  if (userLoading || coursesLoading) return <div>Loading portal...</div>;
+
+  const isFeesPaid = userData?.me?.hasPaidFees || false;
+  const availableCourses: Course[] = coursesData?.availableCourses || [];
+
+  // 2. Toggle function for checkboxes
+  const handleToggleCourse = (courseId: string) => {
+    setSelectedCourseIds((prevSelected) => 
+      prevSelected.includes(courseId)
+        ? prevSelected.filter((id) => id !== courseId) // Remove if already checked
+        : [...prevSelected, courseId] // Add if not checked
+    );
+  };
+
+  // 3. Derived state for the right panel
+  const selectedCourses = availableCourses.filter(course => selectedCourseIds.includes(course.id));
+  const totalUnits = selectedCourses.reduce((sum, course) => sum + course.units, 0);
+  const isOverLimit = totalUnits > 24;
 
   return (
     <div className="registration-wrapper">
-      
-      {/* The Lock Overlay - Only renders if fees are unpaid */}
       {!isFeesPaid && (
         <div className="lock-overlay">
           <div className="lock-content">
             <span className="lock-icon">🔒</span>
             <h2>Portal Locked</h2>
             <p>You must clear your outstanding Harmattan semester fees to unlock course registration.</p>
-            <button className="primary-btn pay-btn" onClick={() => navigate("/fees")}>Proceed to Pay Fees</button>
+            <button className="primary-btn pay-btn">Go to School Fees</button>
           </div>
         </div>
       )}
 
-      {/* The Actual Registration UI - Blurred and disabled if locked */}
       <div className={`registration-content ${!isFeesPaid ? 'locked-blur' : ''}`}>
         <div className="registration-header">
           <h2>Harmattan Semester Registration</h2>
@@ -36,14 +50,13 @@ export default function CourseRegistration() {
         </div>
 
         <div className="registration-split">
-          {/* Left Side: Course Selection */}
           <div className="course-selection-panel">
             <div className="panel-header">
               <h3>Available Courses</h3>
             </div>
             <div className="course-list">
               {availableCourses.map((course) => (
-                <div key={course.code} className="course-card">
+                <div key={course.id} className="course-card">
                   <div className="course-info">
                     <span className="course-code">{course.code}</span>
                     <h4>{course.title}</h4>
@@ -51,29 +64,51 @@ export default function CourseRegistration() {
                   </div>
                   <div className="course-action">
                     <span className="units">{course.units} Units</span>
-                    <input type="checkbox" className="course-checkbox" />
+                    {/* 4. Bind the input to React state */}
+                    <input 
+                      type="checkbox" 
+                      className="course-checkbox" 
+                      disabled={!isFeesPaid}
+                      checked={selectedCourseIds.includes(course.id)}
+                      onChange={() => handleToggleCourse(course.id)}
+                    />
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Right Side: Summary / Cart */}
           <div className="registration-summary-panel">
             <div className="panel-header">
               <h3>Selected Courses</h3>
             </div>
             <div className="summary-content">
-              <div className="empty-state">
-                <p>No courses selected yet.</p>
-              </div>
+              {/* 5. Conditionally render the empty state or the selected list */}
+              {selectedCourses.length === 0 ? (
+                <div className="empty-state">
+                  <p>No courses selected yet.</p>
+                </div>
+              ) : (
+                <div className="selected-courses-list" style={{ flexGrow: 1, overflowY: 'auto' }}>
+                  {selectedCourses.map((course) => (
+                    <div key={course.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #eee' }}>
+                      <strong>{course.code}</strong>
+                      <span>{course.units} Units</span>
+                    </div>
+                  ))}
+                </div>
+              )}
               
               <div className="summary-footer">
-                <div className="unit-counter">
+                <div className="unit-counter" style={{ color: isOverLimit ? 'red' : 'inherit' }}>
                   <span>Total Units:</span>
-                  <strong>0 / 24</strong>
+                  <strong>{totalUnits} / 24</strong>
                 </div>
-                <button className="primary-btn submit-btn" disabled>
+                {/* 6. Disable submission if empty or over limit */}
+                <button 
+                  className="primary-btn submit-btn" 
+                  disabled={selectedCourses.length === 0 || isOverLimit}
+                >
                   Submit Registration
                 </button>
               </div>

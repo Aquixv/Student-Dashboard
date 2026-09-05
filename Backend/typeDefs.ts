@@ -34,5 +34,6 @@ type AuthPayload {
   registerUser(fullName: String!, email: String!, password: String!): AuthPayload!
   login(email: String!, password: String!): AuthPayload!
   updateFeeStatus(userId: ID!, status: Boolean!): User!
+  registerCourses(courseIds: [ID!]!): User!
 }
 `;

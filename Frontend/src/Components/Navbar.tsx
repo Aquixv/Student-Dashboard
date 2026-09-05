@@ -1,11 +1,12 @@
 import './Navbar.css';
 import { useQuery } from '@apollo/client/react';
 import { GET_ME } from '../graphql/queries';
+import { useNavigate } from 'react-router-dom';
 import type { GetMeResponse } from '../types';
 
 export default function Navbar() {
   const { data, loading, error } = useQuery<GetMeResponse>(GET_ME);
-
+  const navigate = useNavigate()
   const displayName = data?.me?.fullName || 'Student';
   const initials = displayName.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase();
 
@@ -32,7 +33,7 @@ export default function Navbar() {
           🔔
         </button>
 
-        <div className="profile-widget">
+        <div onClick={() => navigate("/profile")} className="profile-widget">
           <div className="avatar">{loading ? '...' : initials}</div>
           <span>{error ? 'Error' : displayName}</span>
         </div>
