@@ -34,7 +34,7 @@
 /* Profile Styles */
 .profile-card { position: relative; padding-top: 0; overflow: hidden; }
 .profile-header-banner { height: 120px; background: linear-gradient(135deg, #111c44 0%, #095DC5 100%); margin: 0 -1.5rem; }
-.profile-avatar-large { width: 80px; height: 80px; background: #ffffff; border: 4px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; color: #095DC5; margin-top: -40px; margin-bottom: 1.5rem; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+.profile-avatar-large { width: 80px; height: 80px; background: #111c44; border: 4px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; color: #095DC5; margin-top: -40px; margin-bottom: 1.5rem; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 .profile-details-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
 .detail-group label { display: block; font-size: 0.8rem; color: #718096; margin-bottom: 0.3rem; text-transform: uppercase; }
 .detail-group p { font-size: 1rem; color: #2b3674; font-weight: 600; }

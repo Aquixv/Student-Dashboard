@@ -3,7 +3,7 @@ import Course from './Courses';
 import bcrypt from 'bcryptjs';
 
 export interface IUser extends Document {
-  name: string;
+  fullName: string;
   email: string;
   password?: string; 
   avatar: string;
@@ -24,7 +24,7 @@ type UserModel = Model<IUser, {}, IUserMethods>;
 
 const userSchema = new Schema<IUser, UserModel, IUserMethods>(
   {
-    name: { type: String, required: [true, 'Please add a name'] },
+    fullName: { type: String, required: [true, 'Please add a name'] },
     email: { type: String, required: [true, 'Please add an email'], unique: true },
     password: { type: String },
     matricNumber: { type: String, unique: true },
@@ -60,7 +60,7 @@ userSchema.pre('save', async function () {
   }
 
   const paddedNumber = nextSequence.toString().padStart(4, '0');
-  this.matricNumber = `PROF/${paddedNumber}`;
+  this.matricNumber = `OND/PROF/${paddedNumber}`;
 });
 
 userSchema.methods.matchPassword = async function(this: IUser, enteredPassword: string) {

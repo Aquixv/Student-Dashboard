@@ -182,7 +182,7 @@
 }
 
 .download-receipt-btn:hover {
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 @media (max-width: 1024px) {

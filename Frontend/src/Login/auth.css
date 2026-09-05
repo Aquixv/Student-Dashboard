@@ -110,7 +110,7 @@
 }
 
 .auth-link:hover {
-  text-decoration: underline;
+  text-decoration: none !important;
 }
 
 @media (max-width: 768px) {

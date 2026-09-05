@@ -7,7 +7,7 @@ export const getUserContext = async (req: any) => {
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     try {
       token = req.headers.authorization.split(' ')[1];
-      const secret = process.env.JWT_SECRET || 'fallback_super_secret_key';
+      const secret = process.env.API_SECRET || 'fallback_super_secret_key';
       
       const decoded: any = jwt.verify(token, secret);
     

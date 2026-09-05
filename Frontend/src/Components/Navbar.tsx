@@ -1,6 +1,14 @@
 import './Navbar.css';
+import { useQuery } from '@apollo/client/react';
+import { GET_ME } from '../graphql/queries';
+import type { GetMeResponse } from '../types';
 
 export default function Navbar() {
+  const { data, loading, error } = useQuery<GetMeResponse>(GET_ME);
+
+  const displayName = data?.me?.fullName || 'Student';
+  const initials = displayName.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase();
+
   return (
     <header className="topbar">
       <div className="topbar-title">
@@ -25,8 +33,8 @@ export default function Navbar() {
         </button>
 
         <div className="profile-widget">
-          <div className="avatar">JD</div>
-          <span>John Doe</span>
+          <div className="avatar">{loading ? '...' : initials}</div>
+          <span>{error ? 'Error' : displayName}</span>
         </div>
       </div>
     </header>

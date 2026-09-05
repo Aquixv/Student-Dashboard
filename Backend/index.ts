@@ -8,6 +8,7 @@ import { typeDefs } from './typeDefs';
 import dns from "node:dns";
 import { setServers } from 'node:dns';
 import { seedCourses } from './seeder';
+import { getUserContext } from './util/authContext';
 
 dotenv.config();
 
@@ -26,13 +27,12 @@ const startServer = async () => {
   app.use(express.json());
 
   const apolloServer = new ApolloServer({
-    typeDefs,
-    resolvers,
-    context: ({ req }) => {
-      const token = req.headers.authorization || '';
-      return { token };
-    }
-  });
+  typeDefs,
+  resolvers,
+  context: async ({ req }) => {
+    return await getUserContext(req);
+  }
+});
 
   await apolloServer.start();
   apolloServer.applyMiddleware({ app: app as any, path: '/graphql' });
