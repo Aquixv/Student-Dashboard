@@ -1,13 +1,41 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useMutation } from '@apollo/client/react';
+import {REGISTER_USER} from '../graphql/mutations'
 import './Auth.css';
 
 export default function Signup() {
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    password: '',
+  });
 
-  const handleSignup = (e: React.FormEvent) => {
+  const [registerUser, { loading, error }] = useMutation(REGISTER_USER, {
+    onCompleted: (data) => {
+      localStorage.setItem('portal_token', data?.registerUser.token);
+      navigate('/');
+    },
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate a successful registration and redirect to dashboard
-    navigate('/');
+    try {
+      await registerUser({
+        variables: {
+          fullName: formData.fullName,
+          email: formData.email,
+          password: formData.password,
+        },
+      });
+    } catch (err) {
+      console.error('Signup failed:', err);
+    }
   };
 
   return (
@@ -22,23 +50,48 @@ export default function Signup() {
           <h2>Create Account</h2>
           <p>Register below to generate your portal credentials.</p>
 
+          {error && <div className="auth-error" style={{ color: 'red', marginBottom: '1rem' }}>{error.message}</div>}
+
           <form onSubmit={handleSignup}>
             <div className="auth-input-group">
               <label>Full Name</label>
-              <input type="text" placeholder="John Doe" required />
+              <input 
+                type="text" 
+                name="fullName"
+                placeholder="John Doe" 
+                value={formData.fullName}
+                onChange={handleChange}
+                required 
+              />
             </div>
 
             <div className="auth-input-group">
               <label>Email Address</label>
-              <input type="email" placeholder="student@eduportal.edu.ng" required />
+              <input 
+                type="email" 
+                name="email"
+                placeholder="student@eduportal.edu.ng" 
+                value={formData.email}
+                onChange={handleChange}
+                required 
+              />
             </div>
             
             <div className="auth-input-group">
               <label>Password</label>
-              <input type="password" placeholder="••••••••" required />
+              <input 
+                type="password" 
+                name="password"
+                placeholder="••••••••" 
+                value={formData.password}
+                onChange={handleChange}
+                required 
+              />
             </div>
 
-            <button type="submit" className="auth-btn">Sign Up</button>
+            <button type="submit" className="auth-btn" disabled={loading}>
+              {loading ? 'Creating Account...' : 'Sign Up'}
+            </button>
           </form>
 
           <div className="auth-redirect">

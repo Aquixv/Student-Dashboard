@@ -1,13 +1,39 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useMutation } from '@apollo/client';
+import { LOGIN_USER } from '../graphql/mutations';
 import './Auth.css';
 
 export default function Login() {
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
 
-  const handleLogin = (e: React.FormEvent) => {
+  const [loginUser, { loading, error }] = useMutation(LOGIN_USER, {
+    onCompleted: (data) => {
+      localStorage.setItem('portal_token', data.login.token);
+      navigate('/');
+    },
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // For the demo, bypass real auth and jump straight to the dashboard
-    navigate('/');
+    try {
+      await loginUser({
+        variables: {
+          email: formData.email,
+          password: formData.password,
+        },
+      });
+    } catch (err) {
+      console.error('Login failed:', err);
+    }
   };
 
   return (
@@ -22,18 +48,36 @@ export default function Login() {
           <h2>Welcome Back</h2>
           <p>Enter your credentials to access your account.</p>
 
+          {error && <div className="auth-error" style={{ color: 'red', marginBottom: '1rem' }}>{error.message}</div>}
+
           <form onSubmit={handleLogin}>
             <div className="auth-input-group">
               <label>Email Address</label>
-              <input type="email" placeholder="student@eduportal.edu.ng" required />
+              <input 
+                type="email" 
+                name="email"
+                placeholder="student@eduportal.edu.ng" 
+                value={formData.email}
+                onChange={handleChange}
+                required 
+              />
             </div>
             
             <div className="auth-input-group">
               <label>Password</label>
-              <input type="password" placeholder="••••••••" required />
+              <input 
+                type="password" 
+                name="password"
+                placeholder="••••••••" 
+                value={formData.password}
+                onChange={handleChange}
+                required 
+              />
             </div>
 
-            <button type="submit" className="auth-btn">Sign In</button>
+            <button type="submit" className="auth-btn" disabled={loading}>
+              {loading ? 'Signing In...' : 'Sign In'}
+            </button>
           </form>
 
           <div className="auth-redirect">
