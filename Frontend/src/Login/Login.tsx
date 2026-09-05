@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { LOGIN_USER } from '../graphql/mutations';
 import './Auth.css';
+import type { LoginResponse } from '../types';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ export default function Login() {
     password: '',
   });
 
-  const [loginUser, { loading, error }] = useMutation(LOGIN_USER, {
+  const [loginUser, { loading, error}] = useMutation<LoginResponse>(LOGIN_USER, {
     onCompleted: (data) => {
       localStorage.setItem('portal_token', data.login.token);
       navigate('/');

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from '@apollo/client/react';
 import {REGISTER_USER} from '../graphql/mutations'
 import './Auth.css';
+import type { RegisterResponse } from '../types';
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ export default function Signup() {
     password: '',
   });
 
-  const [registerUser, { loading, error }] = useMutation(REGISTER_USER, {
+  const [registerUser, { loading, error }] = useMutation<RegisterResponse>(REGISTER_USER, {
     onCompleted: (data) => {
       localStorage.setItem('portal_token', data?.registerUser.token);
       navigate('/');

@@ -19,7 +19,7 @@ export default function Home() {
         </div>
         <div className="stat-card">
           <h3>Academic Term</h3>
-          <p className="stat-value text-sm">Harmattan '26</p>
+          <p className="stat-value text-sm">Harmattan 2026</p>
           <span className="stat-subtitle">Week 4 of 12</span>
         </div>
         <div className="stat-card">

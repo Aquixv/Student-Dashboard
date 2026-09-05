@@ -1,7 +1,19 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate} from 'react-router-dom';
+import { useApolloClient } from '@apollo/client/react';
 import './Sidebar.css';
 
 export default function Sidebar() {
+
+  const navigate = useNavigate();
+  const client = useApolloClient();
+
+  const handleLogout = () => {
+    localStorage.removeItem('portal_token');
+    client.clearStore();
+    
+    navigate('/login');
+  };
+
   return (
     <aside className="sidebar">
       <div className="sidebar-logo">
@@ -51,6 +63,9 @@ export default function Sidebar() {
           <NavLink to="/help" className="nav-item">Help</NavLink>
           <NavLink to="/settings" className="nav-item">Settings</NavLink>
         </div>
+        <button onClick={handleLogout} className="nav-item logout-btn">
+            Log Out
+          </button>
       </div>
     </aside>
   );

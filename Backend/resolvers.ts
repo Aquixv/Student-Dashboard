@@ -49,7 +49,7 @@ export const resolvers = {
       const courseIds = defaultCourses.map(course => course._id);
 
       const user = await User.create({
-        name: fullName,
+        name: fullName || User.name,
         email,
         password: hashedPassword, 
         registeredCourses: courseIds,
