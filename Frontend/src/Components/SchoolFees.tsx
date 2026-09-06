@@ -1,4 +1,5 @@
 import { useQuery, useMutation } from '@apollo/client/react';
+import { usePaystackPayment } from 'react-paystack';
 import { GET_ME } from '../graphql/queries';
 import { UPDATE_FEE_STATUS } from '../graphql/mutations';
 import './SchoolFees.css';
@@ -7,7 +8,7 @@ import type { GetMeResponse } from '../types';
 export default function SchoolFees() {
   const { data, loading } = useQuery<GetMeResponse>(GET_ME);
   
-  const [updateFeeStatus, { loading: isPaying }] = useMutation(UPDATE_FEE_STATUS, {
+  const [updateFeeStatus, { loading: isUpdating }] = useMutation(UPDATE_FEE_STATUS, {
     refetchQueries: [{ query: GET_ME }] 
   });
 
@@ -16,14 +17,42 @@ export default function SchoolFees() {
   const user = data?.me;
   const hasPaidFees = user?.hasPaidFees || false;
 
-  const handleSimulatePayment = async () => {
+  // 1. Configure the Paystack payload
+  const paystackConfig = {
+    reference: `INV-${new Date().getTime()}`,
+    email: user?.email || 'student@eduportal.edu.ng',
+    amount: 140000 * 100, // Paystack requires the amount in kobo
+    publicKey: 'pk_test_aed41b8546b5826ba7e2d0c06029c6acc73ccbfa', // Swap this with your actual test key
+    metadata: {
+      custom_fields: [
+        {
+          display_name: "Matric Number",
+          variable_name: "matric_number",
+          value: user?.matricNumber || "Pending"
+        }
+      ]
+    }
+  };
+
+  const initializePayment = usePaystackPayment(paystackConfig);
+
+  // 2. The callback when the payment actually succeeds
+  const onSuccess = async (reference: any) => {
     try {
       await updateFeeStatus({
-        variables: { userId: user?.id, status: true }
+        variables: { 
+          userId: user?.id, 
+          status: true,
+          reference: reference.reference // Paystack returns the ref inside an object
+        }
       });
     } catch (error) {
-      console.error('Payment failed:', error);
+      console.error('Failed to update database after payment:', error);
     }
+  };
+
+  const onClose = () => {
+    console.log('Payment window closed by user.');
   };
 
   return (
@@ -34,8 +63,6 @@ export default function SchoolFees() {
       </div>
 
       <div className="fees-split">
-        
-        {/* Left Column: Invoice Panel */}
         <div className="invoice-panel">
           <div className="invoice-header">
             <h3>Session Invoice</h3>
@@ -73,14 +100,15 @@ export default function SchoolFees() {
               </div>
 
               <div className="invoice-footer">
+                {/* 3. Wire the button to initialize Paystack */}
                 <button 
                   className="primary-btn pay-fees-btn" 
-                  onClick={handleSimulatePayment}
-                  disabled={isPaying}
+                  onClick={() => initializePayment({ onSuccess, onClose })}
+                  disabled={isUpdating}
                 >
-                  {isPaying ? 'Processing...' : 'Pay ₦140,000 Now'}
+                  {isUpdating ? 'Updating Portal...' : 'Pay ₦140,000 via Paystack'}
                 </button>
-                <span className="secure-note">🔒 Secured by standard payment gateways</span>
+                <span className="secure-note">🔒 Secured by Paystack Checkout</span>
               </div>
             </>
           ) : (
@@ -92,14 +120,12 @@ export default function SchoolFees() {
           )}
         </div>
 
-        {/* Right Column: History Panel */}
+        {/* ... History Panel remains identical to previous code ... */}
         <div className="history-panel">
           <div className="invoice-header">
             <h3>Payment History</h3>
           </div>
-          
           <div className="history-list">
-            {/* When hasPaidFees is true, we simulate the session receipt appearing */}
             {hasPaidFees && (
               <div className="history-item">
                 <div className="history-icon">✓</div>
@@ -113,7 +139,6 @@ export default function SchoolFees() {
                 </div>
               </div>
             )}
-            
             <div className="history-item">
               <div className="history-icon">✓</div>
               <div className="history-details">
@@ -125,21 +150,8 @@ export default function SchoolFees() {
                 <button className="download-receipt-btn">⬇ PDF</button>
               </div>
             </div>
-            
-            <div className="history-item">
-              <div className="history-icon">✓</div>
-              <div className="history-details">
-                <h4>Application Form</h4>
-                <p>INV-0981 • Jul 20, 2026</p>
-              </div>
-              <div className="history-actions">
-                <span className="history-amount">₦10,000</span>
-                <button className="download-receipt-btn">⬇ PDF</button>
-              </div>
-            </div>
           </div>
         </div>
-
       </div>
     </div>
   );

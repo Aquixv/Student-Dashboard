@@ -32,8 +32,8 @@ export const LOGIN_USER = gql`
 `;
 
 export const UPDATE_FEE_STATUS = gql`
-  mutation UpdateFeeStatus($userId: ID!, $status: Boolean!) {
-    updateFeeStatus(userId: $userId, status: $status) {
+  mutation UpdateFeeStatus($userId: ID!, $status: Boolean!, $reference: String!) {
+    updateFeeStatus(userId: $userId, status: $status, reference: $reference) {
       id
       hasPaidFees
     }

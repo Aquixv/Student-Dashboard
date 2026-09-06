@@ -11,6 +11,13 @@ export const typeDefs = gql`
   hasPaidFees: Boolean!
   registeredCourses: [Course!] 
 }
+type Transaction {
+  id: ID!
+  reference: String!
+  amount: Float!
+  description: String!
+  createdAt: String!
+}
 
   type Course {
     id: ID!
@@ -34,7 +41,7 @@ type AuthPayload {
   type Mutation {
   registerUser(fullName: String!, email: String!, password: String!): AuthPayload!
   login(email: String!, password: String!): AuthPayload!
-  updateFeeStatus(userId: ID!, status: Boolean!): User!
+  updateFeeStatus(userId: ID!, status: Boolean!, reference: String!): User!
   registerCourses(courseIds: [ID!]!): User!
 }
 `;

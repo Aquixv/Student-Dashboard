@@ -2,6 +2,7 @@ import User from './models/User';
 import Course from './models/Courses';
 import  generateToken  from './config/GenerateToken';
 import bcrypt from 'bcryptjs';
+import Transactions from './models/Transactions';
 
 export const resolvers = {
   Query: {
@@ -33,7 +34,27 @@ export const resolvers = {
         user
       };
     },
+  updateFeeStatus: async (_parent: any, { userId, status, reference }: any, context: any) => {
+    if (!context.user) throw new Error('Not authenticated');
 
+    // 1. Create the Receipt/Transaction record
+    await Transactions.create({
+      user: userId,
+      reference: reference,
+      amount: 140000, 
+      description: 'Harmattan Semester Mandatory Fees',
+      status: 'success'
+    });
+
+    // 2. Unlock the portal for the user
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $set: { hasPaidFees: status } },
+      { new: true }
+    );
+
+    return updatedUser;
+  },
     registerUser: async (_parent: any, { fullName, email, password }: any) => {
       const existingUser = await User.findOne({ email });
       if (existingUser) {
@@ -62,19 +83,20 @@ export const resolvers = {
         user
       };
     },
-    updateFeeStatus: async (_parent: any, { userId, status }: any) => {
-      const updatedUser = await User.findByIdAndUpdate(
-        userId,
-        { hasPaidFees: status },
-        { new: true }
-      );
 
-      if (!updatedUser) {
-        throw new Error('User not found');
-      }
+    // updateFeeStatus: async (_parent: any, { userId, status }: any) => {
+    //   const updatedUser = await User.findByIdAndUpdate(
+    //     userId,
+    //     { hasPaidFees: status },
+    //     { new: true }
+    //   );
 
-      return updatedUser;
-    },
+    //   if (!updatedUser) {
+    //     throw new Error('User not found');
+    //   }
+
+    //   return updatedUser;
+    // },
     registerCourses: async (_parent: any, { courseIds }: any, context: any) => {
     if (!context.user) {
       throw new Error('Not authenticated');
