@@ -2,14 +2,15 @@ import { gql } from 'apollo-server-express';
 
 export const typeDefs = gql`
   type User {
-    id: ID!
-    fullName: String!
-    email: String!
-    matricNumber: String
-    level: String
-    department: String
-    hasPaidFees: Boolean!
-  }
+  id: ID!
+  fullName: String!
+  email: String!
+  matricNumber: String
+  level: String
+  department: String
+  hasPaidFees: Boolean!
+  registeredCourses: [Course!] 
+}
 
   type Course {
     id: ID!

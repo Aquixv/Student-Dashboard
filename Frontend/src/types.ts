@@ -1,13 +1,12 @@
-// src/types.ts
-
 export interface User {
   id: string;
   fullName: string;
   email: string;
-  matricNumber?: string;
+  matricNumber: string;
   level?: string;
   department?: string;
   hasPaidFees: boolean;
+  registeredCourses?: Course[];
 }
 
 export interface Course {

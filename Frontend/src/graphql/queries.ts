@@ -10,6 +10,10 @@ export const GET_ME = gql`
       level
       department
       hasPaidFees
+      registeredCourses {
+        id
+        units
+      }
     }
   }
 `;

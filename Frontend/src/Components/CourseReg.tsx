@@ -1,34 +1,61 @@
-import { useState } from 'react';
-import { useQuery } from '@apollo/client/react';
+import { useState, useEffect } from 'react';
+import { useQuery, useMutation } from '@apollo/client/react';
 import { GET_ME, GET_AVAILABLE_COURSES } from '../graphql/queries';
+import { REGISTER_COURSES } from '../graphql/mutations';
 import type { Course, GetAvailableCoursesResponse, GetMeResponse } from '../types';
 import './CourseReg.css';
 
 export default function CourseRegistration() {
   const { data: userData, loading: userLoading } = useQuery<GetMeResponse>(GET_ME);
   const { data: coursesData, loading: coursesLoading } = useQuery<GetAvailableCoursesResponse>(GET_AVAILABLE_COURSES);
+  
+  const [registerCourses, { loading: isSubmitting }] = useMutation(REGISTER_COURSES, {
+    refetchQueries: [{ query: GET_ME }], 
+  });
 
-  // 1. Add state to track which courses are selected
   const [selectedCourseIds, setSelectedCourseIds] = useState<string[]>([]);
+  const [hasInitialized, setHasInitialized] = useState(false);
+
+  // Pre-load existing registrations into the checkboxes
+  useEffect(() => {
+    if (userData?.me?.registeredCourses && !hasInitialized) {
+      const existingIds = userData.me.registeredCourses.map((c: any) => c.id);
+      setSelectedCourseIds(existingIds);
+      setHasInitialized(true);
+    }
+  }, [userData, hasInitialized]);
 
   if (userLoading || coursesLoading) return <div>Loading portal...</div>;
 
   const isFeesPaid = userData?.me?.hasPaidFees || false;
+  // If they have 1 or more courses, they are "Editing", not registering for the first time
+  const isAlreadyRegistered = (userData?.me?.registeredCourses?.length || 0) > 0;
+  
   const availableCourses: Course[] = coursesData?.availableCourses || [];
 
-  // 2. Toggle function for checkboxes
   const handleToggleCourse = (courseId: string) => {
-    setSelectedCourseIds((prevSelected) => 
-      prevSelected.includes(courseId)
-        ? prevSelected.filter((id) => id !== courseId) // Remove if already checked
-        : [...prevSelected, courseId] // Add if not checked
+    setSelectedCourseIds((prev) => 
+      prev.includes(courseId) ? prev.filter((id) => id !== courseId) : [...prev, courseId]
     );
   };
 
-  // 3. Derived state for the right panel
+  const handleSubmit = async () => {
+    try {
+      await registerCourses({
+        variables: { courseIds: selectedCourseIds }
+      });
+      alert(isAlreadyRegistered ? 'Registration successfully updated!' : 'Course registration submitted!');
+    } catch (error) {
+      console.error('Failed to register:', error);
+      alert('An error occurred during registration.');
+    }
+  };
+
   const selectedCourses = availableCourses.filter(course => selectedCourseIds.includes(course.id));
   const totalUnits = selectedCourses.reduce((sum, course) => sum + course.units, 0);
   const isOverLimit = totalUnits > 24;
+  const isUnchanged = isAlreadyRegistered && 
+    JSON.stringify(selectedCourseIds.sort()) === JSON.stringify(userData?.me?.registeredCourses?.map((c: any) => c.id).sort());
 
   return (
     <div className="registration-wrapper">
@@ -50,6 +77,7 @@ export default function CourseRegistration() {
         </div>
 
         <div className="registration-split">
+          {/* LEFT SIDE: Available Courses */}
           <div className="course-selection-panel">
             <div className="panel-header">
               <h3>Available Courses</h3>
@@ -64,7 +92,6 @@ export default function CourseRegistration() {
                   </div>
                   <div className="course-action">
                     <span className="units">{course.units} Units</span>
-                    {/* 4. Bind the input to React state */}
                     <input 
                       type="checkbox" 
                       className="course-checkbox" 
@@ -78,12 +105,13 @@ export default function CourseRegistration() {
             </div>
           </div>
 
+          {/* RIGHT SIDE: Summary / Selected Courses */}
           <div className="registration-summary-panel">
             <div className="panel-header">
-              <h3>Selected Courses</h3>
+              <h3>{isAlreadyRegistered ? 'Current Registration' : 'Selected Courses'}</h3>
             </div>
             <div className="summary-content">
-              {/* 5. Conditionally render the empty state or the selected list */}
+              
               {selectedCourses.length === 0 ? (
                 <div className="empty-state">
                   <p>No courses selected yet.</p>
@@ -104,12 +132,17 @@ export default function CourseRegistration() {
                   <span>Total Units:</span>
                   <strong>{totalUnits} / 24</strong>
                 </div>
-                {/* 6. Disable submission if empty or over limit */}
+                
                 <button 
-                  className="primary-btn submit-btn" 
-                  disabled={selectedCourses.length === 0 || isOverLimit}
+                  className={`primary-btn submit-btn ${isAlreadyRegistered ? 'update-btn' : ''}`}
+                  disabled={selectedCourses.length === 0 || isOverLimit || isUnchanged || isSubmitting}
+                  onClick={handleSubmit}
                 >
-                  Submit Registration
+                  {isSubmitting 
+                    ? 'Saving...' 
+                    : isAlreadyRegistered 
+                      ? 'Update Registration' 
+                      : 'Submit Registration'}
                 </button>
               </div>
             </div>

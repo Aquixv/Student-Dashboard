@@ -5,12 +5,13 @@ import bcrypt from 'bcryptjs';
 
 export const resolvers = {
   Query: {
-    me: async (_parent: any, _args: any, context: any) => {
-      if (!context.user) {
-        throw new Error('Not authenticated');
-      }
-      return context.user;
-    },
+   me: async (_parent: any, _args: any, context: any) => {
+    if (!context.user) {
+      throw new Error('Not authenticated');
+    }
+    const user = await User.findById(context.user.id).populate('registeredCourses');
+    return user;
+  },
     availableCourses: async () => await Course.find(),
   },
 
