@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client/react';
 import { GET_ME, GET_AVAILABLE_COURSES } from '../graphql/queries';
 import { REGISTER_COURSES } from '../graphql/mutations';
@@ -6,6 +7,7 @@ import type { Course, GetAvailableCoursesResponse, GetMeResponse } from '../type
 import './CourseReg.css';
 
 export default function CourseRegistration() {
+  const navigate = useNavigate()
   const { data: userData, loading: userLoading } = useQuery<GetMeResponse>(GET_ME);
   const { data: coursesData, loading: coursesLoading } = useQuery<GetAvailableCoursesResponse>(GET_AVAILABLE_COURSES);
   
@@ -65,7 +67,7 @@ export default function CourseRegistration() {
             <span className="lock-icon">🔒</span>
             <h2>Portal Locked</h2>
             <p>You must clear your outstanding Harmattan semester fees to unlock course registration.</p>
-            <button className="primary-btn pay-btn">Go to School Fees</button>
+            <button onClick={() => navigate("/fees")} className="primary-btn pay-btn">Go to School Fees</button>
           </div>
         </div>
       )}

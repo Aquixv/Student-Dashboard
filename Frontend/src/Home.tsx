@@ -14,7 +14,6 @@ export default function Home() {
   const firstName = user?.fullName?.split(' ')[0] || 'Student';
   const hasPaidFees = user?.hasPaidFees || false;
   
-  // Dynamically calculate units from the populated array
   const totalUnits = user?.registeredCourses?.reduce((sum: number, course: any) => sum + course.units, 0) || 0;
 
   return (
@@ -24,11 +23,10 @@ export default function Home() {
       </div>
       
       <div className="stats-grid">
-        {/* Dynamically style the balance card based on payment status */}
         <div className={`stat-card ${!hasPaidFees ? 'alert' : ''}`}>
           <h3>Outstanding Balance</h3>
           <p className={`stat-value ${!hasPaidFees ? 'text-red' : 'text-green'}`}>
-            {hasPaidFees ? '₦0' : '₦15,000'}
+            {hasPaidFees ? '₦0' : '₦140,000'}
           </p>
           <span className="stat-subtitle">
             {hasPaidFees ? 'Fully Paid' : 'Due in 5 days'}
@@ -57,29 +55,31 @@ export default function Home() {
       <div className="dashboard-main-split">
         <div className="content-card fees-section">
           <div className="card-header">
-            <h2>Current Fee </h2>
+            <h2>Current Fee Overview</h2>
             <button className="text-link">View History</button>
           </div>
           
           <div className="fee-list">
-            <div className="fee-item settled">
+            <div className={`fee-item ${hasPaidFees ? 'settled' : 'pending'}`}>
               <div>
                 <h4>Tuition Fee</h4>
                 <p>100 Level</p>
               </div>
               <div className="fee-status">
                 <span className="amount">₦120,000</span>
-                <span className="badge badge-paid">Paid</span>
+                <span className={`badge ${hasPaidFees ? 'badge-paid' : 'badge-unpaid'}`}>
+                  {hasPaidFees ? 'Paid' : 'Pending'}
+                </span>
               </div>
             </div>
             
             <div className={`fee-item ${hasPaidFees ? 'settled' : 'pending'}`}>
               <div>
-                <h4>ICT & Lab Levy</h4>
+                <h4>ICT, Lab & Library Levy</h4>
                 <p>Compulsory</p>
               </div>
               <div className="fee-status">
-                <span className="amount">₦15,000</span>
+                <span className="amount">₦20,000</span>
                 <span className={`badge ${hasPaidFees ? 'badge-paid' : 'badge-unpaid'}`}>
                   {hasPaidFees ? 'Paid' : 'Pending'}
                 </span>
@@ -93,28 +93,29 @@ export default function Home() {
               disabled={hasPaidFees}
               onClick={() => navigate("/fees")}
             >
-              {hasPaidFees ? 'All Fees Cleared' : 'Proceed to Pay ₦15,000'}
+              {hasPaidFees ? 'All Fees Cleared' : 'Proceed to Pay ₦140,000'}
             </button>
           </div>
         </div>
 
-        {/* Right Column: Receipts */}
         <div className="content-card receipts-section">
           <div className="card-header">
             <h2>Recent Receipts</h2>
           </div>
           <div className="receipt-list">
+            {hasPaidFees && (
+              <div className="receipt-item">
+                <div className="receipt-info">
+                  <h4>Invoice #2026</h4>
+                  <p>Session Fees • Current</p>
+                </div>
+                <button className="download-btn">⬇</button>
+              </div>
+            )}
             <div className="receipt-item">
               <div className="receipt-info">
                 <h4>Invoice #1042</h4>
-                <p>Tuition • Aug 15, 2026</p>
-              </div>
-              <button className="download-btn">⬇</button>
-            </div>
-            <div className="receipt-item">
-              <div className="receipt-info">
-                <h4>Invoice #0981</h4>
-                <p>Acceptance • Jul 20, 2026</p>
+                <p>Acceptance • Aug 15, 2026</p>
               </div>
               <button className="download-btn">⬇</button>
             </div>
@@ -122,7 +123,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Conditionally hide the registration warning if fees are paid */}
       {!hasPaidFees && (
         <div className="action-banner">
           <div className="banner-content">
