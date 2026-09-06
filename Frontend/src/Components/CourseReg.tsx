@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client/react';
 import { GET_ME, GET_AVAILABLE_COURSES } from '../graphql/queries';
 import { REGISTER_COURSES } from '../graphql/mutations';
@@ -7,7 +6,6 @@ import type { Course, GetAvailableCoursesResponse, GetMeResponse } from '../type
 import './CourseReg.css';
 
 export default function CourseRegistration() {
-  const navigate = useNavigate()
   const { data: userData, loading: userLoading } = useQuery<GetMeResponse>(GET_ME);
   const { data: coursesData, loading: coursesLoading } = useQuery<GetAvailableCoursesResponse>(GET_AVAILABLE_COURSES);
   
@@ -17,8 +15,9 @@ export default function CourseRegistration() {
 
   const [selectedCourseIds, setSelectedCourseIds] = useState<string[]>([]);
   const [hasInitialized, setHasInitialized] = useState(false);
+  // NEW: State to track if the user is in edit mode
+  const [isEditing, setIsEditing] = useState(false);
 
-  // Pre-load existing registrations into the checkboxes
   useEffect(() => {
     if (userData?.me?.registeredCourses && !hasInitialized) {
       const existingIds = userData.me.registeredCourses.map((c: any) => c.id);
@@ -30,9 +29,11 @@ export default function CourseRegistration() {
   if (userLoading || coursesLoading) return <div>Loading portal...</div>;
 
   const isFeesPaid = userData?.me?.hasPaidFees || false;
-  // If they have 1 or more courses, they are "Editing", not registering for the first time
   const isAlreadyRegistered = (userData?.me?.registeredCourses?.length || 0) > 0;
   
+  // NEW: Determine if the form should be locked down (read-only)
+  const isReadOnly = isAlreadyRegistered && !isEditing;
+
   const availableCourses: Course[] = coursesData?.availableCourses || [];
 
   const handleToggleCourse = (courseId: string) => {
@@ -46,6 +47,8 @@ export default function CourseRegistration() {
       await registerCourses({
         variables: { courseIds: selectedCourseIds }
       });
+      // NEW: Lock the form back up after a successful update
+      setIsEditing(false);
       alert(isAlreadyRegistered ? 'Registration successfully updated!' : 'Course registration submitted!');
     } catch (error) {
       console.error('Failed to register:', error);
@@ -67,11 +70,11 @@ export default function CourseRegistration() {
             <span className="lock-icon">🔒</span>
             <h2>Portal Locked</h2>
             <p>You must clear your outstanding Harmattan semester fees to unlock course registration.</p>
-            <button onClick={() => navigate("/fees")} className="primary-btn pay-btn">Go to School Fees</button>
           </div>
         </div>
       )}
 
+      {/* NEW: Apply a visual grey-out class if they are in read-only mode */}
       <div className={`registration-content ${!isFeesPaid ? 'locked-blur' : ''}`}>
         <div className="registration-header">
           <h2>Harmattan Semester Registration</h2>
@@ -79,14 +82,13 @@ export default function CourseRegistration() {
         </div>
 
         <div className="registration-split">
-          {/* LEFT SIDE: Available Courses */}
-          <div className="course-selection-panel">
+          <div className={`course-selection-panel ${isReadOnly ? 'read-only-panel' : ''}`}>
             <div className="panel-header">
-              <h3>Available Courses</h3>
+              <h3>Available Courses {isReadOnly && '(Locked)'}</h3>
             </div>
             <div className="course-list">
               {availableCourses.map((course) => (
-                <div key={course.id} className="course-card">
+                <div key={course.id} className="course-card" style={{ opacity: isReadOnly ? 0.6 : 1 }}>
                   <div className="course-info">
                     <span className="course-code">{course.code}</span>
                     <h4>{course.title}</h4>
@@ -97,7 +99,8 @@ export default function CourseRegistration() {
                     <input 
                       type="checkbox" 
                       className="course-checkbox" 
-                      disabled={!isFeesPaid}
+                      // NEW: Disable checkboxes if fees aren't paid OR if it's read-only
+                      disabled={!isFeesPaid || isReadOnly}
                       checked={selectedCourseIds.includes(course.id)}
                       onChange={() => handleToggleCourse(course.id)}
                     />
@@ -107,13 +110,11 @@ export default function CourseRegistration() {
             </div>
           </div>
 
-          {/* RIGHT SIDE: Summary / Selected Courses */}
           <div className="registration-summary-panel">
             <div className="panel-header">
               <h3>{isAlreadyRegistered ? 'Current Registration' : 'Selected Courses'}</h3>
             </div>
             <div className="summary-content">
-              
               {selectedCourses.length === 0 ? (
                 <div className="empty-state">
                   <p>No courses selected yet.</p>
@@ -135,17 +136,38 @@ export default function CourseRegistration() {
                   <strong>{totalUnits} / 24</strong>
                 </div>
                 
-                <button 
-                  className={`primary-btn submit-btn ${isAlreadyRegistered ? 'update-btn' : ''}`}
-                  disabled={selectedCourses.length === 0 || isOverLimit || isUnchanged || isSubmitting}
-                  onClick={handleSubmit}
-                >
-                  {isSubmitting 
-                    ? 'Saving...' 
-                    : isAlreadyRegistered 
-                      ? 'Update Registration' 
-                      : 'Submit Registration'}
-                </button>
+                {/* NEW: Conditional Button Render */}
+                {isReadOnly ? (
+                  <button 
+                    className="primary-btn submit-btn edit-btn"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    Edit Registration
+                  </button>
+                ) : (
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    {isEditing && (
+                       <button 
+                         className="secondary-btn" 
+                         onClick={() => {
+                           setIsEditing(false);
+                           setSelectedCourseIds(userData?.me?.registeredCourses?.map((c: any) => c.id) || []);
+                         }}
+                         style={{ flex: 1 }}
+                       >
+                         Cancel
+                       </button>
+                    )}
+                    <button 
+                      className="primary-btn submit-btn"
+                      disabled={selectedCourses.length === 0 || isOverLimit || isUnchanged || isSubmitting}
+                      onClick={handleSubmit}
+                      style={{ flex: 2 }}
+                    >
+                      {isSubmitting ? 'Saving...' : (isAlreadyRegistered ? 'Save Changes' : 'Submit Registration')}
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

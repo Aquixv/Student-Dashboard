@@ -17,7 +17,7 @@ export default function Navbar() {
       
       <div className="topbar-actions">
         <button className="status-btn">
-          <span style={{ fontSize: '1.1rem' }}>⛙</span> Status
+          <span style={{ fontSize: '1.1rem' }}></span> Status
         </button>
         
         <div className="search-container">

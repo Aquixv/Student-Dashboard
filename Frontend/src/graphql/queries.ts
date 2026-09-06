@@ -13,6 +13,8 @@ export const GET_ME = gql`
       registeredCourses {
         id
         units
+        code
+        title
       }
     }
   }

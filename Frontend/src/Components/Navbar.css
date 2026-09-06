@@ -31,6 +31,7 @@
   font-weight: 600;
   display: flex;
   align-items: center;
+  align-content: center;
   gap: 0.5rem;
   cursor: pointer;
   box-shadow: 0px 4px 10px rgba(9, 93, 197, 0.2);
