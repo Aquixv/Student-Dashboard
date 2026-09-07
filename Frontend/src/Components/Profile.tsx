@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/client/react';
 import { GET_ME } from '../graphql/queries';
 import './Results.css';
+import { downloadProfileForm } from '../utils/generateProfileForm';
 import type { GetMeResponse } from '../types';
 
 export default function Profile() {
@@ -21,7 +22,7 @@ export default function Profile() {
           <h2>Student Profile & Course Form</h2>
           <p>Official bio-data and academic registration records.</p>
         </div>
-        <button style={{ backgroundColor:'#2b3674'}}className="secondary-btn" onClick={() => window.print()}>🖨️ Print</button>
+        {/* <button style={{ backgroundColor:'#2b3674'}}className="secondary-btn" onClick={() => window.print()}>🖨️ Print</button> */}
       </div>
 
       <div className="content-card profile-card" style={{ marginBottom: '2rem' }}>
@@ -94,6 +95,10 @@ export default function Profile() {
                 </tr>
               </tfoot>
             </table>
+            <button style={{ backgroundColor:'#2b3674'}}
+          className="secondary-btn" 
+          onClick={() => downloadProfileForm(user)}
+        >Download Course Form</button>
           </div>
         )}
       </div>
