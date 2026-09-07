@@ -177,7 +177,7 @@ export default function SchoolFees() {
             </>
           ) : (
             <div style={{ padding: '4rem 2rem', textAlign: 'center', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>✅</div>
+              {/* <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>✅</div> */}
               <h3 style={{ color: '#2b3674', fontSize: '1.2rem', marginBottom: '0.5rem' }}>All Mandatory Fees Cleared</h3>
               <p style={{ color: '#718096', fontSize: '0.95rem' }}>You have no outstanding balance for the current academic session.</p>
             </div>
@@ -211,7 +211,7 @@ export default function SchoolFees() {
               </div>
               <div className="history-actions">
                 <span className="history-amount">₦50,000</span>
-                <button className="download-receipt-btn">⬇ PDF</button>
+                <button className="download-receipt-btn"><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/507665/download.svg" alt="" /> PDF</button>
               </div>
             </div>
           </div>

@@ -117,7 +117,7 @@ export default function Home() {
                 <h4>Invoice #1042</h4>
                 <p>Acceptance • Aug 15, 2026</p>
               </div>
-              <button className="download-btn">⬇</button>
+              <button className="download-btn"><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/507665/download.svg" alt="" /></button>
             </div>
           </div>
         </div>

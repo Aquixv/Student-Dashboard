@@ -61,16 +61,16 @@ export default function Timetable() {
                       <span className="icon">🕒</span> {session.time}
                     </span>
                     <span className="detail-item">
-                      <span className="icon">📍</span> {session.venue}
+                      <span className="icon"><img style={{ height: '15px', width:'15px'}} src="https://www.svgrepo.com/show/522166/location.svg" alt="" /></span> {session.venue}
                     </span>
                     <span className="detail-item">
-                      <span className="icon">👤</span> {session.instructor}
+                      <span className="icon"><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/478629/graduate.svg" alt="" /></span> {session.instructor}
                     </span>
                   </div>
                 </div>
                 <div className="session-action">
                   <button className="reminder-btn" title="Set Reminder">
-                    🔔
+                    <img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/490517/alarm-clock.svg" alt="" />
                   </button>
                 </div>
               </div>

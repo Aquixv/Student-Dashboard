@@ -67,7 +67,7 @@ export default function CourseRegistration() {
       {!isFeesPaid && (
         <div className="lock-overlay">
           <div className="lock-content">
-            <span className="lock-icon">🔒</span>
+            <span className="lock-icon"><img style={{ height: '90px', width:'90px'}} src="https://www.svgrepo.com/show/246343/padlock.svg" alt="" /></span>
             <h2>Portal Locked</h2>
             <p>You must clear your outstanding Harmattan semester fees to unlock course registration.</p>
           </div>
