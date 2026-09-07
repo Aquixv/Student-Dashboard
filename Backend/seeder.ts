@@ -2,8 +2,8 @@ import Course from "./models/Courses";
 
 export const seedCourses = async () => {
   // Temporarily comment this out to force the new courses in:
-  // const count = await Course.countDocuments();
-  // if (count > 0) return; 
+  const count = await Course.countDocuments();
+  if (count > 0) return; 
 
   const dummyCourses = [
     { code: 'CSC 201', title: 'Computer Programming I', units: 3, type: 'Compulsory', schedule: { day: 'Monday', time: '08:00 AM - 10:00 AM', venue: 'Lecture Theater 1', instructor: 'Dr. Dan-star' } },
