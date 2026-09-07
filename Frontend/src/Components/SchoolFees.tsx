@@ -5,6 +5,7 @@ import { GET_ME } from '../graphql/queries';
 import { UPDATE_FEE_STATUS } from '../graphql/mutations';
 import './SchoolFees.css';
 import type { GetMeResponse } from '../types';
+import { downloadReceipt } from '../utils/generateReceipts';
 
 export default function SchoolFees() {
   const [paymentMethod, setPaymentMethod] = useState<'paystack' | 'remita' | 'transfer'>('paystack');
@@ -13,6 +14,22 @@ export default function SchoolFees() {
   const [updateFeeStatus, { loading: isUpdating }] = useMutation(UPDATE_FEE_STATUS, {
     refetchQueries: [{ query: GET_ME }] 
   });
+
+  const handleDownloadSessionReceipt = () => {
+    if (!user) return;
+    const invoiceDetails = {
+      reference: 'INV-2026-HMT',
+      date: new Date().toLocaleDateString(),
+      total: '140,000',
+      items: [
+        { desc: 'Harmattan Tuition Fee', amount: '120,000' },
+        { desc: 'ICT & Lab Levy', amount: '15,000' },
+        { desc: 'Library Fee', amount: '5,000' }
+      ]
+    };
+    
+    downloadReceipt(user, invoiceDetails);
+  };
 
   if (loading) return <div className="fees-wrapper">Loading financial records...</div>;
 
@@ -55,6 +72,21 @@ export default function SchoolFees() {
 
   const onClose = () => {
     console.log('Payment window closed by user.');
+  };
+
+  const handleDownloadAcceptanceReceipt = () => {
+    if (!user) return;
+    
+    const invoiceDetails = {
+      reference: 'INV-1042',
+      date: 'Aug 15, 2026',
+      total: '50,000',
+      items: [
+        { desc: 'Acceptance Fee', amount: '50,000' }
+      ]
+    };
+    
+    downloadReceipt(user, invoiceDetails);
   };
 
   return (
@@ -195,11 +227,11 @@ export default function SchoolFees() {
                 <div className="history-icon">✓</div>
                 <div className="history-details">
                   <h4>Session Fees</h4>
-                  <p>INV-2026 • Current</p>
+                  <p>HM-2026 - Current</p>
                 </div>
                 <div className="history-actions">
                   <span className="history-amount">₦140,000</span>
-                  <button className="download-receipt-btn">⬇ PDF</button>
+                  <button onClick={handleDownloadSessionReceipt} className="download-receipt-btn"><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/507665/download.svg" alt="" /> PDF</button>
                 </div>
               </div>
             )}
@@ -211,7 +243,7 @@ export default function SchoolFees() {
               </div>
               <div className="history-actions">
                 <span className="history-amount">₦50,000</span>
-                <button className="download-receipt-btn"><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/507665/download.svg" alt="" /> PDF</button>
+                <button onClick={handleDownloadAcceptanceReceipt} className="download-receipt-btn"><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/507665/download.svg" alt="" /> PDF</button>
               </div>
             </div>
           </div>

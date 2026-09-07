@@ -1,0 +1,49 @@
+/* --- Print Styles for Profile Course Form --- */
+@media print {
+  /* 1. Hide all navigation and UI buttons */
+  .sidebar, 
+  .topbar, 
+  .page-header button,
+  ::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  /* 2. Remove background colors and expand the wrapper to fit the page */
+  body, html, .page-wrapper {
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    width: 100% !important;
+    overflow: visible !important;
+  }
+
+  /* 3. Shift the main content over since the sidebar is gone */
+  .main-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+
+  /* 4. Ensure the table doesn't get cut off and breaks cleanly across pages */
+  .content-card {
+    box-shadow: none !important;
+    border: 1px solid #e2e8f0 !important;
+    margin-bottom: 20px !important;
+    page-break-inside: avoid; 
+  }
+
+  table {
+    page-break-inside: auto;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  /* 5. Force the browser to print your background colors (like the blue banner) */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

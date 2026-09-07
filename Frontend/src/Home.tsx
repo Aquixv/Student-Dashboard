@@ -106,16 +106,16 @@ export default function Home() {
             {hasPaidFees && (
               <div className="receipt-item">
                 <div className="receipt-info">
-                  <h4>Invoice #2026</h4>
-                  <p>Session Fees • Current</p>
+                  <h4>Invoice for the 2026 Session</h4>
+                  <p>Session Fees</p>
                 </div>
-                <button className="download-btn">⬇</button>
+                <button className="download-btn"><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/507665/download.svg" alt="" /></button>
               </div>
             )}
             <div className="receipt-item">
               <div className="receipt-info">
-                <h4>Invoice #1042</h4>
-                <p>Acceptance • Aug 15, 2026</p>
+                <h4>Invoice For Acceptance Fees</h4>
+                <p>Acceptance Fees • Aug 15, 2026</p>
               </div>
               <button className="download-btn"><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/507665/download.svg" alt="" /></button>
             </div>
