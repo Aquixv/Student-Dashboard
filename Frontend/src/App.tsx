@@ -1,10 +1,10 @@
 import { Routes, Route } from 'react-router-dom';
-import ProtectedRoute from './ProtectedRoutes';
+// Fix 1: Import AdminRoute with curly braces!
+import ProtectedRoute, { AdminRoute } from './ProtectedRoutes'; 
 import Sidebar from './Components/Sidebar';
 import Navbar from './Components/Navbar';
 import Home from './Home';
 import CourseRegistration from './Components/CourseReg';
-import AdminRoute from './ProtectedRoutes';
 import AdminDashboard from './Components/AdminDashboard';
 import './App.css';
 import SchoolFees from './Components/SchoolFees';
@@ -15,6 +15,7 @@ import Help from './Components/Help';
 import Settings from './Components/Settings';
 import Login from './Login/Login';
 import Signup from './Login/Signup';
+import AdminLogin from './Components/AdminLogin';
 
 function App() {
   return (
@@ -22,8 +23,14 @@ function App() {
       {/* 1. Public Routes */}
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/admin-login" element={<AdminLogin />} />
 
-      {/* 2. Protected Layout Wrapper */}
+      {/* Fix 2: Standalone Admin Layout (Moved OUTSIDE the student wrapper) */}
+      <Route element={<AdminRoute />}>
+        <Route path="/admin" element={<AdminDashboard />} />
+      </Route> 
+
+      {/* 3. Protected Student Layout Wrapper */}
       <Route element={<ProtectedRoute />}>
         {/* Everything inside here requires a valid portal_token in localStorage */}
         <Route path="/*" element={
@@ -40,11 +47,8 @@ function App() {
                   <Route path="/results" element={<Results />} />
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/help" element={<Help />} />
-                  <Route element={<AdminRoute />}>
-  <Route path="/admin" element={<AdminDashboard />} />
-</Route>
                   <Route path="/settings" element={<Settings />} />
-                </Routes>
+               </Routes>
               </main>
             </div>
           </div>

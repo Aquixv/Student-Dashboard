@@ -64,18 +64,18 @@ export const resolvers = {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
-      const defaultCourses = await Course.aggregate([
-        { $match: { type: 'Compulsory' } },
-        { $sample: { size: 2 } }
-      ]);
-      const courseIds = defaultCourses.map(course => course._id);
+      // Generate a random 4-digit ID
+      const randomNum = Math.floor(1000 + Math.random() * 9000);
+      const generatedMatric = `OND/PROF/${randomNum}`;
 
       const user = await User.create({
-        fullName: fullName || User.name,
+        fullName: fullName || 'Student',
         email,
         password: hashedPassword, 
-        registeredCourses: courseIds,
-        hasPaidFees: false
+        registeredCourses: [], // <-- Set this to an empty array!
+        hasPaidFees: false,
+        role: 'Student', // Match the exact casing from your Mongoose enum
+        matricNumber: generatedMatric 
       });
 
       return {

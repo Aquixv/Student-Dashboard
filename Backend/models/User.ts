@@ -27,7 +27,7 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>(
     fullName: { type: String, required: [true, 'Please add a name'] },
     email: { type: String, required: [true, 'Please add an email'], unique: true },
     password: { type: String },
-    matricNumber: { type: String, unique: true },
+    matricNumber: { type: String, unique: true, sparse: true },
     avatar: { 
       type: String, 
       default: 'https://res.cloudinary.com/your-cloud-name/image/upload/v1234567/default-avatar.png' 

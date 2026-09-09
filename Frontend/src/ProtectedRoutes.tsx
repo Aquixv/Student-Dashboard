@@ -15,18 +15,19 @@ export default function ProtectedRoute() {
   return <Outlet />;
 }
 
-// 2. Fixed AdminRoute
 export function AdminRoute() {
-  // Added the error object to the destructuring
+  const token = localStorage.getItem('portal_token');
+  
+  if (!token) {
+    return <Navigate to="/admin-login" replace />;
+  }
   const { data, loading, error } = useQuery<GetMeResponse>(GET_ME);
 
-  if (loading) return <div style={{ padding: '2rem' }}>Authenticating access...</div>;
+  if (loading) return <div style={{ padding: '2rem' }}>Verifying Admin Clearances...</div>;
 
-  // If there's a GraphQL error, OR no user data, OR they aren't an admin, kick them out
   if (error || !data?.me || data.me.role !== 'Admin') {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/admin-login" replace />;
   }
 
-  // If they pass all checks, let them in
   return <Outlet />;
 }

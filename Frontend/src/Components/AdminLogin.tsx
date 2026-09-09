@@ -1,28 +1,28 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@apollo/client/react';
-import { LOGIN_USER } from '../graphql/mutations';
+import { LOGIN } from '../graphql/mutations';
 import './Results.css'; 
 import type { LoginResponse } from '../types';
 
 export default function AdminLogin() {
-  const navigate = useNavigate();
+//   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
-  const [loginAdmin, { loading }] = useMutation<LoginResponse>(LOGIN_USER, {
+  const [loginAdmin, { loading }] = useMutation<LoginResponse>(LOGIN, {
     onCompleted: (data) => {
-      // Assuming your login mutation returns a token and user object
       const user = data.login.user;
       
       if (user.role !== 'Admin') {
+        console.log(errorMsg)
         setErrorMsg('Access denied. This portal is restricted to administrative staff.');
         return;
       }
 
       localStorage.setItem('portal_token', data.login.token);
-      navigate('/admin');
+window.location.href = '/admin';
     },
     onError: (error) => {
       setErrorMsg(error.message || 'Invalid admin credentials');
@@ -62,7 +62,7 @@ export default function AdminLogin() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid #e2e8f0', outline: 'none' }}
-              placeholder="admin@eduportal.edu.ng"
+              placeholder="admin@portal.edu.ng"
             />
           </div>
           
