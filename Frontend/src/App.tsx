@@ -4,6 +4,8 @@ import Sidebar from './Components/Sidebar';
 import Navbar from './Components/Navbar';
 import Home from './Home';
 import CourseRegistration from './Components/CourseReg';
+import AdminRoute from './ProtectedRoutes';
+import AdminDashboard from './Components/AdminDashboard';
 import './App.css';
 import SchoolFees from './Components/SchoolFees';
 import Timetable from './Components/Timetables';
@@ -38,6 +40,9 @@ function App() {
                   <Route path="/results" element={<Results />} />
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/help" element={<Help />} />
+                  <Route element={<AdminRoute />}>
+  <Route path="/admin" element={<AdminDashboard />} />
+</Route>
                   <Route path="/settings" element={<Settings />} />
                 </Routes>
               </main>
