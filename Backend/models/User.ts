@@ -11,7 +11,7 @@ export interface IUser extends Document {
   resetPasswordToken?: string;
   resetPasswordExpire?: Date;
   authProvider: 'local';
-  role: 'Student' | 'Professor';
+  role: 'Student' | 'Professor' | 'Admin';
   registeredCourses: mongoose.Types.ObjectId[];
   hasPaidFees: boolean;
 }
@@ -35,7 +35,7 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>(
     resetPasswordToken: { type: String, required: false },
     resetPasswordExpire: { type: Date, required: false },
     authProvider: { type: String, enum: ['local'], default: 'local' },
-    role: { type: String, enum: ['Student', 'Professor'], default: 'Student' },
+    role: { type: String, enum: ['Student', 'Professor', 'Admin'], default: 'Student' },
     registeredCourses: [{ type: Schema.Types.ObjectId, ref: 'Course' }],
     hasPaidFees: {type: Boolean, required: true}
   }, 

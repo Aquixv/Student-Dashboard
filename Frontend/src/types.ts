@@ -7,6 +7,7 @@ export interface User {
   department?: string;
   hasPaidFees: boolean;
   registeredCourses?: Course[];
+  role:string
 }
 
 export interface Course {

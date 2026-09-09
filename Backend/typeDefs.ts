@@ -6,10 +6,11 @@ export const typeDefs = gql`
   fullName: String!
   email: String!
   matricNumber: String
-  level: String
   department: String
+  level: String
   hasPaidFees: Boolean!
-  registeredCourses: [Course!] 
+  role: String! 
+  registeredCourses: [Course!]
 }
 type Transaction {
   id: ID!

@@ -7,14 +7,15 @@ export const GET_ME = gql`
       fullName
       email
       matricNumber
-      level
       department
+      level
       hasPaidFees
+      role
       registeredCourses {
         id
-        units
         code
         title
+        units
       }
     }
   }
