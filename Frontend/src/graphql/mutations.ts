@@ -48,6 +48,18 @@ export const REGISTER_COURSES = gql`
     }
   }
 `;
+export const ADD_COURSE = gql`
+  mutation AddCourse($code: String!, $title: String!, $units: Int!, $type: String!) {
+    addCourse(code: $code, title: $title, units: $units, type: $type) {
+      id
+      code
+      title
+      units
+      type
+    }
+  }
+`;
+
 export const LOGIN = gql`
   mutation Login($email: String!, $password: String!) {
     login(email: $email, password: $password) {
@@ -58,6 +70,25 @@ export const LOGIN = gql`
         fullName
         role # <--- THIS IS THE MISSING PIECE
       }
+    }
+  }
+`;
+export const ADD_BILL = gql`
+  mutation AddBill($description: String!, $amount: Float!) {
+    addBill(description: $description, amount: $amount) { id description amount }
+  }
+`;
+
+export const DELETE_BILL = gql`
+  mutation DeleteBill($id: ID!) {
+    deleteBill(id: $id)
+  }
+`;
+export const UPDATE_DEPARTMENT = gql`
+  mutation UpdateDepartment($userId: ID!, $department: String!) {
+    updateDepartment(userId: $userId, department: $department) {
+      id
+      department
     }
   }
 `;

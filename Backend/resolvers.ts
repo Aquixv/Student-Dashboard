@@ -3,6 +3,7 @@ import Course from './models/Courses';
 import  generateToken  from './config/GenerateToken';
 import bcrypt from 'bcryptjs';
 import Transactions from './models/Transactions';
+import Bill from './bills';
 
 export const resolvers = {
   Query: {
@@ -13,8 +14,13 @@ export const resolvers = {
     const user = await User.findById(context.user.id).populate('registeredCourses');
     return user;
   },
+  getStudents: async (_parent: any, _args: any, context: any) => {
+  if (!context.user || context.user.role !== 'Admin') throw new Error('Unauthorized');
+  return await User.find({ role: 'Student' }).sort({ createdAt: -1 });
+},
     availableCourses: async () => await Course.find(),
-  },
+getBills: async () => await Bill.find().sort({ createdAt: 1 }),
+  },    
 
   Mutation: {
     login: async (_parent: any, { email, password }: any) => {
@@ -34,6 +40,16 @@ export const resolvers = {
         user
       };
     },
+
+addBill: async (_parent: any, { description, amount }: any, context: any) => {
+  if (!context.user || context.user.role !== 'Admin') throw new Error('Unauthorized');
+  return await Bill.create({ description, amount });
+},
+deleteBill: async (_parent: any, { id }: any, context: any) => {
+  if (!context.user || context.user.role !== 'Admin') throw new Error('Unauthorized');
+  await Bill.findByIdAndDelete(id);
+  return id;
+},
   updateFeeStatus: async (_parent: any, { userId, status, reference }: any, context: any) => {
     if (!context.user) throw new Error('Not authenticated');
 
@@ -55,6 +71,15 @@ export const resolvers = {
 
     return updatedUser;
   },
+  updateDepartment: async (_parent: any, { userId, department }: any, context: any) => {
+  if (!context.user || context.user.role !== 'Admin') throw new Error('Unauthorized');
+  
+  return await User.findByIdAndUpdate(
+    userId,
+    { $set: { department } },
+    { new: true }
+  );
+},
     registerUser: async (_parent: any, { fullName, email, password }: any) => {
       const existingUser = await User.findOne({ email });
       if (existingUser) {
@@ -84,6 +109,21 @@ export const resolvers = {
       };
     },
 
+addCourse: async (_parent: any, { code, title, units, type }: any, context: any) => {
+  // Ensure the user actually has the Admin token
+  if (!context.user || context.user.role !== 'Admin') {
+    throw new Error('Unauthorized access');
+  }
+
+  const newCourse = await Course.create({
+    code,
+    title,
+    units,
+    type,
+  });
+
+  return newCourse;
+},
     // updateFeeStatus: async (_parent: any, { userId, status }: any) => {
     //   const updatedUser = await User.findByIdAndUpdate(
     //     userId,

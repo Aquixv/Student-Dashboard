@@ -11,6 +11,12 @@ export const typeDefs = gql`
   hasPaidFees: Boolean!
   role: String! 
   registeredCourses: [Course!]
+
+}
+  type Bill {
+  id: ID!
+  description: String!
+  amount: Float!
 }
 type Transaction {
   id: ID!
@@ -34,9 +40,10 @@ type AuthPayload {
   type Query {
     # Fetch the current user to determine if they hit the lockout screen
     me: User
-    
+    getBills: [Bill!]!
     # Fetch available courses for registration
     availableCourses: [Course!]!
+    getStudents: [User!]!
   }
 
   type Mutation {
@@ -44,5 +51,9 @@ type AuthPayload {
   login(email: String!, password: String!): AuthPayload!
   updateFeeStatus(userId: ID!, status: Boolean!, reference: String!): User!
   registerCourses(courseIds: [ID!]!): User!
+  addCourse(code: String!, title: String!, units: Int!, type: String!): Course!
+  addBill(description: String!, amount: Float!): Bill!
+  deleteBill(id: ID!): ID!
+  updateDepartment(userId: ID!, department: String!): User!
 }
 `;

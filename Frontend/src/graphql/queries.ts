@@ -32,3 +32,19 @@ export const GET_AVAILABLE_COURSES = gql`
     }
   }
 `;
+export const GET_STUDENTS = gql`
+  query GetStudents {
+    getStudents {
+      id
+      fullName
+      matricNumber
+      department
+      hasPaidFees
+    }
+  }
+`;
+export const GET_BILLS = gql`
+  query GetBills {
+    getBills { id description amount }
+  }
+`;

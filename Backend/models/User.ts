@@ -14,6 +14,7 @@ export interface IUser extends Document {
   role: 'Student' | 'Professor' | 'Admin';
   registeredCourses: mongoose.Types.ObjectId[];
   hasPaidFees: boolean;
+  department:string
 }
 
 export interface IUserMethods {
@@ -28,6 +29,7 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>(
     email: { type: String, required: [true, 'Please add an email'], unique: true },
     password: { type: String },
     matricNumber: { type: String, unique: true, sparse: true },
+    department: { type: String, default: null },
     avatar: { 
       type: String, 
       default: 'https://res.cloudinary.com/your-cloud-name/image/upload/v1234567/default-avatar.png' 

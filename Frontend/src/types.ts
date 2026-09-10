@@ -37,7 +37,17 @@ export interface LoginResponse {
 export interface UpdateFeeStatusResponse {
   updateFeeStatus: User;
 }
+export interface Student {
+  id: string;
+  fullName: string;
+  matricNumber: string | null;
+  department: string | null;
+  hasPaidFees: boolean;
+}
 
+export interface GetStudentsResponse {
+  getStudents: Student[];
+}
 // --- GraphQL Query Response Types ---
 
 export interface GetMeResponse {
@@ -46,4 +56,13 @@ export interface GetMeResponse {
 
 export interface GetAvailableCoursesResponse {
   availableCourses: Course[];
+}
+export interface Bill {
+  id: string;
+  description: string;
+  amount: number;
+}
+
+export interface GetBillsResponse {
+  getBills: Bill[];
 }
