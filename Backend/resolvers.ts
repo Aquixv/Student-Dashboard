@@ -4,6 +4,7 @@ import  generateToken  from './config/GenerateToken';
 import bcrypt from 'bcryptjs';
 import Transactions from './models/Transactions';
 import Bill from './bills';
+import Result from './models/REsults'
 
 export const resolvers = {
   Query: {
@@ -40,7 +41,23 @@ getBills: async () => await Bill.find().sort({ createdAt: 1 }),
         user
       };
     },
+uploadResult: async (_parent: any, { matricNumber, courseCode, score }: any, context: any) => {
+  if (!context.user || context.user.role !== 'Admin') throw new Error('Unauthorized');
+  
+  // Auto-calculate the grade based on standard university curves
+  let grade = 'F';
+  if (score >= 70) grade = 'A';
+  else if (score >= 60) grade = 'B';
+  else if (score >= 50) grade = 'C';
+  else if (score >= 45) grade = 'D';
 
+  return await Result.create({
+    matricNumber,
+    courseCode,
+    score,
+    grade
+  });
+},
 addBill: async (_parent: any, { description, amount }: any, context: any) => {
   if (!context.user || context.user.role !== 'Admin') throw new Error('Unauthorized');
   return await Bill.create({ description, amount });
