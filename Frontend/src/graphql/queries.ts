@@ -48,3 +48,28 @@ export const GET_BILLS = gql`
     getBills { id description amount }
   }
 `;
+export const GET_MY_RESULTS = gql`
+  query GetMyResults {
+    getMyResults {
+      id
+      courseCode
+      score
+      grade
+    }
+  }
+`;
+export const GET_STUDENT_BY_MATRIC = gql`
+  query GetStudentByMatric($matricNumber: String!) {
+    getStudentByMatric(matricNumber: $matricNumber) {
+      id
+      fullName
+      matricNumber
+      department
+      registeredCourses {
+        id
+        code
+        title
+      }
+    }
+  }
+`;

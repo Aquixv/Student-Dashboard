@@ -20,14 +20,14 @@ export default function Navbar() {
           <span style={{ fontSize: '1.1rem' }}></span> Status
         </button>
         
-        <div className="search-container">
+        {/* <div className="search-container">
           <span style={{ color: '#a3aed1', fontSize: '1.1rem' }}><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/532551/search-alt-1.svg" alt="" /></span>
           <input 
             type="text" 
             placeholder="Search here..." 
             className="search-input" 
           />
-        </div>
+        </div> */}
 
         <button className="notification-icon">
          <img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/522617/notification.svg" alt="" />

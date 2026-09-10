@@ -1,28 +1,32 @@
 import { useQuery } from '@apollo/client/react';
-import { GET_ME } from '../graphql/queries';
+import { GET_ME, GET_MY_RESULTS } from '../graphql/queries';
 import { downloadTranscript } from '../utils/generateTranscripts';
-
-import './Results.css';
-import type { GetMeResponse } from '../types';
+import './SecondaryPages.css'; 
+import type { GetMeResponse, GetMyResultsResponse } from '../types';
 
 export default function Results() {
-  const { data, loading } = useQuery<GetMeResponse>(GET_ME);
+  const { data: userData, loading: userLoading } = useQuery<GetMeResponse>(GET_ME);
+  const { data: resultsData, loading: resultsLoading } = useQuery<GetMyResultsResponse>(GET_MY_RESULTS);
 
-  if (loading) return <div>Loading results...</div>;
+  if (userLoading || resultsLoading) return <div style={{ padding: '2rem' }}>Loading academic records...</div>;
 
-  const user = data?.me || { fullName: 'Student' };
+  const user = userData?.me || { fullName: 'Student', registeredCourses: [] };
+  const realResults = resultsData?.getMyResults || [];
 
-  // Hardcoded data matching your UI until the admin backend is built
-  const gpa = "4.25";
-  const mockResults = [
-    { id: 1, code: 'CSC 101', title: 'Intro to Computer Science', units: 3, score: 78, grade: 'A' },
-    { id: 2, code: 'MTH 101', title: 'Elementary Mathematics I', units: 3, score: 65, grade: 'B' },
-    { id: 3, code: 'PHY 101', title: 'General Physics I', units: 3, score: 55, grade: 'C' },
-    { id: 4, code: 'GST 101', title: 'Use of English', units: 2, score: 72, grade: 'A' },
-  ];
-
+  // MVP GPA: Just a static placeholder until you want to write a full credit-weight algorithm
+  const gpa = realResults.length > 0 ? "4.25" : "0.00";
+  const enrichedResults = realResults.map((result: any) => {
+    const courseMatch = user.registeredCourses?.find((c: any) => c.code === result.courseCode);
+    return {
+      ...result,
+      code: result.courseCode, // <-- This ensures the PDF library finds it!
+      title: courseMatch?.title || 'Unknown Course',
+      units: courseMatch?.units || '-'
+    };
+  });
   const handleDownload = () => {
-    downloadTranscript(user, mockResults, gpa);
+    // Pass the real data to your PDF utility
+    downloadTranscript(user, enrichedResults, gpa);
   };
 
   return (
@@ -38,22 +42,26 @@ export default function Results() {
             <thead>
               <tr style={{ borderBottom: '1px solid #e2e8f0', color: '#718096' }}>
                 <th style={{ padding: '1rem' }}>Course Code</th>
-                <th>Course Title</th>
-                <th>Units</th>
                 <th>Score</th>
                 <th>Grade</th>
               </tr>
             </thead>
             <tbody>
-              {mockResults.map((result) => (
-                <tr key={result.id} style={{ borderBottom: '1px solid #edf2f7' }}>
-                  <td style={{ padding: '1rem', fontWeight: 'bold' }}>{result.code}</td>
-                  <td style={{ color: '#4a5568' }}>{result.title}</td>
-                  <td style={{ color: '#4a5568' }}>{result.units}</td>
-                  <td style={{ color: '#4a5568' }}>{result.score}</td>
-                  <td style={{ fontWeight: 'bold', color: '#2b3674' }}>{result.grade}</td>
+              {realResults.length > 0 ? (
+                realResults.map((result: any) => (
+                  <tr key={result.id} style={{ borderBottom: '1px solid #edf2f7' }}>
+                    <td style={{ padding: '1rem', fontWeight: 'bold' }}>{result.courseCode}</td>
+                    <td style={{ color: '#4a5568' }}>{result.score}</td>
+                    <td style={{ fontWeight: 'bold', color: '#2b3674' }}>{result.grade}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={3} style={{ padding: '2rem', textAlign: 'center', color: '#a0aec0' }}>
+                    No results have been uploaded for your matriculation number yet.
+                  </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
@@ -66,6 +74,7 @@ export default function Results() {
           <button 
             className="primary-btn-sm" 
             onClick={handleDownload}
+            disabled={realResults.length === 0}
           >
             Download Transcript
           </button>

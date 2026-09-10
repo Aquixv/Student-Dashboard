@@ -53,7 +53,7 @@ export default function Profile() {
           <div className="detail-group">
             <label>Financial Status</label>
             <p style={{ color: user?.hasPaidFees ? 'green' : 'red', fontWeight: 'bold' }}>
-              {user?.hasPaidFees ? 'Cleared' : 'Outstanding Balance'}
+              {user?.hasPaidFees ? 'Fees Paid' : 'Fees Unpaid'}
             </p>
           </div>
         </div>
@@ -95,7 +95,7 @@ export default function Profile() {
                 </tr>
               </tfoot>
             </table>
-            <button style={{ backgroundColor:'#2b3674'}}
+            <button style={{color:'#FFF', backgroundColor:'#2b3674'}}
           className="secondary-btn" 
           onClick={() => downloadProfileForm(user)}
         >Download Course Form</button>

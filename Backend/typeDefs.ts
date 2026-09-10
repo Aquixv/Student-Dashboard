@@ -50,17 +50,20 @@ type AuthPayload {
     # Fetch available courses for registration
     availableCourses: [Course!]!
     getStudents: [User!]!
+    
+    # Moved these to their rightful home!
+    getStudentByMatric(matricNumber: String!): User
+    getMyResults: [Result!]!
   }
 
   type Mutation {
-  registerUser(fullName: String!, email: String!, password: String!): AuthPayload!
-  login(email: String!, password: String!): AuthPayload!
-  updateFeeStatus(userId: ID!, status: Boolean!, reference: String!): User!
-  registerCourses(courseIds: [ID!]!): User!
-  addCourse(code: String!, title: String!, units: Int!, type: String!): Course!
-  addBill(description: String!, amount: Float!): Bill!
-  deleteBill(id: ID!): ID!
-  updateDepartment(userId: ID!, department: String!): User!
-  uploadResult(matricNumber: String!, courseCode: String!, score: Int!): Result!
-}
-`;
+    registerUser(fullName: String!, email: String!, password: String!): AuthPayload!
+    login(email: String!, password: String!): AuthPayload!
+    updateFeeStatus(userId: ID!, status: Boolean!, reference: String!): User!
+    registerCourses(courseIds: [ID!]!): User!
+    addCourse(code: String!, title: String!, units: Int!, type: String!): Course!
+    addBill(description: String!, amount: Float!): Bill!
+    deleteBill(id: ID!): ID!
+    updateDepartment(userId: ID!, department: String!): User!
+    uploadResult(matricNumber: String!, courseCode: String!, score: Int!): Result!
+  }`;

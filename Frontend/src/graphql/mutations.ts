@@ -92,3 +92,13 @@ export const UPDATE_DEPARTMENT = gql`
     }
   }
 `;
+export const UPLOAD_RESULT = gql`
+  mutation UploadResult($matricNumber: String!, $courseCode: String!, $score: Int!) {
+    uploadResult(matricNumber: $matricNumber, courseCode: $courseCode, score: $score) {
+      id
+      courseCode
+      score
+      grade
+    }
+  }
+`;

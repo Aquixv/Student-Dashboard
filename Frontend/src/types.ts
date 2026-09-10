@@ -44,7 +44,36 @@ export interface Student {
   department: string | null;
   hasPaidFees: boolean;
 }
+// --- Types for the Admin Search ---
+export interface RegisteredCourse {
+  id: string;
+  code: string;
+  title: string;
+}
 
+export interface StudentByMatric {
+  id: string;
+  fullName: string;
+  matricNumber: string | null;
+  department: string | null;
+  registeredCourses: RegisteredCourse[];
+}
+
+export interface GetStudentByMatricResponse {
+  getStudentByMatric: StudentByMatric | null;
+}
+
+// --- Types for the Student Results Page ---
+export interface AcademicResult {
+  id: string;
+  courseCode: string;
+  score: number;
+  grade: string;
+}
+
+export interface GetMyResultsResponse {
+  getMyResults: AcademicResult[];
+}
 export interface GetStudentsResponse {
   getStudents: Student[];
 }

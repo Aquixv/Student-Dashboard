@@ -1,17 +1,35 @@
 import { useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client/react';
+import { useLazyQuery } from '@apollo/client/react';
+import { GET_STUDENT_BY_MATRIC } from '../graphql/queries';
 import { ADD_COURSE } from '../graphql/mutations';
 import { GET_AVAILABLE_COURSES } from '../graphql/queries';
 import { GET_BILLS } from '../graphql/queries';
+import { UPLOAD_RESULT } from '../graphql/mutations';
 import { GET_STUDENTS } from '../graphql/queries';
 import { UPDATE_DEPARTMENT } from '../graphql/mutations';
 import { ADD_BILL, DELETE_BILL } from '../graphql/mutations';
 import './secondaryPages.css'; 
-import type { GetBillsResponse, GetStudentsResponse } from '../types';
+import type { GetBillsResponse, GetStudentByMatricResponse, GetStudentsResponse } from '../types';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<'COURSES' | 'RESULTS' | 'BILLING' | 'STUDENTS'>('COURSES');
-  const { data: studentsData, loading: studentsLoading, error: studentsError } = useQuery<GetStudentsResponse>(GET_STUDENTS);
+  const { data } = useQuery<GetStudentsResponse>(GET_STUDENTS);
+  const [searchMatric, setSearchMatric] = useState('');
+const [fetchStudent, { data: searchData, loading: searchLoading, error: searchError }] = useLazyQuery<GetStudentByMatricResponse>(GET_STUDENT_BY_MATRIC);
+
+const handleSearch = (e: React.FormEvent) => {
+  e.preventDefault();
+  const input = searchMatric.trim();
+  
+  if (input) {
+    const formattedMatric = input.length === 4 && !input.startsWith('OND') 
+      ? `OND/PROF/${input}` 
+      : input;
+      
+    fetchStudent({ variables: { matricNumber: formattedMatric } });
+  }
+};
 const [updateDept] = useMutation(UPDATE_DEPARTMENT, {
   onError: (err) => {
     console.error("Mutation Failed:", err.message);
@@ -51,6 +69,17 @@ const handleAddBill = (e: React.FormEvent) => {
   setBillDesc('');
   setBillAmount('');
 };
+
+const [uploadResult, {}] = useMutation(UPLOAD_RESULT, {
+  onCompleted: () => {
+    // Just a silent confirmation for the console, no intrusive alerts!
+    console.log('Grade auto-saved successfully.');
+  },
+  onError: (err) => {
+    // Only alert if something actually goes wrong
+    alert(`Failed to save grade: ${err.message}`);
+  }
+});
 
   const handleAddCourse = (e: React.FormEvent) => {
     e.preventDefault();
@@ -260,60 +289,155 @@ const handleAddBill = (e: React.FormEvent) => {
           </div>
         )}
 
+        {/* --- STUDENTS TAB (Now with Search!) --- */}
         {activeTab === 'STUDENTS' && (
           <div>
             <h3 style={{ color: '#2b3674', marginBottom: '0.5rem' }}>Student Mapper</h3>
-            <p style={{ color: '#718096', marginBottom: '1.5rem', fontSize: '0.9rem' }}>Assign academic departments to registered matriculation numbers.</p>
+            <p style={{ color: '#718096', marginBottom: '1.5rem', fontSize: '0.9rem' }}>Search for a student to assign their academic department.</p>
 
-            {/* Error and Loading Handlers */}
-            {studentsLoading && <p style={{ color: '#095DC5', padding: '1rem' }}>⏳ Fetching registered students...</p>}
-            {studentsError && <p style={{ color: '#ef4444', padding: '1rem', background: '#fee2e2', borderRadius: '6px' }}>❌ Database Error: {studentsError.message}</p>}
+            {/* Reusing the exact same search bar from the Results tab */}
+            <form onSubmit={handleSearch} style={{ display: 'flex', gap: '10px', marginBottom: '2rem', maxWidth: '500px' }}>
+              <input 
+                type="text" 
+                placeholder="Enter Last 4 Digits (e.g. 1234)"
+                value={searchMatric}
+                onChange={(e) => setSearchMatric(e.target.value)}
+                style={{ flex: 1, padding: '0.75rem', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+                required
+              />
+              <button type="submit" className="primary-btn" disabled={searchLoading}>
+                {searchLoading ? 'Searching...' : 'Search'}
+              </button>
+            </form>
 
-            {!studentsLoading && !studentsError && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {studentsData?.getStudents?.map((student: any) => (
-                  <div key={student.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.5rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
-                    
-                    <div style={{ flex: 1 }}>
-                      <h4 style={{ margin: 0, color: '#2b3674' }}>{student.fullName}</h4>
-                      <p style={{ margin: '0.3rem 0 0 0', fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>
-                        {student.matricNumber || 'No Matric Number'} • <span style={{ color: student.hasPaidFees ? '#16a34a' : '#ef4444' }}>{student.hasPaidFees ? 'Cleared' : 'Owing'}</span>
-                      </p>
-                    </div>
+            {searchError && <p style={{ color: '#ef4444' }}>Error: {searchError.message}</p>}
 
-                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                      <input 
-                        type="text" 
-                        placeholder="e.g. Computer Science"
-                        defaultValue={student.department || ''}
-                        onBlur={(e) => {
-                          if (e.target.value !== student.department) {
-                            updateDept({ variables: { userId: student.id, department: e.target.value } });
-                          }
-                        }}
-                        style={{ padding: '0.75rem', borderRadius: '6px', border: '1px solid #cbd5e1', width: '250px' }}
-                      />
-                      <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>*Auto-saves on click away</span>
-                    </div>
-                    
-                  </div>
-                ))}
-                
-                {/* Fallback if the array is actually empty */}
-                {(!studentsData?.getStudents || studentsData.getStudents.length === 0) && (
-                  <p style={{ color: '#a0aec0', textAlign: 'center', padding: '2rem', border: '1px dashed #cbd5e1', borderRadius: '8px' }}>
-                    No registered students found in the database.
+            {searchData?.getStudentByMatric === null && !searchLoading && (
+              <div style={{ padding: '2rem', background: '#f8fafc', borderRadius: '8px', textAlign: 'center', color: '#64748b' }}>
+                No student found with that matriculation number.
+              </div>
+            )}
+
+            {searchData?.getStudentByMatric && (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.5rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+                <div style={{ flex: 1 }}>
+                  <h4 style={{ margin: 0, color: '#2b3674' }}>{searchData.getStudentByMatric.fullName}</h4>
+                  <p style={{ margin: '0.3rem 0 0 0', fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>
+                    {searchData.getStudentByMatric.matricNumber} • <span style={{ color: '#16a34a' }}>Found</span>
                   </p>
-                )}
+                </div>
+
+                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                  <input 
+                    type="text" 
+                    placeholder="e.g. Computer Science"
+                    defaultValue={searchData.getStudentByMatric.department || ''}
+                    onBlur={(e) => {
+                      if (e.target.value !== searchData.getStudentByMatric!.department) {
+                        updateDept({ variables: { userId: searchData.getStudentByMatric!.id, department: e.target.value } });
+                      }
+                    }}
+                    style={{ padding: '0.75rem', borderRadius: '6px', border: '1px solid #cbd5e1', width: '250px' }}
+                  />
+                  <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>*Auto-saves</span>
+                </div>
               </div>
             )}
           </div>
         )}
+        {/* --- RESULTS TAB --- */}
         {activeTab === 'RESULTS' && (
           <div>
             <h3 style={{ color: '#2b3674', marginBottom: '0.5rem' }}>Upload Academic Result</h3>
-            <p style={{ color: '#718096', marginBottom: '1.5rem', fontSize: '0.9rem' }}>Bind a final grade to a student's matriculation number.</p>
-            {/* Upload Result Form will go here next */}
+            <p style={{ color: '#718096', marginBottom: '1.5rem', fontSize: '0.9rem' }}>Search for a student to view and grade their registered courses.</p>
+            
+            {/* 1. The Search Bar */}
+            <form onSubmit={handleSearch} style={{ display: 'flex', gap: '10px', marginBottom: '2rem', maxWidth: '500px' }}>
+              <input 
+  type="text" 
+  placeholder="Enter Last 4 Digits (e.g. 1234)"
+  value={searchMatric}
+  onChange={(e) => setSearchMatric(e.target.value)}
+  style={{ flex: 1, padding: '0.75rem', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+  required
+/>
+              <button type="submit" className="primary-btn" disabled={searchLoading}>
+                {searchLoading ? 'Searching...' : 'Search'}
+              </button>
+            </form>
+
+            {searchError && <p style={{ color: '#ef4444' }}>Error: {searchError.message}</p>}
+
+            {/* 2. The Grading Interface (Only shows if a student is found) */}
+            {searchData?.getStudentByMatric === null && !searchLoading && (
+              <div style={{ padding: '2rem', background: '#f8fafc', borderRadius: '8px', textAlign: 'center', color: '#64748b' }}>
+                No student found with that matriculation number.
+              </div>
+            )}
+
+            {searchData?.getStudentByMatric && (
+              <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', overflow: 'hidden' }}>
+                
+                {/* Student Bio Header */}
+                <div style={{ background: '#f8fafc', padding: '1.5rem', borderBottom: '1px solid #e2e8f0' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: '#2b3674', fontSize: '1.2rem' }}>
+                    {searchData.getStudentByMatric.fullName}
+                  </h4>
+                  <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem' }}>
+                    {searchData.getStudentByMatric.matricNumber} • {searchData.getStudentByMatric.department || 'No Department Assigned'}
+                  </p>
+                </div>
+
+                {/* Course Grading List */}
+                <div style={{ padding: '1.5rem' }}>
+                  <h5 style={{ marginTop: 0, color: '#4a5568', marginBottom: '1rem' }}>Registered Courses</h5>
+                  
+                  {searchData.getStudentByMatric.registeredCourses.length === 0 ? (
+                    <p style={{ color: '#a0aec0', fontSize: '0.9rem' }}>This student has not registered for any courses.</p>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                      {searchData.getStudentByMatric.registeredCourses.map((course: any) => (
+                        <div key={course.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '1rem', borderBottom: '1px dashed #e2e8f0' }}>
+                          
+                          <div>
+                            <strong style={{ display: 'block', color: '#2b3674' }}>{course.code}</strong>
+                            <span style={{ fontSize: '0.85rem', color: '#718096' }}>{course.title}</span>
+                          </div>
+
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <label style={{ fontSize: '0.85rem', fontWeight: 600, color: '#4a5568' }}>Score:</label>
+                            <input 
+                              type="number" 
+                              min="0" max="100"
+                              placeholder="0"
+                              onBlur={(e) => {
+                                const val = e.target.value;
+                                if (val !== '') {
+                                  // Fire the auto-save mutation when they click away!
+                                  uploadResult({ 
+                                    variables: { 
+                                      matricNumber: searchData?.getStudentByMatric?.matricNumber, 
+                                      courseCode: course.code, 
+                                      score: Number(val) 
+                                    } 
+                                  });
+                                }
+                              }}
+                              style={{ width: '80px', padding: '0.5rem', borderRadius: '6px', border: '1px solid #cbd5e1', textAlign: 'center' }}
+                            />
+                          </div>
+
+                        </div>
+                      ))}
+                      <div style={{ textAlign: 'right', marginTop: '1rem' }}>
+                        <span style={{ fontSize: '0.8rem', color: '#16a34a' }}>✓ Scores auto-save on entry</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+              </div>
+            )}
           </div>
         )}
       </div>

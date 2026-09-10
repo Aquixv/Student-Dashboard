@@ -19,6 +19,17 @@ export const resolvers = {
   if (!context.user || context.user.role !== 'Admin') throw new Error('Unauthorized');
   return await User.find({ role: 'Student' }).sort({ createdAt: -1 });
 },
+getMyResults: async (_parent: any, _args: any, context: any) => {
+  if (!context.user) throw new Error('Not authenticated');
+  const user = await User.findById(context.user.id);
+  if (!user || !user.matricNumber) return [];
+  return await Result.find({ matricNumber: user.matricNumber });
+},
+getStudentByMatric: async (_parent: any, { matricNumber }: any, context: any) => {
+  if (!context.user || context.user.role !== 'Admin') throw new Error('Unauthorized');
+  // Populate the courses so we know exactly what they registered for!
+  return await User.findOne({ matricNumber }).populate('registeredCourses');
+},
     availableCourses: async () => await Course.find(),
 getBills: async () => await Bill.find().sort({ createdAt: 1 }),
   },    

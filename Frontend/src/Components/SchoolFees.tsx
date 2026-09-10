@@ -1,16 +1,16 @@
 import { useQuery, useMutation } from '@apollo/client/react';
 import { useState } from 'react';
 import { usePaystackPayment } from 'react-paystack';
-import { GET_ME } from '../graphql/queries';
+import { GET_ME, GET_BILLS} from '../graphql/queries';
 import { UPDATE_FEE_STATUS } from '../graphql/mutations';
 import './SchoolFees.css';
-import type { GetMeResponse } from '../types';
+import type { GetBillsResponse, GetMeResponse } from '../types';
 import { downloadReceipt } from '../utils/generateReceipts';
 
 export default function SchoolFees() {
   const [paymentMethod, setPaymentMethod] = useState<'paystack' | 'remita' | 'transfer'>('paystack');
   const { data, loading } = useQuery<GetMeResponse>(GET_ME);
-  
+  const { data: billsData, loading: billsLoading } = useQuery<GetBillsResponse>(GET_BILLS);
   const [updateFeeStatus, { loading: isUpdating }] = useMutation(UPDATE_FEE_STATUS, {
     refetchQueries: [{ query: GET_ME }] 
   });
@@ -35,12 +35,14 @@ export default function SchoolFees() {
 
   const user = data?.me;
   const hasPaidFees = user?.hasPaidFees || false;
+  const bills = billsData?.getBills || [];
+  const totalAmount = bills.reduce((sum: number, bill: any) => sum + bill.amount, 0);
 
   // 1. Configure the Paystack payload
   const paystackConfig = {
     reference: `INV-${new Date().getTime()}`,
     email: user?.email || 'student@eduportal.edu.ng',
-    amount: 140000 * 100, // Paystack requires the amount in kobo
+    amount: totalAmount * 100, // Paystack requires the amount in kobo
     publicKey: 'pk_test_aed41b8546b5826ba7e2d0c06029c6acc73ccbfa', // Swap this with your actual test key
     metadata: {
       custom_fields: [
@@ -55,14 +57,13 @@ export default function SchoolFees() {
 
   const initializePayment = usePaystackPayment(paystackConfig);
 
-  // 2. The callback when the payment actually succeeds
   const onSuccess = async (reference: any) => {
     try {
       await updateFeeStatus({
         variables: { 
           userId: user?.id, 
           status: true,
-          reference: reference.reference // Paystack returns the ref inside an object
+          reference: reference.reference 
         }
       });
     } catch (error) {
@@ -101,38 +102,27 @@ export default function SchoolFees() {
           <div className="invoice-header">
             <h3>Session Invoice</h3>
             <span className="total-due-badge">
-              {hasPaidFees ? '₦0' : '₦140,000'}
+              {hasPaidFees ? '₦0' : `₦${totalAmount.toLocaleString()}`}
             </span>
           </div>
 
           {!hasPaidFees ? (
             <>
               <div className="invoice-list">
-                <div className="invoice-item">
-                  <div className="item-details">
-                    <h4>Harmattan Tuition Fee</h4>
-                    <p>100 Level</p>
-                  </div>
-                  <span className="item-amount">₦120,000</span>
-                </div>
-                
-                <div className="invoice-item">
-                  <div className="item-details">
-                    <h4>ICT & Lab Levy</h4>
-                    <p>Compulsory</p>
-                  </div>
-                  <span className="item-amount">₦15,000</span>
-                </div>
-
-                <div className="invoice-item">
-                  <div className="item-details">
-                    <h4>Library Fee</h4>
-                    <p>Sessional</p>
-                  </div>
-                  <span className="item-amount">₦5,000</span>
-                </div>
+                {bills.length === 0 ? (
+                  <p style={{ padding: '1rem', color: '#718096' }}>No fees have been set for this session yet.</p>
+                ) : (
+                  bills.map((bill: any) => (
+                    <div className="invoice-item" key={bill.id}>
+                      <div className="item-details">
+                        <h4>{bill.description}</h4>
+                        <p>Mandatory Session Fee</p>
+                      </div>
+                      <span className="item-amount">₦{bill.amount.toLocaleString()}</span>
+                    </div>
+                  ))
+                )}
               </div>
-
               <div className="invoice-footer" style={{ textAlign: 'left' }}>
                 <div style={{ marginBottom: '1.5rem' }}>
                   <p style={{ fontSize: '0.9rem', color: '#4a5568', marginBottom: '0.8rem', fontWeight: 600 }}>Select Payment Method:</p>
@@ -166,14 +156,13 @@ export default function SchoolFees() {
                     <button 
                       className="primary-btn pay-fees-btn" 
                       onClick={() => initializePayment({ onSuccess, onClose })}
-                      disabled={isUpdating}
+                      disabled={isUpdating || bills.length === 0}
                     >
-                      {isUpdating ? 'Updating Portal...' : 'Pay ₦140,000 via Paystack'}
+                      {isUpdating ? 'Updating Portal...' : `Pay  via Paystack`}
                     </button>
                     <div style={{ textAlign: 'center' }}><span className="secure-note">🔒 Secured by Paystack</span></div>
                   </div>
                 )}
-
                 {paymentMethod === 'remita' && (
                   <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
                     <p style={{ fontSize: '0.85rem', color: '#4a5568', marginBottom: '1rem' }}>
