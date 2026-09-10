@@ -17,17 +17,23 @@ export default function SchoolFees() {
 
   const handleDownloadSessionReceipt = () => {
     if (!user) return;
+    
+    // 1. Map the real GraphQL bills into the shape your PDF generator expects
+    const dynamicItems = bills.map((bill: any) => ({
+      desc: bill.description,
+      amount: bill.amount.toLocaleString()
+    }));
+
+    // 2. Build the dynamic invoice object
     const invoiceDetails = {
-      reference: 'INV-2026-HMT',
+      // Create a unique reference using their matric number (stripping out the slashes)
+      reference: `INV-2026-${user.matricNumber?.replace(/\//g, '') || 'NEW'}`,
       date: new Date().toLocaleDateString(),
-      total: '140,000',
-      items: [
-        { desc: 'Harmattan Tuition Fee', amount: '120,000' },
-        { desc: 'ICT & Lab Levy', amount: '15,000' },
-        { desc: 'Library Fee', amount: '5,000' }
-      ]
+      total: totalAmount.toLocaleString(),
+      items: dynamicItems
     };
     
+    // 3. Send it to your PDF utility!
     downloadReceipt(user, invoiceDetails);
   };
 
@@ -219,7 +225,7 @@ export default function SchoolFees() {
                   <p>HM-2026 - Current</p>
                 </div>
                 <div className="history-actions">
-                  <span className="history-amount">₦140,000</span>
+                  <span className="history-amount">{totalAmount.toLocaleString()}</span>
                   <button onClick={handleDownloadSessionReceipt} className="download-receipt-btn"><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/507665/download.svg" alt="" /> PDF</button>
                 </div>
               </div>

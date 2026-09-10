@@ -1,19 +1,44 @@
 import { useQuery } from '@apollo/client/react';
 import { useNavigate } from 'react-router-dom';
-import { GET_ME } from './graphql/queries';
+import { GET_ME, GET_BILLS } from './graphql/queries';
+import { downloadReceipt } from './utils/generateReceipts';
 import './Home.css';
-import type { GetMeResponse } from './types';
+import type { GetBillsResponse, GetMeResponse } from './types';
 
 export default function Home() {
   const navigate = useNavigate();
-  const { data, loading } = useQuery<GetMeResponse>(GET_ME);
+  
+  // 1. Call all hooks safely at the very top level
+  const { data, loading: userLoading } = useQuery<GetMeResponse>(GET_ME);
+  const { data: billsData, loading: billsLoading } = useQuery<GetBillsResponse>(GET_BILLS);
 
-  if (loading) return <div className="dashboard-container">Loading dashboard...</div>;
+  if (userLoading || billsLoading) return <div className="dashboard-container">Loading dashboard...</div>;
 
   const user = data?.me;
   const firstName = user?.fullName?.split(' ')[0] || 'Student';
   const hasPaidFees = user?.hasPaidFees || false;
   
+  const bills = billsData?.getBills || [];
+  const totalAmount = bills.reduce((sum: number, bill: any) => sum + bill.amount, 0);
+
+  const handleDownloadSessionReceipt = () => {
+    if (!user) return;
+    
+    const dynamicItems = bills.map((bill: any) => ({
+      desc: bill.description,
+      amount: bill.amount.toLocaleString()
+    }));
+
+    const invoiceDetails = {
+      reference: `INV-2026-${user.matricNumber?.replace(/\//g, '') || 'NEW'}`,
+      date: new Date().toLocaleDateString(),
+      total: totalAmount.toLocaleString(),
+      items: dynamicItems.length > 0 ? dynamicItems : [{ desc: 'Standard Session Fee', amount: totalAmount.toLocaleString() }]
+    };
+    
+    downloadReceipt(user, invoiceDetails);
+  };
+
   const totalUnits = user?.registeredCourses?.reduce((sum: number, course: any) => sum + course.units, 0) || 0;
 
   return (
@@ -26,7 +51,7 @@ export default function Home() {
         <div className={`stat-card ${!hasPaidFees ? 'alert' : ''}`}>
           <h3>Outstanding Balance</h3>
           <p className={`stat-value ${!hasPaidFees ? 'text-red' : 'text-green'}`}>
-            {hasPaidFees ? '₦0' : '₦140,000'}
+            {hasPaidFees ? '₦0' : `₦${totalAmount.toLocaleString()}`}
           </p>
           <span className="stat-subtitle">
             {hasPaidFees ? 'Fully Paid' : 'Due in 5 days'}
@@ -59,41 +84,35 @@ export default function Home() {
             <button className="text-link">View History</button>
           </div>
           
+          {/* 2. Dynamically render the real bills from MongoDB */}
           <div className="fee-list">
-            <div className={`fee-item ${hasPaidFees ? 'settled' : 'pending'}`}>
-              <div>
-                <h4>Tuition Fee</h4>
-                <p>100 Level</p>
-              </div>
-              <div className="fee-status">
-                <span className="amount">₦120,000</span>
-                <span className={`badge ${hasPaidFees ? 'badge-paid' : 'badge-unpaid'}`}>
-                  {hasPaidFees ? 'Paid' : 'Pending'}
-                </span>
-              </div>
-            </div>
-            
-            <div className={`fee-item ${hasPaidFees ? 'settled' : 'pending'}`}>
-              <div>
-                <h4>ICT, Lab & Library Levy</h4>
-                <p>Compulsory</p>
-              </div>
-              <div className="fee-status">
-                <span className="amount">₦20,000</span>
-                <span className={`badge ${hasPaidFees ? 'badge-paid' : 'badge-unpaid'}`}>
-                  {hasPaidFees ? 'Paid' : 'Pending'}
-                </span>
-              </div>
-            </div>
+            {bills.length === 0 ? (
+              <p style={{ padding: '1rem', color: '#718096' }}>No fees configured for this session yet.</p>
+            ) : (
+              bills.map((bill: any) => (
+                <div className={`fee-item ${hasPaidFees ? 'settled' : 'pending'}`} key={bill.id}>
+                  <div>
+                    <h4>{bill.description}</h4>
+                    <p>Mandatory Session Fee</p>
+                  </div>
+                  <div className="fee-status">
+                    <span className="amount">₦{bill.amount.toLocaleString()}</span>
+                    <span className={`badge ${hasPaidFees ? 'badge-paid' : 'badge-unpaid'}`}>
+                      {hasPaidFees ? 'Paid' : 'Pending'}
+                    </span>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
 
           <div className="card-action-bar">
             <button 
               className="primary-btn" 
-              disabled={hasPaidFees}
+              disabled={hasPaidFees || bills.length === 0}
               onClick={() => navigate("/fees")}
             >
-              {hasPaidFees ? 'All Fees Cleared' : 'Proceed to Pay ₦140,000'}
+              {hasPaidFees ? 'All Fees Cleared' : `Proceed to Pay ₦${totalAmount.toLocaleString()}`}
             </button>
           </div>
         </div>
@@ -109,16 +128,12 @@ export default function Home() {
                   <h4>Invoice for the 2026 Session</h4>
                   <p>Session Fees</p>
                 </div>
-                <button className="download-btn"><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/507665/download.svg" alt="" /></button>
+                {/* 3. Hooked up the dynamic download handler here */}
+                <button className="download-btn" onClick={handleDownloadSessionReceipt}>
+                  <img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/507665/download.svg" alt="Download PDF" />
+                </button>
               </div>
             )}
-            <div className="receipt-item">
-              <div className="receipt-info">
-                <h4>Invoice For Acceptance Fees</h4>
-                <p>Acceptance Fees • Aug 15, 2026</p>
-              </div>
-              <button className="download-btn"><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/507665/download.svg" alt="" /></button>
-            </div>
           </div>
         </div>
       </div>
