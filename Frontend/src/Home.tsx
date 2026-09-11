@@ -125,7 +125,7 @@ export default function Home() {
             {hasPaidFees && (
               <div className="receipt-item">
                 <div className="receipt-info">
-                  <h4>Invoice for the 2026 Session</h4>
+                  <h4>2026 Session</h4>
                   <p>Session Fees</p>
                 </div>
                 {/* 3. Hooked up the dynamic download handler here */}
@@ -144,7 +144,7 @@ export default function Home() {
             <h3>Registration Deadline Approaching</h3>
             <p>Pay your outstanding fees to unlock the course registration portal for the Harmattan semester.</p>
           </div>
-          <button onClick={() => navigate("/fees")} className="secondary-btn">Pay Fees</button>
+          <button onClick={() => navigate("/fees")} className="secondary-btn2">Pay Fees</button>
         </div>
       )}
     </div>
