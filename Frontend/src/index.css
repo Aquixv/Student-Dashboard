@@ -47,3 +47,65 @@
     print-color-adjust: exact !important;
   }
 }
+/* --- DESKTOP DEFAULTS --- */
+.mobile-header {
+  display: none; /* Hidden on large screens */
+}
+
+.hamburger-btn {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  color: #095DC5;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* --- MOBILE RESPONSIVENESS --- */
+@media (max-width: 768px) {
+  /* 1. Stack the dashboard body */
+  .dashboard-body {
+    flex-direction: column !important;
+  }
+
+  /* 2. Show the Mobile Header */
+  .mobile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  }
+
+  /* 3. Hide the desktop logo */
+  .desktop-logo {
+    display: none !important;
+  }
+
+  /* 4. Hide the sidebar by default, let the state control it */
+  .sidebar-nav {
+    display: none !important; 
+    width: 100% !important;
+    height: auto !important;
+    border-right: none !important;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 1rem !important;
+  }
+
+  /* 5. When state is true, show the menu! */
+  .sidebar-nav.open {
+    display: flex !important;
+  }
+
+  /* 6. Reclaim padding on mobile devices */
+  .main-content {
+    padding: 1.5rem 1rem !important;
+  }
+  .XXX{
+    width: fit-content;
+  }
+}
