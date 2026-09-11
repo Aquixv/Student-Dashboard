@@ -369,7 +369,7 @@ export default function AdminDashboard() {
                   <div style={{ border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', backgroundColor: '#ffffff' }}>
                     <div style={{ padding: '1.25rem 1.5rem', background: '#f8fafc', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <h4 style={{ margin: 0, color: '#1e293b', fontSize: '1rem', fontWeight: 600 }}>Current Invoice Breakdown</h4>
-                      <span className='XXX' style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 500 }}>
+                      <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 500 }}>
                         {billsData?.getBills?.length || 0} Items Listed
                       </span>
                     </div>

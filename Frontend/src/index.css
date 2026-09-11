@@ -105,7 +105,9 @@
   .main-content {
     padding: 1.5rem 1rem !important;
   }
-  .XXX{
-    width: fit-content;
+  .stats-grid,
+  form > div[style*="grid"] {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
   }
 }

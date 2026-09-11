@@ -30,10 +30,7 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>(
     password: { type: String },
     matricNumber: { type: String, unique: true, sparse: true },
     department: { type: String, default: null },
-    avatar: { 
-      type: String, 
-      default: 'https://res.cloudinary.com/your-cloud-name/image/upload/v1234567/default-avatar.png' 
-    },
+    avatar: { type: String, default: null },
     resetPasswordToken: { type: String, required: false },
     resetPasswordExpire: { type: Date, required: false },
     authProvider: { type: String, enum: ['local'], default: 'local' },

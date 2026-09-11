@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import type { GetMeResponse } from '../types';
 import { useState, useRef, useEffect } from 'react';
 
-export default function Navbar({ user }: { user: any }) {
+export default function Navbar({}: { user: any }) {
   const [showNotifs, setShowNotifs] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -78,30 +78,19 @@ const mockNotifications = [
           )}
         </div>
         <div onClick={() => navigate("/profile")} className="profile-widget">
-          <div 
-  className="avatar" 
-  style={{ 
-    width: '38px', 
-    height: '38px', 
-    borderRadius: '50%', 
-    overflow: 'hidden', 
-    display: 'flex', 
-    alignItems: 'center', 
-    justifyContent: 'center' 
-  }}
->
-  {loading ? (
-    '...'
-  ) : user?.avatar && !user.avatar.includes('default-avatar') ? (
-    <img 
-      src={user.avatar} 
-      alt={user.fullName || 'User Avatar'} 
-      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-    />
-  ) : (
-    initials
-  )}
-</div>
+          <div className="avatar" style={{ width: '38px', height: '38px', borderRadius: '50%', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {loading ? (
+              '...'
+            ) : data?.me?.avatar && data.me.avatar.startsWith('http') ? (
+              <img 
+                src={data.me.avatar} 
+                alt="Profile" 
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+              />
+            ) : (
+              initials
+            )}
+          </div>
           <span>{error ? 'Error' : displayName}</span>
         </div>
       </div>
