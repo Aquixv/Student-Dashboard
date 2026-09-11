@@ -20,9 +20,13 @@ export function AvatarUploader({ currentAvatar, initials }: { currentAvatar?: st
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
+    if (file.size > 1024 * 1024) { 
+      alert('Select a passport photo under 1MB.');
+      e.target.value = '';
+      return;
+    }
     if (!cloudName || !uploadPreset) {
-      alert('Cloudinary environment variables missing in .env');
+      console.log('Cloudinary environment variables missing in .env');
       return;
     }
 
