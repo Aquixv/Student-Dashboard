@@ -129,7 +129,7 @@ export default function AdminDashboard() {
                 color: activeTab === 'COURSES' ? '#ffffff' : '#64748b'
               }}
             >
-              <span>📚</span> Manage Courses
+              <span><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/400012/books.svg" alt="" /></span> Manage Courses
             </button>
 
             <button 
@@ -140,7 +140,7 @@ export default function AdminDashboard() {
                 color: activeTab === 'BILLING' ? '#ffffff' : '#64748b'
               }}
             >
-              <span>💳</span> Billing Config
+              <span><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/510942/credit-card-01.svg" alt="" /></span> Billing Config
             </button>
 
             <button 
@@ -151,7 +151,7 @@ export default function AdminDashboard() {
                 color: activeTab === 'STUDENTS' ? '#ffffff' : '#64748b'
               }}
             >
-              <span>🧑‍🎓</span> Student Mapper
+              <span><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/483516/student-person-part-2.svg" alt="" /></span> Student Mapper
             </button>
 
             <button 
@@ -162,7 +162,7 @@ export default function AdminDashboard() {
                 color: activeTab === 'RESULTS' ? '#ffffff' : '#64748b'
               }}
             >
-              <span>📊</span> Upload Results
+              <span><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/373104/results.svg" alt="Download PDF" /></span> Upload Results
             </button>
           </nav>
         </div>
@@ -304,7 +304,7 @@ export default function AdminDashboard() {
           transition: 'background-color 0.2s ease'
         }}
       >
-        <span>📢</span> Publish Fees
+        <span></span> Publish Fees
       </button>
     </div>
 
