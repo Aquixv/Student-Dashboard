@@ -102,3 +102,11 @@ export const UPLOAD_RESULT = gql`
     }
   }
 `;
+export const UPDATE_AVATAR = gql`
+  mutation UpdateAvatar($avatarUrl: String!) {
+    updateAvatar(avatarUrl: $avatarUrl) {
+      id
+      avatar
+    }
+  }
+`;

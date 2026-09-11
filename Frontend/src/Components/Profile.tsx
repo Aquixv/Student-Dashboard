@@ -1,8 +1,125 @@
-import { useQuery } from '@apollo/client/react';
+import { useQuery, useMutation } from '@apollo/client/react';
+import { useState } from 'react';
 import { GET_ME } from '../graphql/queries';
+import { UPDATE_AVATAR } from '../graphql/mutations';
 import './Results.css';
 import { downloadProfileForm } from '../utils/generateProfileForm';
 import type { GetMeResponse } from '../types';
+
+export function AvatarUploader({ currentAvatar, initials }: { currentAvatar?: string; initials: string }) {
+  const [uploading, setUploading] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  
+  const [updateAvatar] = useMutation(UPDATE_AVATAR, {
+    refetchQueries: [{ query: GET_ME }]
+  });
+
+  const cloudName = import.meta.env.VITE_CLOUDINARY_NAME;
+  const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!cloudName || !uploadPreset) {
+      alert('Cloudinary environment variables missing in .env');
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const data = new FormData();
+      data.append('file', file);
+      data.append('upload_preset', uploadPreset);
+      data.append('cloud_name', cloudName);
+
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+        method: 'POST',
+        body: data
+      });
+
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error?.message || 'Upload failed');
+
+      await updateAvatar({ variables: { avatarUrl: json.secure_url } });
+    } catch (err: any) {
+      console.error('Avatar upload error:', err);
+      alert(`Upload failed: ${err.message}`);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div style={{ position: 'relative', display: 'inline-block', margin: '-50px 0 1rem 2rem' }}>
+      <label 
+        htmlFor="avatar-upload"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        style={{
+          position: 'relative',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '110px',
+          height: '110px',
+          borderRadius: '50%',
+          border: '4px solid white',
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+          cursor: uploading ? 'wait' : 'pointer',
+          overflow: 'hidden',
+          backgroundColor: '#2b3674',
+          userSelect: 'none'
+        }}
+      >
+        {/* Render Image or Initials */}
+        {currentAvatar && !currentAvatar.includes('default-avatar') ? (
+          <img 
+            src={currentAvatar} 
+            alt="Student Passport" 
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+          />
+        ) : (
+          <span style={{ color: 'white', fontSize: '2rem', fontWeight: 700 }}>
+            {initials}
+          </span>
+        )}
+
+        {/* Hover / Loading Overlay */}
+        {(isHovered || uploading) && (
+          <div 
+            style={{
+              position: 'absolute',
+              inset: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.55)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              gap: '4px',
+              transition: 'opacity 0.2s ease'
+            }}
+          >
+            <span style={{ fontSize: '1.25rem' }}>{uploading ? '⏳' : ''}</span>
+            <span>{uploading ? 'Uploading...' : 'Update'}</span>
+          </div>
+        )}
+      </label>
+
+      <input 
+        id="avatar-upload" 
+        type="file" 
+        accept="image/*" 
+        onChange={handleFileChange} 
+        disabled={uploading} 
+        style={{ display: 'none' }} 
+      />
+    </div>
+  );
+}
 
 export default function Profile() {
   const { data, loading, error } = useQuery<GetMeResponse>(GET_ME);
@@ -11,7 +128,7 @@ export default function Profile() {
   if (error) return <div className="page-wrapper"><div className="page-header"><h2 style={{ color: 'red' }}>Failed to load profile</h2></div></div>;
 
   const user = data?.me;
-  const initials = user?.fullName.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase();
+  const initials = user?.fullName ? user.fullName.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase() : 'ST';
   const registeredCourses = user?.registeredCourses || [];
   const totalUnits = registeredCourses.reduce((sum: number, course: any) => sum + course.units, 0);
 
@@ -22,12 +139,13 @@ export default function Profile() {
           <h2>Student Profile & Course Form</h2>
           <p>Official bio-data and academic registration records.</p>
         </div>
-        {/* <button style={{ backgroundColor:'#2b3674'}}className="secondary-btn" onClick={() => window.print()}>🖨️ Print</button> */}
       </div>
 
       <div className="content-card profile-card" style={{ marginBottom: '2rem' }}>
         <div className="profile-header-banner"></div>
-        <div className="profile-avatar-large">{initials}</div>
+        
+        {/* Render Avatar Uploader in place of static avatar circle */}
+        <AvatarUploader currentAvatar={user?.avatar} initials={initials} />
         
         <div className="profile-details-grid">
           <div className="detail-group">
@@ -59,10 +177,10 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* NEW: The Printable Registered Courses Section */}
+      {/* The Printable Registered Courses Section */}
       <div className="content-card">
         <div className="card-header" style={{ padding: '1.5rem', borderBottom: '1px solid #edf2f7' }}>
-          <h3 style={{color: '#2b3674'}}>Registered Courses (Harmattan Semester)</h3>
+          <h3 style={{ color: '#2b3674' }}>Registered Courses (Harmattan Semester)</h3>
         </div>
         
         {registeredCourses.length === 0 ? (
@@ -95,10 +213,13 @@ export default function Profile() {
                 </tr>
               </tfoot>
             </table>
-            <button style={{color:'#FFF', backgroundColor:'#2b3674'}}
-          className="secondary-btn" 
-          onClick={() => downloadProfileForm(user)}
-        >Download Course Form</button>
+            <button 
+              style={{ color: '#FFF', backgroundColor: '#2b3674', marginTop: '1rem' }}
+              className="secondary-btn" 
+              onClick={() => downloadProfileForm(user)}
+            >
+              Download Course Form
+            </button>
           </div>
         )}
       </div>

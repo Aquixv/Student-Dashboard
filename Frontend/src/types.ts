@@ -7,7 +7,8 @@ export interface User {
   department?: string;
   hasPaidFees: boolean;
   registeredCourses?: Course[];
-  role:string
+  role:string;
+  avatar?: string;
 }
 
 export interface Course {

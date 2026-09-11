@@ -10,6 +10,7 @@ export const typeDefs = gql`
   level: String
   hasPaidFees: Boolean!
   role: String! 
+  avatar: String
   registeredCourses: [Course!]
 }
   type Result {
@@ -66,4 +67,5 @@ type AuthPayload {
     deleteBill(id: ID!): ID!
     updateDepartment(userId: ID!, department: String!): User!
     uploadResult(matricNumber: String!, courseCode: String!, score: Int!): Result!
+    updateAvatar(avatarUrl: String!): User!
   }`;

@@ -4,7 +4,7 @@ import  generateToken  from './config/GenerateToken';
 import bcrypt from 'bcryptjs';
 import Transactions from './models/Transactions';
 import Bill from './bills';
-import Result from './models/REsults'
+import Result from './models/Results'
 
 export const resolvers = {
   Query: {
@@ -181,5 +181,13 @@ addCourse: async (_parent: any, { code, title, units, type }: any, context: any)
 
     return updatedUser;
   },
+  updateAvatar: async (_parent: any, { avatarUrl }: { avatarUrl: string }, context: any) => {
+  if (!context.user) throw new Error('Not authenticated');
+  return await User.findByIdAndUpdate(
+    context.user.id,
+    { avatar: avatarUrl },
+    { new: true }
+  );
+},
   },
 };
