@@ -1,9 +1,9 @@
-import { NavLink, useNavigate} from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useApolloClient } from '@apollo/client/react';
 import './Sidebar.css';
 
-export default function Sidebar() {
-
+// 1. Accept the optional closeMenu prop
+export default function Sidebar({ closeMenu }: { closeMenu?: () => void }) {
   const navigate = useNavigate();
   const client = useApolloClient();
 
@@ -11,6 +11,7 @@ export default function Sidebar() {
     localStorage.removeItem('portal_token');
     client.clearStore();
     
+    if (closeMenu) closeMenu(); // Close menu on logout
     navigate('/login');
   };
 
@@ -21,8 +22,10 @@ export default function Sidebar() {
       </div>
       
       <div className="nav-links">
+        {/* 2. Attach onClick={closeMenu} to every NavLink */}
         <NavLink 
           to="/" 
+          onClick={closeMenu}
           className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}
         >
           Dashboard
@@ -30,6 +33,7 @@ export default function Sidebar() {
         
         <NavLink 
           to="/fees" 
+          onClick={closeMenu}
           className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}
         >
           School Fees
@@ -37,6 +41,7 @@ export default function Sidebar() {
         
         <NavLink 
           to="/registration" 
+          onClick={closeMenu}
           className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}
         >
           Course Registration
@@ -44,6 +49,7 @@ export default function Sidebar() {
         
         <NavLink 
           to="/timetable" 
+          onClick={closeMenu}
           className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}
         >
           Timetable
@@ -51,6 +57,7 @@ export default function Sidebar() {
         
         <NavLink 
           to="/results" 
+          onClick={closeMenu}
           className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}
         >
           Results
@@ -59,13 +66,13 @@ export default function Sidebar() {
 
       <div className="sidebar-footer">
         <div className="nav-links">
-          <NavLink to="/profile" className="nav-item">Profile</NavLink>
-          <NavLink to="/help" className="nav-item">Help</NavLink>
-          <NavLink to="/settings" className="nav-item">Settings</NavLink>
+          <NavLink to="/profile" onClick={closeMenu} className="nav-item">Profile</NavLink>
+          <NavLink to="/help" onClick={closeMenu} className="nav-item">Help</NavLink>
+          <NavLink to="/settings" onClick={closeMenu} className="nav-item">Settings</NavLink>
         </div>
         <button onClick={handleLogout} className="nav-item logout-btn">
-            Log Out
-          </button>
+          Log Out
+        </button>
       </div>
     </aside>
   );

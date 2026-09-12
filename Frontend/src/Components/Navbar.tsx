@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import type { GetMeResponse } from '../types';
 import { useState, useRef, useEffect } from 'react';
 
-export default function Navbar({}: { user: any }) {
+export default function Navbar(){
   const [showNotifs, setShowNotifs] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
   useEffect(() => {

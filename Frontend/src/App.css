@@ -32,3 +32,14 @@ body {
   color: #095DC5;
   
 }
+.dashboard-content {
+  /* Firefox */
+  scrollbar-width: none; 
+  /* IE and Edge */
+  -ms-overflow-style: none; 
+}
+
+.dashboard-content::-webkit-scrollbar {
+  /* WebKit (Chrome, Safari, modern Edge) */
+  display: none; 
+}

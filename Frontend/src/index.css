@@ -111,3 +111,55 @@
     gap: 1rem !important;
   }
 }
+/* --- DESKTOP DEFAULTS --- */
+.mobile-header {
+  display: none; /* Hide hamburger bar on large screens */
+}
+
+.portal-sidebar {
+  width: 260px;
+  background: white;
+  border-right: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+@media (max-width: 768px) {
+  .portal-body {
+    flex-direction: column !important;
+  }
+
+  .mobile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    z-index: 50;
+  }
+
+  .portal-sidebar {
+    display: none; /* Hide sidebar by default */
+    width: 100% !important;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .portal-sidebar.open {
+    display: block; /* Show when hamburger is clicked */
+  }
+
+  /* Make sure the Navbar doesn't stretch weirdly on mobile */
+  .topbar {
+    padding: 1rem !important;
+  }
+}
+*::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbars for Firefox and IE/Edge Legacy */
+* {
+  -ms-overflow-style: none;  
+  scrollbar-width: none;  
+}

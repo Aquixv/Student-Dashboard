@@ -115,6 +115,37 @@
 
 @media (max-width: 768px) {
   .auth-brand-panel {
-    display: none; /* Hide the visual panel on mobile */
+    display: none !important;
+  }
+
+  .auth-form-panel {
+    padding: 1.25rem !important; 
+    align-items: flex-start !important; 
+    padding-top: 10vh !important; 
+  }
+
+  .auth-form-container h2 {
+    font-size: 1.5rem !important; 
+  }
+
+  .auth-form-container > p {
+    font-size: 0.85rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+
+  .auth-input-group label {
+    font-size: 0.8rem !important;
+    margin-bottom: 0.3rem !important;
+  }
+
+  .auth-input-group input {
+    padding: 0.65rem 0.8rem !important; 
+    font-size: 0.9rem !important;
+  }
+
+  .auth-btn {
+    padding: 0.75rem !important; 
+    font-size: 0.95rem !important;
+    margin-top: 0.5rem !important;
   }
 }
