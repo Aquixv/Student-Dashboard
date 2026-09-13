@@ -165,8 +165,8 @@ export default function Profile() {
             <p>{user?.department || 'Not Assigned'}</p>
           </div>
           <div className="detail-group">
-            <label>Current Level</label>
-            <p>{user?.level || '100 Level'}</p>
+            <label>Program</label>
+            <p>{user?.level || 'Expert'}</p>
           </div>
           <div className="detail-group">
             <label>Email Address</label>

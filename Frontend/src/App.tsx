@@ -51,30 +51,37 @@ function App() {
               </button>
             </div>
 
-            <div className="main-wrapper" style={{ display: 'flex', flex: 1, minHeight: 0 }}>
+            <div className="main-wrapper" style={{ display: 'flex', flex: 1, minHeight: 0, alignItems: 'stretch' }}>
+            
+            {/* --- SIDEBAR --- */}
+            <div className={`portal-sidebar ${isMobileMenuOpen ? 'open' : ''}`}>
+              <Sidebar closeMenu={() => setIsMobileMenuOpen(false)} />
+            </div>
+            
+            {/* --- THE RIGHT COLUMN WRAPPER --- */}
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, justifyContent: 'flex-start' }}>
               
-              {/* 🚨 FIX 2: THE DYNAMIC WRAPPER 🚨 */}
-              <div className={`portal-sidebar ${isMobileMenuOpen ? 'open' : ''}`}>
-                <Sidebar closeMenu={() => setIsMobileMenuOpen(false)} />
-              </div>
-              
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+              {/* 1. Strict 'Do Not Grow' Navbar Wrapper */}
+              <div style={{ flex: '0 0 auto' }}>
                 <Navbar />
-                <main className="dashboard-content" style={{ flex: 1, overflowY: 'auto' }}>
-                  <Routes>
-                    <Route path="/" element={<div className='Intro'><Home /></div>} />
-                    <Route path="/fees" element={<div className='Intro'><SchoolFees/></div>} />
-                    <Route path="/registration" element={<CourseRegistration />} />
-                    <Route path="/timetable" element={<Timetable />} />
-                    <Route path="/results" element={<Results />} />
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/help" element={<Help />} />
-                    <Route path="/settings" element={<Settings />} />
-                  </Routes>
-                </main>
               </div>
 
+              {/* 2. Flexible Main Content (Handles its own scrolling) */}
+              <main className="dashboard-content" style={{ flex: 1, overflowY: 'auto', display: 'block', padding: '1.5rem' }}>
+                <Routes>
+                  <Route path="/" element={<div className='Intro'><Home /></div>} />
+                  <Route path="/fees" element={<div className='Intro'><SchoolFees/></div>} />
+                  <Route path="/registration" element={<CourseRegistration />} />
+                  <Route path="/timetable" element={<Timetable />} />
+                  <Route path="/results" element={<Results />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/help" element={<Help />} />
+                  <Route path="/settings" element={<Settings />} />
+                </Routes>
+              </main>
+
             </div>
+          </div>
           </div>
         } />
       </Route>

@@ -14,7 +14,19 @@ export interface IUser extends Document {
   role: 'Student' | 'Professor' | 'Admin';
   registeredCourses: mongoose.Types.ObjectId[];
   hasPaidFees: boolean;
-  department:string
+  programType: { 
+  type: String, 
+  enum: ['OND', 'Professional'], 
+  default: 'OND' 
+},
+department: { 
+  type: String, 
+},
+level: { 
+  type: String, 
+  enum: ['Year 1', 'Year 2'], // Replaces 100L/200L to match the 1 or 2 year duration
+  default: 'Year 1' 
+}
 }
 
 export interface IUserMethods {

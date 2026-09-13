@@ -9,37 +9,59 @@ body {
   background-color: #f4f7fe;
 }
 
-.layout-container {
-  display: flex;
-  height: 100vh;
-  overflow: hidden;
-}
-
-.main-wrapper {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.dashboard-content {
-  flex: 1;
-  padding: 2rem;
-  overflow-y: auto;
-}
 .Intro {
   font-size: 1.6rem;
   font-weight: 700;
   color: #095DC5;
-  
-}
-.dashboard-content {
-  /* Firefox */
-  scrollbar-width: none; 
-  /* IE and Edge */
-  -ms-overflow-style: none; 
 }
 
+/* Universal scrollbar assassin */
+.dashboard-content {
+  scrollbar-width: none; 
+  -ms-overflow-style: none; 
+}
 .dashboard-content::-webkit-scrollbar {
-  /* WebKit (Chrome, Safari, modern Edge) */
   display: none; 
+}
+/* --- MOBILE HEADER & SIDEBAR DEFAULTS --- */
+.mobile-header {
+  display: none; /* Hidden on large screens */
+}
+
+.portal-sidebar {
+  width: 260px;
+  background: white;
+  border-right: 1px solid #e2e8f0;
+}
+
+/* --- MOBILE RESPONSIVENESS (Screens under 768px) --- */
+@media (max-width: 768px) {
+  /* 1. Stop the tug-o-war: force them to stack vertically */
+  .main-wrapper {
+    flex-direction: column !important;
+  }
+
+  /* 2. Show the top hamburger bar */
+  .mobile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  /* 3. Hide the sidebar by default on phones */
+  .portal-sidebar {
+    display: none;
+    width: 100% !important;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  /* 4. Un-hide it when the hamburger is clicked */
+  .portal-sidebar.open {
+    display: block !important;
+  }
 }

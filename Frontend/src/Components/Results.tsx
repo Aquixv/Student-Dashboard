@@ -33,7 +33,7 @@ export default function Results() {
     <div className="page-wrapper">
       <div className="page-header">
         <h2>Academic Results</h2>
-        <p>100 Level - Harmattan Semester 2025/2026</p>
+        <p>{userData?.me.level}</p>
       </div>
 
       <div className="content-card">
