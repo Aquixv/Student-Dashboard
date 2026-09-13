@@ -11,6 +11,7 @@ export const typeDefs = gql`
   hasPaidFees: Boolean!
   role: String! 
   avatar: String
+  program: String
   registeredCourses: [Course!]
 }
   type Result {
@@ -39,11 +40,23 @@ type Transaction {
     title: String!
     units: Int!
     type: String!
+    department: String!
+  program: String!
   }
 type AuthPayload {
   token: String!
   user: User!
 }
+
+input CourseInput {
+  code: String!
+  title: String!
+  units: Int!
+  type: String!
+  department: String!
+  program: String!
+}
+  
   type Query {
     # Fetch the current user to determine if they hit the lockout screen
     me: User

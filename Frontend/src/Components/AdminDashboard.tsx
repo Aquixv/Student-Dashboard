@@ -19,7 +19,6 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'COURSES' | 'BILLING' | 'STUDENTS' | 'RESULTS'>('COURSES');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
   // --- 1. Search & Student State ---
   const [searchMatric, setSearchMatric] = useState('');
   const [fetchStudent, { data: searchData, loading: searchLoading, error: searchError }] = 
@@ -65,13 +64,15 @@ export default function AdminDashboard() {
     code: '',
     title: '',
     units: 3,
-    type: 'Compulsory'
+    type: 'Compulsory',
+    program: 'OND', // <-- Set a default
+    department: 'Computer Science' // <-- Set a default
   });
 
   const [addCourse, { loading: courseLoading, error: courseError }] = useMutation(ADD_COURSE, {
     refetchQueries: [{ query: GET_AVAILABLE_COURSES }],
     onCompleted: () => {
-      setCourseData({ code: '', title: '', units: 3, type: 'Compulsory' });
+      setCourseData({ code: '', title: '', units: 3, type: 'Compulsory', program: 'OND', department: 'Computer Science' });
       alert('Course successfully added to the catalog!');
     }
   });
@@ -83,7 +84,9 @@ export default function AdminDashboard() {
         code: courseData.code,
         title: courseData.title,
         units: Number(courseData.units),
-        type: courseData.type
+        type: courseData.type,
+        program: courseData.program,       // <-- Send to backend
+        department: courseData.department  // <-- Send to backend
       }
     });
   };
@@ -254,7 +257,32 @@ export default function AdminDashboard() {
                       style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
                     />
                   </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#4a5568', marginBottom: '0.4rem' }}>Program Track</label>
+                    <select 
+                      value={courseData.program}
+                      onChange={e => setCourseData({...courseData, program: e.target.value})}
+                      style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', backgroundColor: 'white' }}
+                    >
+                      <option value="OND">OND (1 Year)</option>
+                      <option value="Professional">Professional (2 Years)</option>
+                    </select>
+                  </div>
 
+                  {/* DEPARTMENT DROPDOWN */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#4a5568', marginBottom: '0.4rem' }}>Assigned Department</label>
+                    <select 
+                      value={courseData.department}
+                      onChange={e => setCourseData({...courseData, department: e.target.value})}
+                      style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', backgroundColor: 'white' }}
+                    >
+                      <option value="Computer Science">Computer Science</option>
+                      <option value="Computer Engineering">Computer Engineering</option>
+                      <option value="Management and Business">Management and Business</option>
+                      <option value="Professional Studies">Professional Studies</option>
+                    </select>
+                  </div>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#4a5568', marginBottom: '0.4rem' }}>Course Type</label>
                     <select 
@@ -277,6 +305,7 @@ export default function AdminDashboard() {
                   </button>
                 </form>
               </div>
+              
             )}
 
             {/* TAB 2: BILLING CONFIG */}
@@ -478,22 +507,27 @@ export default function AdminDashboard() {
                     </div>
 
                     <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-                      <input 
-                        type="text" 
-                        placeholder="e.g. Computer Science"
-                        defaultValue={searchData.getStudentByMatric.department || ''}
-                        onBlur={(e) => {
-                          if (e.target.value !== searchData.getStudentByMatric!.department) {
-                            updateDept({ variables: { userId: searchData.getStudentByMatric!.id, department: e.target.value } });
-                          }
-                        }}
-                        style={{ padding: '0.75rem', borderRadius: '6px', border: '1px solid #cbd5e1', width: '250px' }}
-                      />
-                      <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>*Auto-saves</span>
+                      <select
+  defaultValue={searchData.getStudentByMatric.department || ''}
+  onChange={(e) => {
+    if (e.target.value !== searchData.getStudentByMatric!.department) {
+      updateDept({ variables: { userId: searchData.getStudentByMatric!.id, department: e.target.value } });
+    }
+  }}
+  style={{ padding: '0.75rem', borderRadius: '6px', border: '1px solid #cbd5e1', width: '250px', backgroundColor: 'white' }}
+>
+  <option value="" disabled>Select Department...</option>
+  <option value="Computer Science">Computer Science</option>
+  <option value="Computer Engineering">Computer Engineering</option>
+  <option value="Management and Business">Management and Business</option>
+  <option value="Professional Studies">Professional Studies</option>
+</select>
+                      <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Department</span>
                     </div>
                   </div>
                 )}
               </div>
+              
             )}
 
             {/* TAB 4: UPLOAD RESULTS */}

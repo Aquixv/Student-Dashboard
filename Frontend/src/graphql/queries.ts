@@ -12,6 +12,7 @@ export const GET_ME = gql`
       hasPaidFees
       role
       avatar
+      program
       registeredCourses {
         id
         code

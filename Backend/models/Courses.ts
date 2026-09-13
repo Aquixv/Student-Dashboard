@@ -13,12 +13,13 @@ export interface ICourse extends Document {
   };
 }
 
-const courseSchema = new Schema<ICourse>(
-  {
-    code: { type: String, required: true, unique: true },
-    title: { type: String, required: true },
-    units: { type: Number, required: true },
-    type: { type: String, enum: ['Compulsory', 'Elective'], required: true },
+const courseSchema = new mongoose.Schema({
+  code: { type: String, required: true, unique: true },
+  title: { type: String, required: true },
+  units: { type: Number, required: true },
+  type: { type: String, enum: ['Compulsory', 'Elective'], required: true },
+  department: { type: String, required: true },
+  program: { type: String, enum: ['OND', 'Professional'], required: true },
     schedule: {
       day: { type: String },
       time: { type: String },
