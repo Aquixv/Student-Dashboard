@@ -56,7 +56,7 @@ input CourseInput {
   department: String!
   program: String!
 }
-  
+
   type Query {
     # Fetch the current user to determine if they hit the lockout screen
     me: User
@@ -75,7 +75,7 @@ input CourseInput {
     login(email: String!, password: String!): AuthPayload!
     updateFeeStatus(userId: ID!, status: Boolean!, reference: String!): User!
     registerCourses(courseIds: [ID!]!): User!
-    addCourse(code: String!, title: String!, units: Int!, type: String!): Course!
+    addCourse(code: String!, title: String!, units: Int!, type: String!, department: String!, program: String! ): Course!
     addBill(description: String!, amount: Float!): Bill!
     deleteBill(id: ID!): ID!
     updateDepartment(userId: ID!, department: String!): User!

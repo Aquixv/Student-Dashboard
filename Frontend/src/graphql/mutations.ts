@@ -49,13 +49,15 @@ export const REGISTER_COURSES = gql`
   }
 `;
 export const ADD_COURSE = gql`
-  mutation AddCourse($code: String!, $title: String!, $units: Int!, $type: String!) {
-    addCourse(code: $code, title: $title, units: $units, type: $type) {
+mutation AddCourse($code: String!, $title: String!, $units: Int!, $type: String!, $department: String!, $program: String!) {
+  addCourse(code: $code, title: $title, units: $units, type: $type, department: $department, program: $program) {
       id
       code
       title
       units
       type
+      department 
+      program
     }
   }
 `;

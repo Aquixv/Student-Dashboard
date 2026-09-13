@@ -137,7 +137,7 @@ deleteBill: async (_parent: any, { id }: any, context: any) => {
       };
     },
 
-addCourse: async (_parent: any, { code, title, units, type }: any, context: any) => {
+addCourse: async (_parent: any, { code, title, units, type, department, program }: any, context: any) => {
   // Ensure the user actually has the Admin token
   if (!context.user || context.user.role !== 'Admin') {
     throw new Error('Unauthorized access');
@@ -148,6 +148,8 @@ addCourse: async (_parent: any, { code, title, units, type }: any, context: any)
     title,
     units,
     type,
+    department,
+    program,
   });
 
   return newCourse;

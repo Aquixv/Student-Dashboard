@@ -5,6 +5,8 @@ export interface ICourse extends Document {
   title: string;
   units: number;
   type: 'Compulsory' | 'Elective';
+  department:string;
+  program:string;
   schedule: {
     day: string;
     time: string;
