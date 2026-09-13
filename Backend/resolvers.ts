@@ -154,6 +154,15 @@ addCourse: async (_parent: any, { code, title, units, type, department, program 
 
   return newCourse;
 },
+updateProgram: async (_parent: any, { userId, program }: any, context: any) => {
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { program },
+        { new: true }
+      );
+      if (!updatedUser) throw new Error('Student not found');
+      return updatedUser;
+    },
     // updateFeeStatus: async (_parent: any, { userId, status }: any) => {
     //   const updatedUser = await User.findByIdAndUpdate(
     //     userId,

@@ -112,3 +112,11 @@ export const UPDATE_AVATAR = gql`
     }
   }
 `;
+export const UPDATE_PROGRAM = gql`
+  mutation UpdateProgram($userId: ID!, $program: String!) {
+    updateProgram(userId: $userId, program: $program) {
+      id
+      program
+    }
+  }
+`;

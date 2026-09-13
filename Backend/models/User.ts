@@ -15,11 +15,7 @@ export interface IUser extends Document {
   registeredCourses: mongoose.Types.ObjectId[];
   hasPaidFees: boolean;
   department:string
-  program: { 
-    type: String, 
-    enum: ['OND', 'Professional', null], 
-    default: null 
-  },
+  program: string,
 }
 
 export interface IUserMethods {
@@ -41,7 +37,8 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>(
     authProvider: { type: String, enum: ['local'], default: 'local' },
     role: { type: String, enum: ['Student', 'Professor', 'Admin'], default: 'Student' },
     registeredCourses: [{ type: Schema.Types.ObjectId, ref: 'Course' }],
-    hasPaidFees: {type: Boolean, required: true}
+    hasPaidFees: {type: Boolean, required: true},
+    program: { type: String, enum: ['OND', 'Professional'], default: null },
   }, 
   { timestamps: true }
 );

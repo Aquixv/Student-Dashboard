@@ -11,6 +11,7 @@ import {
   ADD_BILL, 
   DELETE_BILL, 
   UPDATE_DEPARTMENT, 
+  UPDATE_PROGRAM,
   UPLOAD_RESULT 
 } from '../graphql/mutations';
 import type { GetBillsResponse, GetStudentByMatricResponse } from '../types';
@@ -34,6 +35,10 @@ export default function AdminDashboard() {
       fetchStudent({ variables: { matricNumber: formattedMatric } });
     }
   };
+const [updateProgram] = useMutation(UPDATE_PROGRAM, {
+    onError: (err) => alert(`Failed to save program: ${err.message}`),
+    onCompleted: () => console.log('Program saved successfully!')
+  });
 
   const [updateDept] = useMutation(UPDATE_DEPARTMENT, {
     onError: (err) => alert(`Failed to save: ${err.message}`),
@@ -507,24 +512,42 @@ export default function AdminDashboard() {
                     </div>
 
                     <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+                      
+                      {/* Department Dropdown */}
                       <select
-  defaultValue={searchData.getStudentByMatric.department || ''}
-  onChange={(e) => {
-    if (e.target.value !== searchData.getStudentByMatric!.department) {
-      updateDept({ variables: { userId: searchData.getStudentByMatric!.id, department: e.target.value } });
-    }
-  }}
-  style={{ padding: '0.75rem', borderRadius: '6px', border: '1px solid #cbd5e1', width: '250px', backgroundColor: 'white' }}
->
-  <option value="" disabled>Select Department...</option>
-  <option value="Computer Science">Computer Science</option>
-  <option value="Computer Engineering">Computer Engineering</option>
-  <option value="Management and Business">Management and Business</option>
-  <option value="Professional Studies">Professional Studies</option>
-</select>
-                      <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Department</span>
+                        defaultValue={searchData.getStudentByMatric.department || ''}
+                        onChange={(e) => {
+                          if (e.target.value !== searchData.getStudentByMatric!.department) {
+                            updateDept({ variables: { userId: searchData.getStudentByMatric!.id, department: e.target.value } });
+                          }
+                        }}
+                        style={{ padding: '0.75rem', borderRadius: '6px', border: '1px solid #cbd5e1', width: '220px', backgroundColor: 'white' }}
+                      >
+                        <option value="" disabled>Select Department...</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Computer Engineering">Computer Engineering</option>
+                        <option value="Management and Business">Management and Business</option>
+                        <option value="Professional Studies">Professional Studies</option>
+                      </select>
+
+                      {/* Program Dropdown */}
+                      <select
+                        defaultValue={searchData.getStudentByMatric.program || ''}
+                        onChange={(e) => {
+                          if (e.target.value !== searchData.getStudentByMatric!.program) {
+                            updateProgram({ variables: { userId: searchData.getStudentByMatric!.id, program: e.target.value } });
+                          }
+                        }}
+                        style={{ padding: '0.75rem', borderRadius: '6px', border: '1px solid #cbd5e1', width: '200px', backgroundColor: 'white' }}
+                      >
+                        <option value="" disabled>Select Program...</option>
+                        <option value="OND">OND (1 Year)</option>
+                        <option value="Professional">Professional (2 Years)</option>
+                      </select>
+
+                      <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>*Auto-saves</span>
                     </div>
-                  </div>
+                    </div>
                 )}
               </div>
               

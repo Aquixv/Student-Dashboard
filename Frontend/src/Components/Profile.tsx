@@ -166,7 +166,7 @@ export default function Profile() {
           </div>
           <div className="detail-group">
             <label>Program</label>
-            <p>{user?.level || 'Expert'}</p>
+            <p>{user?.program || 'Expert'}</p>
           </div>
           <div className="detail-group">
             <label>Email Address</label>

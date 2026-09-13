@@ -81,4 +81,5 @@ input CourseInput {
     updateDepartment(userId: ID!, department: String!): User!
     uploadResult(matricNumber: String!, courseCode: String!, score: Int!): Result!
     updateAvatar(avatarUrl: String!): User!
+    updateProgram(userId: ID!, program: String!): User
   }`;

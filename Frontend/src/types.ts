@@ -9,6 +9,7 @@ export interface User {
   registeredCourses?: Course[];
   role:string;
   avatar?: string;
+  program:string;
 }
 
 export interface Course {
@@ -58,6 +59,7 @@ export interface StudentByMatric {
   matricNumber: string | null;
   department: string | null;
   registeredCourses: RegisteredCourse[];
+  program: string
 }
 
 export interface GetStudentByMatricResponse {
