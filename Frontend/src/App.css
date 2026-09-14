@@ -65,3 +65,22 @@ body {
     display: block !important;
   }
 }
+@media (max-width: 768px) {
+  /* Add position relative so the absolute sidebar stays contained */
+  .main-wrapper {
+    flex-direction: column !important;
+    position: relative; 
+  }
+
+  /* Make the open sidebar a full-cover overlay */
+  .portal-sidebar.open {
+    display: flex !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100%; /* Takes up exactly the space under the mobile header */
+    z-index: 50;
+    background: white;
+  }
+}
