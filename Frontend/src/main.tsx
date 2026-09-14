@@ -12,7 +12,9 @@ import App from './App';
 import './index.css';
 
 const httpLink = createHttpLink({
-  uri: 'https://dashboard-backend-bd8e.onrender.com/graphql',
+  uri: import.meta.env.DEV 
+    ? 'http://localhost:1500/graphql' 
+    : 'https://dashboard-backend-bd8e.onrender.com/graphql'
 });
 
 const authLink = setContext((_, { headers }) => {
