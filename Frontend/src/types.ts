@@ -45,6 +45,8 @@ export interface Student {
   matricNumber: string | null;
   department: string | null;
   hasPaidFees: boolean;
+  registeredCourses: Course[];
+  program:string;
 }
 // --- Types for the Admin Search ---
 export interface RegisteredCourse {
@@ -77,8 +79,8 @@ export interface AcademicResult {
 export interface GetMyResultsResponse {
   getMyResults: AcademicResult[];
 }
-export interface GetStudentsResponse {
-  getStudents: Student[];
+export interface searchStudentsResponse {
+  searchStudents: Student[];
 }
 // --- GraphQL Query Response Types ---
 

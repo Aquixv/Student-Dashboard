@@ -15,10 +15,13 @@ export const resolvers = {
     const user = await User.findById(context.user.id).populate('registeredCourses');
     return user;
   },
-  getStudents: async (_parent: any, _args: any, context: any) => {
-  if (!context.user || context.user.role !== 'Admin') throw new Error('Unauthorized');
-  return await User.find({ role: 'Student' }).sort({ createdAt: -1 });
-},
+    searchStudents: async (_parent: any, { searchTerm }: any, context: any) => {
+      // The 'i' option makes it case-insensitive
+      return await User.find({
+        matricNumber: { $regex: searchTerm, $options: 'i' },
+        role: 'Student' 
+      });
+    },
 getMyResults: async (_parent: any, _args: any, context: any) => {
   if (!context.user) throw new Error('Not authenticated');
   const user = await User.findById(context.user.id);

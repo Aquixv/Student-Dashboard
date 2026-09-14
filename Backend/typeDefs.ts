@@ -68,6 +68,7 @@ input CourseInput {
     # Moved these to their rightful home!
     getStudentByMatric(matricNumber: String!): User
     getMyResults: [Result!]!
+    searchStudents(searchTerm: String!): [User]
   }
 
   type Mutation {

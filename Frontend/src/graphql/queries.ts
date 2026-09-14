@@ -34,14 +34,14 @@ export const GET_AVAILABLE_COURSES = gql`
     }
   }
 `;
-export const GET_STUDENTS = gql`
-  query GetStudents {
-    getStudents {
+export const SEARCH_STUDENTS = gql`
+  query SearchStudents($searchTerm: String!) {
+    searchStudents(searchTerm: $searchTerm) {
       id
       fullName
       matricNumber
       department
-      hasPaidFees
+      program
     }
   }
 `;
