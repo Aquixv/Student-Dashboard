@@ -22,6 +22,7 @@ export default function AdminDashboard() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   // --- 1. Search & Student State ---
   const [searchMatric, setSearchMatric] = useState('');
+  const [searchPrefix, setSearchPrefix] = useState('OND');
   const [fetchStudent, { data: searchData, loading: searchLoading, error: searchError }] = 
     useLazyQuery<GetStudentByMatricResponse>(GET_STUDENT_BY_MATRIC);
 
@@ -29,9 +30,10 @@ export default function AdminDashboard() {
     e.preventDefault();
     const input = searchMatric.trim();
     if (input) {
-      const formattedMatric = input.length === 4 && !input.startsWith('OND') 
-        ? `OND/PROF/${input}` 
-        : input;
+      const formattedMatric = input.length === 4 
+        ? `${searchPrefix}/${input}` 
+        : input.toUpperCase();
+        
       fetchStudent({ variables: { matricNumber: formattedMatric } });
     }
   };
@@ -212,7 +214,7 @@ const [updateProgram] = useMutation(UPDATE_PROGRAM, {
               </p>
             </div>
             <span style={{ fontSize: '0.85rem', color: '#16a34a', background: '#dcfce7', padding: '0.4rem 0.8rem', borderRadius: '20px', fontWeight: 600 }}>
-              ● Admin Session Active
+               Admin Session Active
             </span>
           </div>
 
@@ -481,18 +483,28 @@ const [updateProgram] = useMutation(UPDATE_PROGRAM, {
                 <p style={{ color: '#718096', marginBottom: '1.5rem', fontSize: '0.9rem' }}>Search by matriculation number to assign academic departments.</p>
 
                 <form onSubmit={handleSearch} style={{ display: 'flex', gap: '10px', marginBottom: '2rem', maxWidth: '500px' }}>
-                  <input 
-                    type="text" 
-                    placeholder="Enter Last 4 Digits (e.g. 1234)"
-                    value={searchMatric}
-                    onChange={(e) => setSearchMatric(e.target.value)}
-                    style={{ flex: 1, padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-                    required
-                  />
-                  <button type="submit" className="primary-btn" disabled={searchLoading}>
-                    {searchLoading ? 'Searching...' : 'Search'}
-                  </button>
-                </form>
+                <select 
+                  value={searchPrefix} 
+                  onChange={(e) => setSearchPrefix(e.target.value)}
+                  style={{ padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', backgroundColor: '#f8fafc', fontWeight: 600, color: '#2b3674' }}
+                >
+                  <option value="OND">OND /</option>
+                  <option value="PROF">PROF /</option>
+                </select>
+                
+                <input 
+                  type="text" 
+                  placeholder="e.g. 1234"
+                  value={searchMatric}
+                  onChange={(e) => setSearchMatric(e.target.value)}
+                  style={{ flex: 1, padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                  required
+                />
+                
+                <button type="submit" className="primary-btn" disabled={searchLoading}>
+                  {searchLoading ? '...' : 'Search'}
+                </button>
+              </form>
 
                 {searchError && <p style={{ color: '#ef4444' }}>Error: {searchError.message}</p>}
 
@@ -560,18 +572,28 @@ const [updateProgram] = useMutation(UPDATE_PROGRAM, {
                 <p style={{ color: '#718096', marginBottom: '1.5rem', fontSize: '0.9rem' }}>Search for a student to view and grade their registered courses.</p>
                 
                 <form onSubmit={handleSearch} style={{ display: 'flex', gap: '10px', marginBottom: '2rem', maxWidth: '500px' }}>
-                  <input 
-                    type="text" 
-                    placeholder="Enter Last 4 Digits (e.g. 1234)"
-                    value={searchMatric}
-                    onChange={(e) => setSearchMatric(e.target.value)}
-                    style={{ flex: 1, padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-                    required
-                  />
-                  <button type="submit" className="primary-btn" disabled={searchLoading}>
-                    {searchLoading ? 'Searching...' : 'Search'}
-                  </button>
-                </form>
+                <select 
+                  value={searchPrefix} 
+                  onChange={(e) => setSearchPrefix(e.target.value)}
+                  style={{ padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', backgroundColor: '#f8fafc', fontWeight: 600, color: '#2b3674' }}
+                >
+                  <option value="OND">OND /</option>
+                  <option value="PROF">PROF /</option>
+                </select>
+                
+                <input 
+                  type="text" 
+                  placeholder="e.g. 1234"
+                  value={searchMatric}
+                  onChange={(e) => setSearchMatric(e.target.value)}
+                  style={{ flex: 1, padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                  required
+                />
+                
+                <button type="submit" className="primary-btn" disabled={searchLoading}>
+                  {searchLoading ? '...' : 'Search'}
+                </button>
+              </form>
 
                 {searchError && <p style={{ color: '#ef4444' }}>Error: {searchError.message}</p>}
 
