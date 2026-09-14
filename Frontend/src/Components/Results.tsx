@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client/react';
 import { GET_ME, GET_MY_RESULTS } from '../graphql/queries';
 import { downloadTranscript } from '../utils/generateTranscripts';
-import './SecondaryPages.css'; 
+import './secondaryPages.css'; 
 import type { GetMeResponse, GetMyResultsResponse } from '../types';
 
 export default function Results() {
