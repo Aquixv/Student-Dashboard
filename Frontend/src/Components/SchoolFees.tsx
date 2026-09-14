@@ -10,7 +10,7 @@ import { downloadReceipt } from '../utils/generateReceipts';
 export default function SchoolFees() {
   const [paymentMethod, setPaymentMethod] = useState<'paystack' | 'remita' | 'transfer'>('paystack');
   const { data, loading } = useQuery<GetMeResponse>(GET_ME);
-  const { data: billsData, loading: billsLoading } = useQuery<GetBillsResponse>(GET_BILLS);
+  const { data: billsData } = useQuery<GetBillsResponse>(GET_BILLS);
   const [updateFeeStatus, { loading: isUpdating }] = useMutation(UPDATE_FEE_STATUS, {
     refetchQueries: [{ query: GET_ME }] 
   });
