@@ -27,16 +27,18 @@ export default function AdminDashboard() {
     useLazyQuery<GetStudentByMatricResponse>(GET_STUDENT_BY_MATRIC);
 
   const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    const input = searchMatric.trim();
-    if (input) {
-      const formattedMatric = input.length === 4 
-        ? `${searchPrefix}/${input}` 
-        : input.toUpperCase();
-        
-      fetchStudent({ variables: { matricNumber: formattedMatric } });
-    }
-  };
+  e.preventDefault();
+  const input = searchMatric.trim();
+  const currentYear = new Date().getFullYear();
+
+  if (input) {
+    const formattedMatric = input.length === 4 
+      ? `${searchPrefix}/${currentYear}/${input}` 
+      : input.toUpperCase();
+      
+    fetchStudent({ variables: { matricNumber: formattedMatric } });
+  }
+};
 const [updateProgram] = useMutation(UPDATE_PROGRAM, {
     onError: (err) => alert(`Failed to save program: ${err.message}`),
     onCompleted: () => console.log('Program saved successfully!')

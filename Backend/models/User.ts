@@ -14,8 +14,8 @@ export interface IUser extends Document {
   role: 'Student' | 'Professor' | 'Admin';
   registeredCourses: mongoose.Types.ObjectId[];
   hasPaidFees: boolean;
-  department:string
-  program: string,
+  department: string;
+  program?: string; // <-- Fixed the comma and made it optional
 }
 
 export interface IUserMethods {
@@ -37,22 +37,32 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>(
     authProvider: { type: String, enum: ['local'], default: 'local' },
     role: { type: String, enum: ['Student', 'Professor', 'Admin'], default: 'Student' },
     registeredCourses: [{ type: Schema.Types.ObjectId, ref: 'Course' }],
-    hasPaidFees: {type: Boolean, required: true},
+    hasPaidFees: {type: Boolean, default: false}, // <-- Switched to default: false so signup doesn't crash
     program: { type: String, enum: ['OND', 'Professional'], default: null },
   }, 
   { timestamps: true }
 );
+
+// --- THE NEW MATRIC NUMBER GENERATOR ---
 userSchema.pre('save', async function () {
-  if (!this.isNew || this.matricNumber) {
+  // If the user already has a matric number (or is an Admin/Professor being updated), skip.
+  if (!this.isNew || this.matricNumber || this.role !== 'Student') {
     return;
   }
 
-  const lastUser = await mongoose.model('User').findOne().sort({ createdAt: -1 });
+  const currentYear = new Date().getFullYear();
+
+  // Find the last student registered THIS YEAR so the sequence resets to 0001 every January
+  const lastUser = await mongoose.model('User').findOne({
+    role: 'Student',
+    createdAt: { $gte: new Date(`${currentYear}-01-01`) }
+  }).sort({ createdAt: -1 });
 
   let nextSequence = 1;
   
   if (lastUser && lastUser.matricNumber) {
-    const lastNumberString = lastUser.matricNumber.split('/')[1];
+    const parts = lastUser.matricNumber.split('/');
+    const lastNumberString = parts[parts.length - 1]; // Always grabs the sequence, no matter the prefix length
     const lastNumber = parseInt(lastNumberString, 10);
     
     if (!isNaN(lastNumber)) {
@@ -61,7 +71,14 @@ userSchema.pre('save', async function () {
   }
 
   const paddedNumber = nextSequence.toString().padStart(4, '0');
-  this.matricNumber = `OND/PROF/${paddedNumber}`;
+  
+  // Since students don't pick their program at signup, issue them a "Provisional" prefix.
+  // The Admin dashboard will overwrite this with OND/ or PROF/ when assigning them a track.
+  let prefix = 'PROV'; 
+  if (this.program === 'OND') prefix = 'OND';
+  if (this.program === 'Professional') prefix = 'PROF';
+
+  this.matricNumber = `${prefix}/${currentYear}/${paddedNumber}`;
 });
 
 userSchema.methods.matchPassword = async function(this: IUser, enteredPassword: string) {
