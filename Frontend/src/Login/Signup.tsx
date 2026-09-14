@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from '@apollo/client/react';
 import {REGISTER_USER} from '../graphql/mutations'
-import './Auth.css';
+import './auth.css';
 import type { RegisterResponse } from '../types';
 
 export default function Signup() {
