@@ -117,18 +117,24 @@ deleteBill: async (_parent: any, { id }: any, context: any) => {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
-      // Generate a random 4-digit ID
+      // 1. Grab the current year to satisfy the new client requirement
+      const currentYear = new Date().getFullYear();
+
+      // 2. Generate a random 4-digit ID
       const randomNum = Math.floor(1000 + Math.random() * 9000);
-      const generatedMatric = `OND/PROF/${randomNum}`;
+
+      // 3. Create a Provisional Matric Number (e.g., PROV/2026/8342)
+      const generatedMatric = `PROV/${currentYear}/${randomNum}`;
 
       const user = await User.create({
         fullName: fullName || 'Student',
         email,
         password: hashedPassword, 
-        registeredCourses: [], // <-- Set this to an empty array!
+        registeredCourses: [], 
         hasPaidFees: false,
-        role: 'Student', // Match the exact casing from your Mongoose enum
-        matricNumber: generatedMatric 
+        role: 'Student', 
+        matricNumber: generatedMatric,
+        // program: null // Explicitly null so the Admin knows to assign it
       });
 
       return {
