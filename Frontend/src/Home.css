@@ -47,7 +47,7 @@
 .stat-value.text-red { color: #e53e3e; }
 .stat-value.text-sm { font-size: 1.4rem; margin-top: 0.4rem; }
 .stat-max { font-size: 1rem; color: #a0aec0; }
-.stat-subtitle { font-size: 0.8rem; color: #a0aec0; }
+.stat-subtitle { font-size: 0.8rem; color: #a0aec0; display: none; }
 
 /* Main Split Area */
 .dashboard-main-split {
