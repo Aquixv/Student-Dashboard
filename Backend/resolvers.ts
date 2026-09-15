@@ -164,43 +164,33 @@ addCourse: async (_parent: any, { code, title, units, type, department, program 
   return newCourse;
 },
 updateProgram: async (_parent: any, { userId, program }: any, context: any) => {
-      const updatedUser = await User.findByIdAndUpdate(
-        userId,
-        { program },
-        { new: true }
-      );
-      if (!updatedUser) throw new Error('Student not found');
-      return updatedUser;
+      // 1. Fetch the user first
+      const user = await User.findById(userId);
+      if (!user) throw new Error('Student not found');
+
+      // 2. Break down their current matric number (e.g., 'PROV/1234' or 'OND/2025/1234')
+      const matricParts = user.matricNumber?.split('/');
+      
+      // Grab just the final digits from the array (always the last item)
+      const sequenceNumber = matricParts?.[matricParts.length - 1];
+      
+      // Get the current year
+      const currentYear = new Date().getFullYear();
+
+      // 3. Determine the new prefix
+      const prefix = program === 'Professional' ? 'PROF' : 'OND';
+
+      // 4. Reconstruct the perfect string (e.g., 'PROF/2026/1234')
+      const newMatricNumber = `${prefix}/${currentYear}/${sequenceNumber}`;
+
+      // 5. Save the updated data
+      user.program = program;
+      user.matricNumber = newMatricNumber;
+      await user.save();
+
+      return user;
     },
-    // updateFeeStatus: async (_parent: any, { userId, status }: any) => {
-    //   const updatedUser = await User.findByIdAndUpdate(
-    //     userId,
-    //     { hasPaidFees: status },
-    //     { new: true }
-    //   );
-
-    //   if (!updatedUser) {
-    //     throw new Error('User not found');
-    //   }
-
-    //   return updatedUser;
-    // },
-    registerCourses: async (_parent: any, { courseIds }: any, context: any) => {
-    if (!context.user) {
-      throw new Error('Not authenticated');
-    }
-    const updatedUser = await User.findByIdAndUpdate(
-      context.user.id,
-      { $set: { registeredCourses: courseIds } },
-      { new: true }
-    );
-
-    if (!updatedUser) {
-      throw new Error('User not found');
-    }
-
-    return updatedUser;
-  },
+    
   updateAvatar: async (_parent: any, { avatarUrl }: { avatarUrl: string }, context: any) => {
   if (!context.user) throw new Error('Not authenticated');
   return await User.findByIdAndUpdate(

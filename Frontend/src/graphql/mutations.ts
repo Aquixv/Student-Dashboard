@@ -117,6 +117,7 @@ export const UPDATE_PROGRAM = gql`
     updateProgram(userId: $userId, program: $program) {
       id
       program
+      matricNumber  # <-- Ask the backend to send the freshly generated number back
     }
   }
 `;

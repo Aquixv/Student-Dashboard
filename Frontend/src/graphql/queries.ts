@@ -42,6 +42,11 @@ export const SEARCH_STUDENTS = gql`
       matricNumber
       department
       program
+      registeredCourses {     # <-- ADD THIS BLOCK
+        id
+        code
+        title
+      }
     }
   }
 `;
