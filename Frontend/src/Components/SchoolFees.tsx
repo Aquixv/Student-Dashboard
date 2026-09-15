@@ -138,7 +138,7 @@ export default function SchoolFees() {
                       onClick={() => setPaymentMethod('paystack')}
                       style={{ flex: 1, border: paymentMethod === 'paystack' ? '2px solid #095DC5' : '1px solid #e2e8f0' }}
                     >
-                      <img style={{ height: 'max-width', width:'50px'}} src="https://tse4.mm.bing.net/th/id/OIP.5YMLaME3IM0xOl1sn6unmgHaEH?r=0&w=900&h=500&rs=1&pid=ImgDetMain&o=7&rm=3" alt="" />
+                      <img style={{ height: 'max-width', width:'50px'}} src="https://www.bing.com/images/search?view=detailV2&ccid=jHFQmLzO&id=45631CC7B32CE6FCDC8A4F4AB177321ED54265FA&thid=OIP.jHFQmLzOaK0ZK7BZ9YRjrQHaD4&mediaurl=https%3a%2f%2fassets.paystack.com%2fassets%2fimg%2fhero%2fpaystack-opengraph.png&cdnurl=https%3a%2f%2fth.bing.com%2fth%2fid%2fR.8c715098bcce68ad192bb059f58463ad%3frik%3d%252bmVC1R4yd7FKTw%26pid%3dImgRaw%26r%3d0&exph=630&expw=1200&q=paystack+logo+no+background&mode=overlay&FORM=IQFRBA&ck=7A93BB7E978DFB29D36F9E222309C68B&selectedIndex=0&idpp=serp" alt="" />
                     </button>
                     <button 
                       className={`secondary-btn ${paymentMethod === 'remita' ? 'active-tab' : ''}`}
@@ -166,7 +166,7 @@ export default function SchoolFees() {
                     >
                       {isUpdating ? 'Updating Portal...' : `Pay  via Paystack`}
                     </button>
-                    <div style={{ textAlign: 'center' }}><span className="secure-note">🔒 Secured by Paystack</span></div>
+                    <div style={{ textAlign: 'center' }}><span className="secure-note"> Secured by Paystack</span></div>
                   </div>
                 )}
                 {paymentMethod === 'remita' && (

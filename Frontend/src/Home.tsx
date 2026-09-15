@@ -65,13 +65,13 @@ export default function Home() {
         </div>
         
         <div className="stat-card">
-          <h3>Academic Term</h3>
+          <h3>Semester</h3>
           <p className="stat-value text-sm">Harmattan 2026</p>
           <span className="stat-subtitle">Week 4 of 12</span>
         </div>
         
         <div className="stat-card">
-          <h3>Academic Advisor</h3>
+          <h3>Tutor</h3>
           <p className="stat-value text-sm">Dr. Dan-star</p>
           <span className="stat-subtitle">Computer Science Dept.</span>
         </div>
