@@ -16,11 +16,10 @@ export const resolvers = {
     return user;
   },
     searchStudents: async (_parent: any, { searchTerm }: any, context: any) => {
-      // The 'i' option makes it case-insensitive
       return await User.find({
         matricNumber: { $regex: searchTerm, $options: 'i' },
         role: 'Student' 
-      });
+      }).populate('registeredCourses'); // <-- THIS IS THE MAGIC WORD
     },
 getMyResults: async (_parent: any, _args: any, context: any) => {
   if (!context.user) throw new Error('Not authenticated');
