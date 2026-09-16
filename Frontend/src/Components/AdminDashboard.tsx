@@ -139,7 +139,7 @@ const [updateProgram] = useMutation(UPDATE_PROGRAM, {
                 color: activeTab === 'COURSES' ? '#ffffff' : '#64748b'
               }}
             >
-              <span><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/400012/books.svg" alt="" /></span> Manage Courses
+              <span><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/400012/books.svg" alt="" /></span> Courses
             </button>
 
             <button 
@@ -150,7 +150,7 @@ const [updateProgram] = useMutation(UPDATE_PROGRAM, {
                 color: activeTab === 'BILLING' ? '#ffffff' : '#64748b'
               }}
             >
-              <span><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/510942/credit-card-01.svg" alt="" /></span> Billing Config
+              <span><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/510942/credit-card-01.svg" alt="" /></span> Billing
             </button>
 
             <button 
@@ -161,7 +161,7 @@ const [updateProgram] = useMutation(UPDATE_PROGRAM, {
                 color: activeTab === 'STUDENTS' ? '#ffffff' : '#64748b'
               }}
             >
-              <span><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/483516/student-person-part-2.svg" alt="" /></span> Student Mapper
+              <span><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/483516/student-person-part-2.svg" alt="" /></span> Students
             </button>
 
             <button 
@@ -172,7 +172,7 @@ const [updateProgram] = useMutation(UPDATE_PROGRAM, {
                 color: activeTab === 'RESULTS' ? '#ffffff' : '#64748b'
               }}
             >
-              <span><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/373104/results.svg" alt="Download PDF" /></span> Upload Results
+              <span><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/373104/results.svg" alt="Download PDF" /></span> Results
             </button>
           </nav>
 
@@ -475,19 +475,19 @@ const [updateProgram] = useMutation(UPDATE_PROGRAM, {
                 <h3 style={{ color: '#2b3674', marginBottom: '0.5rem', fontSize: '1.2rem' }}>Student Lookup</h3>
                 <p style={{ color: '#718096', marginBottom: '1.5rem', fontSize: '0.9rem' }}>Search by matriculation number to assign academic departments.</p>
 
-                <form onSubmit={handleSearch} style={{ display: 'flex', gap: '10px', marginBottom: '2rem', maxWidth: '500px' }}>
-    <input 
-      type="text" 
-      placeholder="Search by any part of Matric No (e.g., 1234 or PROV)"
+                <form onSubmit={handleSearch} style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '2rem', width: '100%', maxWidth: '500px' }}>
+  <input 
+    type="text" 
+    placeholder="Search by last 4 digits"
       value={searchTerm}
       onChange={(e) => setSearchTerm(e.target.value)}
-      style={{ flex: 1, padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-      required
-    />
-    <button type="submit" className="primary-btn" disabled={searchLoading}>
-      {searchLoading ? 'Searching...' : 'Search'}
-    </button>
-  </form>
+    style={{ flex: '1 1 200px', padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+    required
+  />
+  <button type="submit" className="primary-btn" disabled={searchLoading} style={{ flex: '0 1 auto' }}>
+    {searchLoading ? 'Searching...' : 'Search'}
+  </button>
+</form>
 
                 {searchError && <p style={{ color: '#ef4444' }}>Error: {searchError.message}</p>}
 
@@ -557,13 +557,13 @@ const [updateProgram] = useMutation(UPDATE_PROGRAM, {
                 <h3 style={{ color: '#2b3674', marginBottom: '0.5rem', fontSize: '1.2rem' }}>Academic Grading</h3>
                 <p style={{ color: '#718096', marginBottom: '1.5rem', fontSize: '0.9rem' }}>Search for a student to view and grade their registered courses.</p>
                 
-                <form onSubmit={handleSearch} style={{ display: 'flex', gap: '10px', marginBottom: '2rem', maxWidth: '500px' }}>
+                <form onSubmit={handleSearch} style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '2rem', width: '100%', maxWidth: '500px' }}>
     <input 
       type="text" 
-      placeholder="Search by any part of Matric No (e.g., 1234 or PROV)"
+      placeholder="Last 4 digits of Matric Number"
       value={searchTerm}
       onChange={(e) => setSearchTerm(e.target.value)}
-      style={{ flex: 1, padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+      style={{ flex: '1 1 200px', padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
       required
     />
     <button type="submit" className="primary-btn" disabled={searchLoading}>

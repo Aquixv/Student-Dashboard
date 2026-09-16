@@ -71,7 +71,12 @@ body {
     flex-direction: column !important;
     position: relative; 
   }
-
+.secondary-btn2 {
+display: none;
+}
+.sidebar-logo{
+  display: none;
+}
   /* Make the open sidebar a full-cover overlay */
   .portal-sidebar.open {
     display: flex !important;

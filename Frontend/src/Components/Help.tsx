@@ -11,7 +11,11 @@ export default function Help() {
       <div className="help-grid">
         <div className="content-card">
           <h3 className="card-title">Frequently Asked Questions</h3>
-          <div className="faq-list">
+          <div style={{ 
+  display: 'grid', 
+  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+  gap: '1.5rem' 
+}} className="faq-list">
             <div className="faq-item">
               <h4>How do I reset my portal password?</h4>
               <p>Go to the Settings page and select 'Change Password', or contact the ICT admin.</p>

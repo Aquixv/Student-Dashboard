@@ -66,7 +66,14 @@ export default function Results() {
           </table>
         </div>
 
-        <div className="results-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem', borderTop: '1px dashed #e2e8f0' }}>
+        <div className="results-footer" style={{display: 'flex', 
+  justifyContent: 'space-between', 
+  alignItems: 'center', 
+  flexWrap: 'wrap', /* <-- This is the lifesaver */
+  gap: '1rem', 
+  marginTop: '1rem', 
+  paddingTop: '1rem', 
+  borderTop: '1px dashed #cbd5e1'}}>
           <div style={{ fontSize: '1.1rem' }}>
             <span style={{ color: '#718096' }}>Semester GPA: </span>
             <strong style={{ color: '#2b3674' }}>{gpa}</strong>
