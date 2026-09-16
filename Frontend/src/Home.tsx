@@ -72,7 +72,7 @@ export default function Home() {
         
         <div className="stat-card">
           <h3>Tutor</h3>
-          <p className="stat-value text-sm">Dr. Dan-star</p>
+          <p className="stat-value text-sm">Dr. Alamu</p>
           <span className="stat-subtitle">Computer Science Dept.</span>
         </div>
       </div>
