@@ -33,9 +33,9 @@ const mockNotifications = [
       </div>
       
       <div className="topbar-actions">
-        <button className="status-btn">
+        {/* <button className="status-btn">
           <span style={{ fontSize: '1.1rem' }}></span> Status
-        </button>
+        </button> */}
         
         {/* <div className="search-container">
           <span style={{ color: '#a3aed1', fontSize: '1.1rem' }}><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/532551/search-alt-1.svg" alt="" /></span>

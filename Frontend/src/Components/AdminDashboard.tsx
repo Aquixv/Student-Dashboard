@@ -538,8 +538,8 @@ const [updateProgram] = useMutation(UPDATE_PROGRAM, {
                             style={{ padding: '0.75rem', borderRadius: '6px', border: '1px solid #cbd5e1', width: '200px', backgroundColor: 'white' }}
                           >
                             <option value="" disabled>Select Program...</option>
-                            <option value="OND">OND (1 Year)</option>
-                            <option value="Professional">Professional (2 Years)</option>
+                            <option value="OND">OND (2 Years)</option>
+                            <option value="Professional">Professional (1 Year)</option>
                           </select>
                           <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>*Auto-saves</span>
                         </div>
