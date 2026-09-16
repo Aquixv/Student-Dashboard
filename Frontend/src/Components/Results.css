@@ -54,3 +54,22 @@
 .input-group input:focus { border-color: #095DC5; }
 
 .primary-btn-sm { background: #095DC5; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 600; cursor: pointer; }
+/* Default Desktop View */
+.help-grid {
+  display: flex;
+  gap: 1.5rem;
+  /* Add this to ensure they sit side-by-side evenly on desktop */
+  align-items: flex-start; 
+}
+
+/* Make both cards take up equal space on desktop */
+.help-grid .content-card {
+  flex: 1; 
+}
+
+/* Mobile View Overrides */
+@media (max-width: 768px) {
+  .help-grid {
+    flex-direction: column;
+  }
+}
