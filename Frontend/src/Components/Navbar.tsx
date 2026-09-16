@@ -52,18 +52,18 @@ const mockNotifications = [
           </button>
           {showNotifs && (
             <div style={{ 
-  top: '45px', 
-  right: '-60px', /* Shifts the box to the right, under the avatar */
-  width: '300px', /* Slightly narrower to fit small screens */
-  background: 'white', 
-  border: '1px solid #e2e8f0', 
-  borderRadius: '10px', 
-  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)', 
-  overflow: 'hidden', 
-  position: 'absolute', 
-  maxWidth: 'calc(100vw - 32px)', /* Ultimate safety net: never wider than the screen minus margins */
-  zIndex: 100 
-}}>
+              top: '45px', 
+              right: '0', /* Flushes the right edge of the box to the bell */
+              width: '320px', 
+              maxWidth: 'calc(100vw - 32px)', /* Prevents it from hitting the left edge */
+              background: 'white', 
+              border: '1px solid #e2e8f0', 
+              borderRadius: '10px', 
+              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)', 
+              overflow: 'hidden', 
+              position: 'absolute', 
+              zIndex: 100, 
+            }}>
               <div style={{ padding: '1rem', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h4 style={{ margin: 0, color: '#1e293b' }}>Notifications</h4>
                 <span style={{ fontSize: '0.8rem', color: '#095DC5', cursor: 'pointer', fontWeight: 600 }}>Mark all read</span>
