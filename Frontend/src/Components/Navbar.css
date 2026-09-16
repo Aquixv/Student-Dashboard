@@ -106,3 +106,8 @@
     border-radius: 50%;
   }
 }
+@media (max-width: 768px) {
+.drop{
+  margin-right: -100px;
+}
+}

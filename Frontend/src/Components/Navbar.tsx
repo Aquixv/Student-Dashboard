@@ -51,7 +51,7 @@ const mockNotifications = [
          <span style={{ position: 'absolute', top: '0', right: '0', background: '#ef4444', width: '10px', height: '10px', borderRadius: '50%', border: '2px solid white' }}></span>
           </button>
           {showNotifs && (
-            <div style={{ 
+            <div className='drop' style={{ 
               top: '45px', 
               right: '0', /* Flushes the right edge of the box to the bell */
               width: '320px', 
