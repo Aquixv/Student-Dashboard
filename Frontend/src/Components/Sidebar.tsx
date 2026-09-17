@@ -1,6 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useApolloClient } from '@apollo/client/react';
 import './Sidebar.css';
+import Logo from '../assets/Logo.png'
 
 // 1. Accept the optional closeMenu prop
 export default function Sidebar({ closeMenu }: { closeMenu?: () => void }) {
@@ -18,7 +19,8 @@ export default function Sidebar({ closeMenu }: { closeMenu?: () => void }) {
   return (
     <aside className="sidebar">
       <div className="sidebar-logo">
-         <span>EPortal</span>
+         <span> <img style={{ height: '80px', width:'120px'}}  src={Logo} alt="Company Logo" />
+</span>
       </div>
       
       <div className="nav-links">

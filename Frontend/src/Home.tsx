@@ -81,7 +81,7 @@ export default function Home() {
         <div className="content-card fees-section">
           <div className="card-header">
             <h2>Current Fee Overview</h2>
-            <button className="text-link">View History</button>
+            {/* <button className="text-link">View History</button> */}
           </div>
           
           {/* 2. Dynamically render the real bills from MongoDB */}
