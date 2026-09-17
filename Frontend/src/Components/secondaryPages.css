@@ -124,6 +124,7 @@ input:focus, select:focus {
     border: 1px solid #e2e8f0 !important;
     margin-bottom: 20px !important;
     page-break-inside: avoid; 
+    width: fit-content;
   }
 
   table {

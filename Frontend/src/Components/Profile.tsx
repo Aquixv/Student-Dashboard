@@ -193,7 +193,7 @@ export default function Profile() {
           </div>
         ) : (
           <div style={{ padding: '1.5rem' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
               <thead>
                 <tr style={{ borderBottom: '2px solid #e2e8f0', color: '#4a5568' }}>
                   <th style={{ padding: '12px 8px' }}>Course Code</th>
