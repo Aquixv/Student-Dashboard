@@ -4,7 +4,7 @@ import { useMutation } from '@apollo/client/react';
 import { LOGIN } from '../graphql/mutations';
 import './Results.css'; 
 import type { LoginResponse } from '../types';
-
+import Logo from '../assets/Logo.png'
 export default function AdminLogin() {
 //   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -41,7 +41,7 @@ window.location.href = '/admin';
         
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <div style={{ background: '#2b3674', color: 'white', width: '60px', height: '60px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem', fontSize: '1.5rem', fontWeight: 'bold' }}>
-            EP
+           <img style={{ height: '80px', width:'120px'}}  src={Logo} alt="Company Logo" />
           </div>
           <h2 style={{ color: '#2b3674', margin: 0 }}>Staff Gateway</h2>
           <p style={{ color: '#718096', fontSize: '0.9rem', marginTop: '0.5rem' }}>Authorized personnel only</p>
