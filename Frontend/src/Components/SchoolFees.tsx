@@ -226,7 +226,7 @@ export default function SchoolFees() {
                 </div>
                 <div className="history-actions">
                   <span className="history-amount">{totalAmount.toLocaleString()}</span>
-                  <button onClick={handleDownloadSessionReceipt} className="download-receipt-btn"><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/507665/download.svg" alt="" /> PDF</button>
+                  <button onClick={handleDownloadSessionReceipt} className="download-receipt-btn"><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/507665/download.svg" alt="" /></button>
                 </div>
               </div>
             )}
@@ -234,11 +234,11 @@ export default function SchoolFees() {
               <div className="history-icon">✓</div>
               <div className="history-details">
                 <h4>Acceptance Fee</h4>
-                <p>INV-1042 • Aug 15, 2026</p>
+                <p>Aug 15, 2026</p>
               </div>
               <div className="history-actions">
                 <span className="history-amount">₦50,000</span>
-                <button onClick={handleDownloadAcceptanceReceipt} className="download-receipt-btn"><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/507665/download.svg" alt="" /> PDF</button>
+                <button onClick={handleDownloadAcceptanceReceipt} className="download-receipt-btn"><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/507665/download.svg" alt="" /></button>
               </div>
             </div>
           </div>

@@ -84,7 +84,7 @@ export default function CourseRegistration() {
         <div className="registration-split">
           <div className={`course-selection-panel ${isReadOnly ? 'read-only-panel' : ''}`}>
             <div className="panel-header">
-              <h3>Available Courses {isReadOnly && '(Locked)'}</h3>
+              <h3>Available Courses {isReadOnly && ''}</h3>
             </div>
             <div className="course-list">
               {availableCourses.map((course) => (
