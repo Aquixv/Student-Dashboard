@@ -18,11 +18,11 @@ import Login from './Login/Login';
 import Signup from './Login/Signup';
 import AdminLogin from './Components/AdminLogin';
 import Logo from './assets/Logo.png'
-const navigate = useNavigate()
+
 function App() {
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
+  const navigate = useNavigate()
   return (
     <Routes>
       {/* 1. Public Routes */}
