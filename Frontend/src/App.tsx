@@ -1,5 +1,5 @@
-import { Routes, Route } from 'react-router-dom';
-import { useState } from 'react';
+import { Routes, Route, useNavigate } from 'react-router-dom';
+import { useState, } from 'react';
 // Fix 1: Import AdminRoute with curly braces!
 import ProtectedRoute, { AdminRoute } from './ProtectedRoutes'; 
 import Sidebar from './Components/Sidebar';
@@ -18,7 +18,7 @@ import Login from './Login/Login';
 import Signup from './Login/Signup';
 import AdminLogin from './Components/AdminLogin';
 import Logo from './assets/Logo.png'
-
+const navigate = useNavigate()
 function App() {
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -43,7 +43,7 @@ function App() {
             
             {/* 🚨 FIX 1: THE MISSING HAMBURGER HEADER 🚨 */}
             <div className="mobile-header">
-              <h2 style={{ color: '#095DC5', margin: 0, fontSize: '1.4rem', fontWeight: 800 }}><img style={{ height: '60px', width:'100px'}}  src={Logo} alt="Company Logo" /></h2>
+              <h2 style={{ color: '#095DC5', margin: 0, fontSize: '1.4rem', fontWeight: 800 }}><img onClick={() => navigate("/")} style={{ height: '60px', width:'100px'}}  src={Logo} alt="Company Logo" /></h2>
               <button 
                 className="hamburger-btn" 
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

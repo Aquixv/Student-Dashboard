@@ -19,7 +19,7 @@ export default function Sidebar({ closeMenu }: { closeMenu?: () => void }) {
   return (
     <aside className="sidebar">
       <div className="sidebar-logo">
-         <span> <img style={{ height: '80px', width:'120px'}}  src={Logo} alt="Company Logo" />
+         <span> <img onClick={() => navigate("/")} style={{ height: '80px', width:'120px'}}  src={Logo} alt="Company Logo" />
 </span>
       </div>
       

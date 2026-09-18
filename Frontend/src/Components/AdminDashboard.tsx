@@ -121,7 +121,7 @@ const [updateProgram] = useMutation(UPDATE_PROGRAM, {
         >
           <div className="desktop-logo" style={{ padding: '0 1rem', marginBottom: '2.5rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.5rem' }}>
-              <h2 style={{ color: '#095DC5', margin: 0, fontSize: '1.6rem', fontWeight: 800 }}><img style={{ height: '80px', width:'120px'}}  src={Logo} alt="Company Logo" /></h2>
+              <h2 style={{ color: '#095DC5', margin: 0, fontSize: '1.6rem', fontWeight: 800 }}><img onClick={() => navigate("/")} style={{ height: '80px', width:'120px'}}  src={Logo} alt="Company Logo" /></h2>
               <span style={{ background: '#eff6ff', color: '#095DC5', fontSize: '0.7rem', fontWeight: 700, padding: '0.2rem 0.5rem', borderRadius: '4px', border: '1px solid #bfdbfe' }}>
                 ADMIN
               </span>
