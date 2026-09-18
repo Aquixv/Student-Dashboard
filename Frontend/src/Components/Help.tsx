@@ -23,7 +23,7 @@ export default function Help() {
           </div>
         </div>
 
-        <div className="content-card contact-card">
+        <div style={{width: 'fit-content'}} className="content-card contact-card">
           <h3 className="card-title">Contact ICT Center</h3>
           <p>For urgent technical issues, reach out to support.</p>
           <div className="contact-methods">
