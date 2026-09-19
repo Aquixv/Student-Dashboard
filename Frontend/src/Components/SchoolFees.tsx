@@ -91,6 +91,7 @@ const cloudName = import.meta.env.VITE_CLOUDINARY_NAME;
       const formData = new FormData();
       formData.append('upload_preset', uploadPreset);
       formData.append('cloud_name', cloudName);
+      formData.append('file', file);
       // REMEMBER TO SWAP THIS WITH YOUR ACTUAL PRESET
 
       // REMEMBER TO SWAP 'YOUR_CLOUD_NAME' WITH YOUR ACTUAL CLOUD NAME

@@ -12,6 +12,8 @@ export const typeDefs = gql`
   role: String! 
   avatar: String
   program: String
+  paymentProofUrl: String
+  paymentStatus: String
   registeredCourses: [Course!]
 }
   type Result {

@@ -187,8 +187,20 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
             >
               <span><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/373104/results.svg" alt="Download PDF" /></span> Results
             </button>
+            <button 
+  onClick={() => handleTabSwitch('PAYMENTS')}
+  style={{
+    display: 'flex', alignItems: 'center', gap: '12px', padding: '0.85rem 1rem', border: 'none', borderRadius: '10px', fontSize: '0.95rem', fontWeight: 600, cursor: 'pointer', textAlign: 'left', transition: 'all 0.15s ease',
+    background: activeTab === 'PAYMENTS' ? '#095DC5' : 'transparent',
+    color: activeTab === 'PAYMENTS' ? '#ffffff' : '#64748b'
+  }}
+>
+  <span>
+    <img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/498329/receipt-minus.svg" alt="Payments" />
+  </span> 
+  Verify Payments
+</button>
           </nav>
-
           {/* Sidebar Footer Link */}
           <button 
             onClick={() => navigate('/')}
@@ -217,6 +229,7 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
                 {activeTab === 'BILLING' && 'Configure and publish mandatory semester fees.'}
                 {activeTab === 'STUDENTS' && 'Look up students to assign or update their registered departments.'}
                 {activeTab === 'RESULTS' && 'Search by matric number to grade registered courses.'}
+                {activeTab === 'PAYMENTS' && 'List of manual payments and receipts'}
               </p>
             </div>
             <span style={{ fontSize: '0.85rem', color: '#16a34a', background: '#dcfce7', padding: '0.4rem 0.8rem', borderRadius: '20px', fontWeight: 600 }}>
