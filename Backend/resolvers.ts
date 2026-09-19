@@ -32,6 +32,10 @@ getStudentByMatric: async (_parent: any, { matricNumber }: any, context: any) =>
   // Populate the courses so we know exactly what they registered for!
   return await User.findOne({ matricNumber }).populate('registeredCourses');
 },
+getPendingPayments: async () => {
+    // Fetches everyone who uploaded a receipt but hasn't been approved
+    return await User.find({ paymentStatus: 'Pending' });
+  },
     availableCourses: async () => await Course.find(),
 getBills: async () => await Bill.find().sort({ createdAt: 1 }),
   },    
@@ -144,7 +148,13 @@ deleteBill: async (_parent: any, { id }: any, context: any) => {
         user
       };
     },
-
+approvePayment: async (_parent: any, { userId }: any) => {
+  return await User.findByIdAndUpdate(
+    userId, 
+    { hasPaidFees: true, paymentStatus: 'Verified' }, 
+    { new: true }
+  );
+},
 addCourse: async (_parent: any, { code, title, units, type, department, program }: any, context: any) => {
   // Ensure the user actually has the Admin token
   if (!context.user || context.user.role !== 'Admin') {
@@ -189,7 +199,13 @@ updateProgram: async (_parent: any, { userId, program }: any, context: any) => {
 
       return user;
     },
-    
+    submitPaymentProof: async (_parent: any, { userId, proofUrl }: any, context: any) => {
+  return await User.findByIdAndUpdate(
+    userId, 
+    { paymentProofUrl: proofUrl, paymentStatus: 'Pending' }, 
+    { new: true }
+  );
+},
   updateAvatar: async (_parent: any, { avatarUrl }: { avatarUrl: string }, context: any) => {
   if (!context.user) throw new Error('Not authenticated');
   return await User.findByIdAndUpdate(

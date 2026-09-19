@@ -100,3 +100,14 @@ export interface Bill {
 export interface GetBillsResponse {
   getBills: Bill[];
 }
+export interface PendingPaymentUser {
+  id: string;
+  fullName: string;
+  matricNumber: string;
+  paymentProofUrl: string;
+  paymentStatus: string;
+}
+
+export interface GetPendingPaymentsResponse {
+  getPendingPayments: PendingPaymentUser[] | null;
+}

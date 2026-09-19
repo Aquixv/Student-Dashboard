@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { 
  SEARCH_STUDENTS,
   GET_AVAILABLE_COURSES, 
-  GET_BILLS 
+  GET_BILLS,
+  GET_PENDING_PAYMENTS
 } from '../graphql/queries';
 import { 
   ADD_COURSE, 
@@ -12,13 +13,14 @@ import {
   DELETE_BILL, 
   UPDATE_DEPARTMENT, 
   UPDATE_PROGRAM,
-  UPLOAD_RESULT 
+  UPLOAD_RESULT,
+  APPROVE_PENDING_PAYMENTS
 } from '../graphql/mutations';
-import type { GetBillsResponse, searchStudentsResponse } from '../types';
+import type { GetBillsResponse, searchStudentsResponse, GetPendingPaymentsResponse } from '../types';
 import Logo from '../assets/Logo.png'
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'COURSES' | 'BILLING' | 'STUDENTS' | 'RESULTS'>('COURSES');
+  const [activeTab, setActiveTab] = useState<'COURSES' | 'BILLING' | 'STUDENTS' | 'RESULTS'| 'PAYMENTS'>('COURSES');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   // --- 1. Search & Student State ---
   const [searchTerm, setSearchTerm] = useState('');
@@ -96,7 +98,18 @@ const [updateProgram] = useMutation(UPDATE_PROGRAM, {
     onCompleted: () => console.log('Grade auto-saved successfully.'),
     onError: (err) => alert(`Failed to save grade: ${err.message}`)
   });
-
+const { 
+    data: pendingPaymentsData, 
+  } = useQuery<GetPendingPaymentsResponse>(GET_PENDING_PAYMENTS, {
+    // Optional: fetches fresh data every time the admin opens this tab
+    fetchPolicy: 'cache-and-network' 
+  });
+const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
+    // Automatically re-run the query so the approved student vanishes from the screen
+    refetchQueries: [{ query: GET_PENDING_PAYMENTS }],
+    onCompleted: () => alert('Payment approved! The student can now register for courses.'),
+    onError: (err) => alert(`Failed to approve payment: ${err.message}`)
+  });
   return (
     <div className="layout-wrapper" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#f8fafc' }}>
       
@@ -650,7 +663,53 @@ const [updateProgram] = useMutation(UPDATE_PROGRAM, {
                 )}
               </div>
             )}
+{activeTab === 'PAYMENTS' && (
+  <div>
+    <h3 style={{ color: '#2b3674', marginBottom: '0.5rem', fontSize: '1.2rem' }}>Manual Payment Verification</h3>
+    <p style={{ color: '#718096', marginBottom: '2rem', fontSize: '0.9rem' }}>Review and approve uploaded bank transfer receipts.</p>
 
+    {/* Assuming you have a useQuery hook called 'pendingPaymentsData' */}
+    {!pendingPaymentsData?.getPendingPayments?.length ? (
+      <div style={{ padding: '2rem', background: '#f8fafc', borderRadius: '8px', textAlign: 'center', color: '#64748b' }}>
+        No pending payments to review.
+      </div>
+    ) : (
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
+        {pendingPaymentsData.getPendingPayments.map((student: any) => (
+          <div key={student.id} style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
+            
+            {/* The Uploaded Receipt */}
+            <div style={{ height: '200px', width: '100%', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <a href={student.paymentProofUrl} target="_blank" rel="noopener noreferrer" title="Click to view full size">
+                <img 
+                  src={student.paymentProofUrl} 
+                  alt={`Receipt for ${student.fullName}`} 
+                  style={{ maxHeight: '200px', maxWidth: '100%', objectFit: 'contain' }}
+                />
+              </a>
+            </div>
+
+            <div style={{ padding: '1.25rem' }}>
+              <h4 style={{ margin: '0 0 0.3rem 0', color: '#2b3674', fontSize: '1.05rem' }}>{student.fullName}</h4>
+              <p style={{ margin: '0 0 1rem 0', color: '#64748b', fontSize: '0.85rem', fontWeight: 600 }}>{student.matricNumber}</p>
+              
+              <button 
+                onClick={() => {
+                  approvePayment({ variables: { userId: student.id } });
+                  // Add logic here to filter this student out of the UI or refetch the query
+                }}
+                style={{ width: '100%', padding: '0.75rem', background: '#16a34a', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 600, cursor: 'pointer' }}
+              >
+                Approve Payment
+              </button>
+            </div>
+
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+)}
           </div>
         </main>
       </div>

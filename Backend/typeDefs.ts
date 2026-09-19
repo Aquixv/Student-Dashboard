@@ -64,7 +64,7 @@ input CourseInput {
     # Fetch available courses for registration
     availableCourses: [Course!]!
     getStudents: [User!]!
-    
+    getPendingPayments: [User]
     # Moved these to their rightful home!
     getStudentByMatric(matricNumber: String!): User
     getMyResults: [Result!]!
@@ -83,4 +83,6 @@ input CourseInput {
     uploadResult(matricNumber: String!, courseCode: String!, score: Int!): Result!
     updateAvatar(avatarUrl: String!): User!
     updateProgram(userId: ID!, program: String!): User
+    submitPaymentProof(userId: ID!, proofUrl: String!): User
+  approvePayment(userId: ID!): User
   }`;

@@ -15,7 +15,9 @@ export interface IUser extends Document {
   registeredCourses: mongoose.Types.ObjectId[];
   hasPaidFees: boolean;
   department: string;
-  program?: string; // <-- Fixed the comma and made it optional
+  program?: string;
+  paymentProofUrl: string;
+  paymentStatus: string;
 }
 
 export interface IUserMethods {
@@ -39,6 +41,8 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>(
     registeredCourses: [{ type: Schema.Types.ObjectId, ref: 'Course' }],
     hasPaidFees: {type: Boolean, default: false}, // <-- Switched to default: false so signup doesn't crash
     program: { type: String, enum: ['OND', 'Professional'], default: null },
+    paymentProofUrl: { type: String, default: null },
+    paymentStatus: { type: String, enum: ['Unpaid', 'Pending', 'Verified'], default: 'Unpaid' }
   }, 
   { timestamps: true }
 );

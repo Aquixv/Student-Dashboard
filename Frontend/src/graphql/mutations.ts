@@ -121,3 +121,26 @@ export const UPDATE_PROGRAM = gql`
     }
   }
 `;
+   export const APPROVE_PENDING_PAYMENTS = gql
+   `mutation ApprovePayment($userId: ID!) {
+  approvePayment(userId: $userId) {
+    id
+    hasPaidFees
+    paymentStatus
+  }
+}
+`;
+
+export const SUBMIT_PAYMENT_PROOF = gql`
+mutation SubmitPaymentProof($userId: ID!, $proofUrl: String!) {
+  submitPaymentProof(userId: $userId, proofUrl: $proofUrl) {
+    id
+    level
+    matricNumber
+    program
+    fullName
+    hasPaidFees
+    email
+    department
+  }
+}`

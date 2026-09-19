@@ -79,4 +79,14 @@ export const GET_STUDENT_BY_MATRIC = gql`
       }
     }
   }
+   `;
+   export const GET_PENDING_PAYMENTS = gql
+   `query GetPendingPayments {
+  getPendingPayments {
+    id
+    fullName
+    matricNumber
+    paymentProofUrl
+  }
+}
 `;
