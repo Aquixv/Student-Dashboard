@@ -687,7 +687,7 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
         No pending payments to review.
       </div>
     ) : (
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: '1.5rem' }}>
         {pendingPaymentsData.getPendingPayments.map((student: any) => (
           <div key={student.id} style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
             
@@ -697,7 +697,7 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
                 <img 
                   src={student.paymentProofUrl} 
                   alt={`Receipt for ${student.fullName}`} 
-                  style={{ maxHeight: '200px', maxWidth: '100%', objectFit: 'contain' }}
+                  style={{ maxHeight: '200px', maxWidth: '100%', objectFit: 'contain', display: 'flex', width: '100%', height: '100%', justifyContent: 'center'}}
                 />
               </a>
             </div>
