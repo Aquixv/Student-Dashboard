@@ -20,9 +20,13 @@ import type { GetBillsResponse, searchStudentsResponse, GetPendingPaymentsRespon
 import Logo from '../assets/Logo.png'
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'COURSES' | 'BILLING' | 'STUDENTS' | 'RESULTS'| 'PAYMENTS'>('COURSES');
+  const [activeTab, setActiveTab] = useState<'COURSES' | 'BILLING' | 'STUDENTS' | 'RESULTS'| 'PAYMENTS'| 'SEMESTER' | 'TUTORS'>('COURSES');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  // --- 1. Search & Student State ---
+  const [semesterValue, setSemesterValue] = useState('');
+  const [tutorData, setTutorData] = useState({ department: 'Computer Science', name: '' });
+  // const [updateSemester] = useMutation(UPDATE_SEMESTER);
+  // const [updateTutor] = useMutation(UPDATE_TUTOR);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [fetchStudents, { data: searchData, loading: searchLoading, error: searchError}] = useLazyQuery<searchStudentsResponse>(SEARCH_STUDENTS);
 
@@ -200,6 +204,27 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
   </span> 
   Verify Payments
 </button>
+<button 
+              onClick={() => handleTabSwitch('SEMESTER')}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '12px', padding: '0.85rem 1rem', border: 'none', borderRadius: '10px', fontSize: '0.95rem', fontWeight: 600, cursor: 'pointer', textAlign: 'left', transition: 'all 0.15s ease',
+                background: activeTab === 'SEMESTER' ? '#095DC5' : 'transparent',
+                color: activeTab === 'SEMESTER' ? '#ffffff' : '#64748b'
+              }}
+            >
+              <span><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/522439/calendar-1.svg" alt="Semester" /></span> Active Semester
+            </button>
+
+            <button 
+              onClick={() => handleTabSwitch('TUTORS')}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '12px', padding: '0.85rem 1rem', border: 'none', borderRadius: '10px', fontSize: '0.95rem', fontWeight: 600, cursor: 'pointer', textAlign: 'left', transition: 'all 0.15s ease',
+                background: activeTab === 'TUTORS' ? '#095DC5' : 'transparent',
+                color: activeTab === 'TUTORS' ? '#ffffff' : '#64748b'
+              }}
+            >
+              <span><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/475306/teacher.svg" alt="Tutors" /></span> Dept. Tutors
+            </button>
           </nav>
           {/* Sidebar Footer Link */}
           <button 
@@ -223,13 +248,14 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
                 {activeTab === 'BILLING' && 'Semester Billing Configuration'}
                 {activeTab === 'STUDENTS' && 'Student Department Mapper'}
                 {activeTab === 'RESULTS' && 'Academic Result & Grading'}
+                {activeTab === 'PAYMENTS' && 'List of manual payments and receipts'}
               </h2>
               <p style={{ color: '#718096', fontSize: '0.95rem', margin: 0 }}>
                 {activeTab === 'COURSES' && 'Add new accredited courses to the student registration catalog.'}
                 {activeTab === 'BILLING' && 'Configure and publish mandatory semester fees.'}
                 {activeTab === 'STUDENTS' && 'Look up students to assign or update their registered departments.'}
                 {activeTab === 'RESULTS' && 'Search by matric number to grade registered courses.'}
-                {activeTab === 'PAYMENTS' && 'List of manual payments and receipts'}
+                {activeTab === 'PAYMENTS' && ''}
               </p>
             </div>
             <span style={{ fontSize: '0.85rem', color: '#16a34a', background: '#dcfce7', padding: '0.4rem 0.8rem', borderRadius: '20px', fontWeight: 600 }}>
@@ -723,6 +749,71 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
     )}
   </div>
 )}
+{activeTab === 'SEMESTER' && (
+              <div>
+                <h3 style={{ color: '#2b3674', marginBottom: '0.5rem', fontSize: '1.2rem' }}>Global Semester Configuration</h3>
+                <p style={{ color: '#718096', marginBottom: '2rem', fontSize: '0.9rem' }}>Update the active academic session displayed on all student dashboards.</p>
+
+                <form 
+                  onSubmit={(e) => { e.preventDefault(); /* updateSemester({ variables: { activeSemester: semesterValue }}) */ }} 
+                  style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '10px', border: '1px solid #e2e8f0', maxWidth: '500px' }}
+                >
+                  <div style={{ marginBottom: '1.25rem' }}>
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#4a5568', marginBottom: '0.4rem' }}>Current Academic Semester</label>
+                    <input 
+                      type="text" required placeholder="e.g. Harmattan 2026"
+                      value={semesterValue}
+                      onChange={e => setSemesterValue(e.target.value)}
+                      style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', backgroundColor: 'white' }}
+                    />
+                  </div>
+                  <button type="submit" className="primary-btn" style={{ padding: '0.75rem 2rem' }}>
+                    Publish Semester
+                  </button>
+                </form>
+              </div>
+            )}
+
+            {/* TAB 7: DEPARTMENT TUTORS */}
+            {activeTab === 'TUTORS' && (
+              <div>
+                <h3 style={{ color: '#2b3674', marginBottom: '0.5rem', fontSize: '1.2rem' }}>Department Tutor Mapping</h3>
+                <p style={{ color: '#718096', marginBottom: '2rem', fontSize: '0.9rem' }}>Assign supervising instructors to specific academic departments.</p>
+
+                <form 
+                  onSubmit={(e) => { e.preventDefault(); /* updateTutor({ variables: { department: tutorData.department, name: tutorData.name }}) */ }} 
+                  style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '10px', border: '1px solid #e2e8f0', maxWidth: '500px' }}
+                >
+                  <div style={{ marginBottom: '1.25rem' }}>
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#4a5568', marginBottom: '0.4rem' }}>Department</label>
+                    <select 
+                      value={tutorData.department}
+                      onChange={e => setTutorData({...tutorData, department: e.target.value})}
+                      style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', backgroundColor: 'white' }}
+                    >
+                      <option value="Computer Science">Computer Science</option>
+                      <option value="Computer Engineering">Computer Engineering</option>
+                      <option value="Management and Business">Management and Business</option>
+                      <option value="Professional Studies">Professional Studies</option>
+                    </select>
+                  </div>
+
+                  <div style={{ marginBottom: '1.25rem' }}>
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#4a5568', marginBottom: '0.4rem' }}>Instructor Name</label>
+                    <input 
+                      type="text" required placeholder="e.g. Dan-star or Dr. Alamu"
+                      value={tutorData.name}
+                      onChange={e => setTutorData({...tutorData, name: e.target.value})}
+                      style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', backgroundColor: 'white' }}
+                    />
+                  </div>
+
+                  <button type="submit" className="primary-btn" style={{ padding: '0.75rem 2rem' }}>
+                    Assign Tutor
+                  </button>
+                </form>
+              </div>
+            )}
           </div>
         </main>
       </div>
