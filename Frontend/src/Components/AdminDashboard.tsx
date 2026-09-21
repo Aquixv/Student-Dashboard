@@ -729,4 +729,3 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
     </div>
   );
 }
-//

@@ -13,6 +13,33 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import './index.css';
 
+const checkTokenExpiration = () => {
+  const token = localStorage.getItem('portal_token');
+  if (!token) return;
+
+  try {
+    // A JWT has 3 parts separated by dots. The middle part is the data payload.
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    
+    // JWT 'exp' is in seconds, Date.now() is in milliseconds
+    const isExpired = payload.exp * 1000 < Date.now(); 
+
+    if (isExpired) {
+      localStorage.removeItem('portal_token');
+      // Redirect to login if they aren't already there
+      if (window.location.pathname !== '/') {
+        window.location.href = '/'; 
+      }
+    }
+  } catch (error) {
+    // If the token is corrupted or manually tampered with, kill it
+    localStorage.removeItem('portal_token');
+  }
+};
+
+// Run the check immediately on initial load
+checkTokenExpiration();
+
 const httpLink = createHttpLink({
   uri: import.meta.env.DEV 
     ? 'http://localhost:1500/graphql' 
