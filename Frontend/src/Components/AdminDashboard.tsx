@@ -26,13 +26,6 @@ export default function AdminDashboard() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [semesterValue, setSemesterValue] = useState('');
   const [tutorData, setTutorData] = useState({ department: 'Computer Science', name: '' });
- const [updateSemester] = useMutation(UPDATE_SEMESTER, {
-    onCompleted: () => alert('Global semester updated!')
-  });
-  
-  const [updateTutor] = useMutation(UPDATE_TUTOR, {
-    onCompleted: () => alert('Tutor assigned to department!')
-  });
 
   const [searchTerm, setSearchTerm] = useState('');
   const [fetchStudents, { data: searchData, loading: searchLoading, error: searchError}] = useLazyQuery<searchStudentsResponse>(SEARCH_STUDENTS);
@@ -52,7 +45,13 @@ const [updateProgram] = useMutation(UPDATE_PROGRAM, {
     onError: (err) => alert(`Failed to save: ${err.message}`),
     onCompleted: () => console.log('Department saved successfully!')
   });
-
+ const [updateSemester] = useMutation(UPDATE_SEMESTER, {
+    onCompleted: () => alert('Global semester updated!')
+  });
+  
+  const [updateTutor] = useMutation(UPDATE_TUTOR, {
+    onCompleted: () => alert('Tutor assigned to department!')
+  });
   // --- 2. Billing State ---
   const { data: billsData } = useQuery<GetBillsResponse>(GET_BILLS);
   const [addBill] = useMutation(ADD_BILL, { refetchQueries: [{ query: GET_BILLS }] });
@@ -698,7 +697,7 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
                               ))}
                               
                               <div style={{ textAlign: 'right', marginTop: '0.5rem' }}>
-                                <span style={{ fontSize: '0.8rem', color: '#16a34a', fontWeight: 500 }}>✓ Scores auto-save when clicking away</span>
+                                <span style={{ fontSize: '0.8rem', color: '#16a34a', fontWeight: 500 }}> Scores auto-save when clicking away</span>
                               </div>
                             </div>
                           )}
@@ -762,7 +761,7 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
                 <p style={{ color: '#718096', marginBottom: '2rem', fontSize: '0.9rem' }}>Update the active academic session displayed on all student dashboards.</p>
 
                 <form 
-                  onSubmit={(e) => { e.preventDefault(); /* updateSemester({ variables: { activeSemester: semesterValue }}) */ }} 
+                  onSubmit={(e) => { e.preventDefault(); updateSemester({ variables: { activeSemester: semesterValue }})}} 
                   style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '10px', border: '1px solid #e2e8f0', maxWidth: '500px' }}
                 >
                   <div style={{ marginBottom: '1.25rem' }}>
@@ -788,7 +787,7 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
                 <p style={{ color: '#718096', marginBottom: '2rem', fontSize: '0.9rem' }}>Assign supervising instructors to specific academic departments.</p>
 
                 <form 
-                  onSubmit={(e) => { e.preventDefault(); /* updateTutor({ variables: { department: tutorData.department, name: tutorData.name }}) */ }} 
+                  onSubmit={(e) => { e.preventDefault(); updateTutor({ variables: { department: tutorData.department, name: tutorData.name }}) }} 
                   style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '10px', border: '1px solid #e2e8f0', maxWidth: '500px' }}
                 >
                   <div style={{ marginBottom: '1.25rem' }}>
