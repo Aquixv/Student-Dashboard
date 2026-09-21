@@ -4,6 +4,7 @@ import { useMutation } from '@apollo/client/react';
 import {REGISTER_USER} from '../graphql/mutations'
 import './auth.css';
 import type { RegisterResponse } from '../types';
+import Logo from '../assets/Logo.png'
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -42,8 +43,14 @@ export default function Signup() {
   return (
     <div className="auth-layout">
       <div className="auth-brand-panel">
-        <h1>Start Your Journey</h1>
-        <p>Create your student account to securely access your timetable, grades, and financial records.</p>
+        <h1><img style={{ 
+    height: '40px', 
+    width: 'auto', 
+    maxWidth: '160px', 
+    objectFit: 'contain', 
+    cursor: 'pointer' 
+  }} src={Logo} alt="" /></h1>
+        <p>Create an account to become a Student</p>
       </div>
       
       <div className="auth-form-panel">

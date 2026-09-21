@@ -4,6 +4,7 @@ import { useMutation } from '@apollo/client/react';
 import { LOGIN_USER } from '../graphql/mutations';
 import './auth.css';
 import type { LoginResponse } from '../types';
+import Logo from '../assets/Logo.png'
 
 export default function Login() {
   const navigate = useNavigate();
@@ -40,8 +41,14 @@ export default function Login() {
   return (
     <div className="auth-layout">
       <div className="auth-brand-panel">
-        <h1>EduPortal</h1>
-        <p>Manage your academic journey, track fee payments, and register for courses all in one unified platform.</p>
+        <h1><img style={{ 
+    height: '40px', 
+    width: 'auto', 
+    maxWidth: '160px', 
+    objectFit: 'contain', 
+    cursor: 'pointer' 
+  }} src={Logo} alt="" /></h1>
+        <p>Institute of Technology </p>
       </div>
       
       <div className="auth-form-panel">
