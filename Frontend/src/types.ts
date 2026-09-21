@@ -111,3 +111,17 @@ export interface PendingPaymentUser {
 export interface GetPendingPaymentsResponse {
   getPendingPayments: PendingPaymentUser[] | null;
 }
+export interface Tutor {
+  department: string;
+  name: string;
+}
+
+export interface Settings {
+  id: string;
+  activeSemester: string;
+  tutors: Tutor[];
+}
+
+export interface GetSystemSettingsResponse {
+  getSystemSettings: Settings;
+}

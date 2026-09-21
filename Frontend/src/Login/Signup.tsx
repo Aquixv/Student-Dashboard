@@ -42,16 +42,23 @@ export default function Signup() {
 
   return (
     <div className="auth-layout">
-      <div className="auth-brand-panel">
-        <h1><img style={{ 
-    height: '40px', 
-    width: 'auto', 
-    maxWidth: '160px', 
-    objectFit: 'contain', 
-    cursor: 'pointer' 
-  }} src={Logo} alt="" /></h1>
-        <p>Create an account to become a Student</p>
-      </div>
+      <div className="auth-brand-panel" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1.5rem', textAlign: 'center' }}>
+  <img 
+    src={Logo} 
+    alt="Institute Logo" 
+    style={{ 
+      height: '120px', 
+      width: 'auto', 
+      maxWidth: '80%', 
+      objectFit: 'contain', 
+      cursor: 'pointer' 
+    }} 
+    onClick={() => navigate("/")}
+  />
+  <p style={{ margin: 0, fontSize: '1.1rem', color: '#e2e8f0' }}>
+    Create an account to become a Student
+  </p>
+</div>
       
       <div className="auth-form-panel">
         <div className="auth-form-container">

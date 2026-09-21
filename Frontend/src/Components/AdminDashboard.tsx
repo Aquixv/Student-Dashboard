@@ -218,7 +218,7 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
                 color: activeTab === 'SEMESTER' ? '#ffffff' : '#64748b'
               }}
             >
-              <span><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/svg/475952/date" alt="Semester" /></span> Active Semester
+              <span><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/svg/475952/date.svg" alt="Semester" /></span> Active Semester
             </button>
 
             <button 

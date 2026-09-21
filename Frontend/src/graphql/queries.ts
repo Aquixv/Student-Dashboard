@@ -90,3 +90,15 @@ export const GET_STUDENT_BY_MATRIC = gql`
   }
 }
 `;
+export const GET_SYSTEM_SETTINGS = gql`
+  query GetSystemSettings {
+    getSystemSettings {
+      id
+      activeSemester
+      tutors {
+        department
+        name
+      }
+    }
+  }
+`;

@@ -1,18 +1,24 @@
 import { useQuery } from '@apollo/client/react';
 import { useNavigate } from 'react-router-dom';
-import { GET_ME, GET_BILLS } from './graphql/queries';
+import { GET_ME, GET_BILLS, GET_SYSTEM_SETTINGS} from './graphql/queries';
 import { downloadReceipt } from './utils/generateReceipts';
 import './Home.css';
-import type { GetBillsResponse, GetMeResponse } from './types';
+import type { GetBillsResponse, GetMeResponse, GetSystemSettingsResponse } from './types';
 
 export default function Home() {
   const navigate = useNavigate();
   
   // 1. Call all hooks safely at the very top level
-  const { data, loading: userLoading } = useQuery<GetMeResponse>(GET_ME);
-  const { data: billsData, loading: billsLoading } = useQuery<GetBillsResponse>(GET_BILLS);
+  const { data, } = useQuery<GetMeResponse>(GET_ME);
+  const { data: billsData,} = useQuery<GetBillsResponse>(GET_BILLS);
+const { data: settingsData,  } = useQuery<GetSystemSettingsResponse>(GET_SYSTEM_SETTINGS);
 
-  if (userLoading || billsLoading) return <div className="dashboard-container">Loading dashboard...</div>;
+  const activeSemester = settingsData?.getSystemSettings?.activeSemester || 'Loading...';
+
+  // Find the exact tutor for the student's department
+  const myTutor = settingsData?.getSystemSettings?.tutors?.find(
+    (t) => t.department === data?.me?.department
+  )?.name || 'Pending Assignment';
 
   const user = data?.me;
   const firstName = user?.fullName?.split(' ')[0] || 'Student';
@@ -66,13 +72,13 @@ export default function Home() {
         
         <div className="stat-card">
           <h3>Semester</h3>
-          <p className="stat-value text-sm">Harmattan 2026</p>
-          <span className="stat-subtitle">Week 4 of 12</span>
+          <p className="stat-value text-sm">{activeSemester}</p>
+          {/* <span className="stat-subtitle">Week 4 of 12</span> */}
         </div>
         
         <div className="stat-card">
           <h3>Tutor</h3>
-          <p className="stat-value text-sm">Dr. Alamu</p>
+          <p className="stat-value text-sm">{myTutor}</p>
           <span className="stat-subtitle">Computer Science Dept.</span>
         </div>
       </div>
