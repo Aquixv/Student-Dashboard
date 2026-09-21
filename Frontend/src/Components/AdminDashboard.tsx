@@ -14,7 +14,9 @@ import {
   UPDATE_DEPARTMENT, 
   UPDATE_PROGRAM,
   UPLOAD_RESULT,
-  APPROVE_PENDING_PAYMENTS
+  APPROVE_PENDING_PAYMENTS,
+  UPDATE_TUTOR,
+  UPDATE_SEMESTER
 } from '../graphql/mutations';
 import type { GetBillsResponse, searchStudentsResponse, GetPendingPaymentsResponse } from '../types';
 import Logo from '../assets/Logo.png'
@@ -24,8 +26,13 @@ export default function AdminDashboard() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [semesterValue, setSemesterValue] = useState('');
   const [tutorData, setTutorData] = useState({ department: 'Computer Science', name: '' });
-  // const [updateSemester] = useMutation(UPDATE_SEMESTER);
-  // const [updateTutor] = useMutation(UPDATE_TUTOR);
+ const [updateSemester] = useMutation(UPDATE_SEMESTER, {
+    onCompleted: () => alert('Global semester updated!')
+  });
+  
+  const [updateTutor] = useMutation(UPDATE_TUTOR, {
+    onCompleted: () => alert('Tutor assigned to department!')
+  });
 
   const [searchTerm, setSearchTerm] = useState('');
   const [fetchStudents, { data: searchData, loading: searchLoading, error: searchError}] = useLazyQuery<searchStudentsResponse>(SEARCH_STUDENTS);

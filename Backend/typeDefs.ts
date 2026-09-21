@@ -16,6 +16,17 @@ export const typeDefs = gql`
   paymentStatus: String
   registeredCourses: [Course!]
 }
+  type Tutor {
+  department: String!
+  name: String!
+}
+
+type Settings {
+  id: ID!
+  activeSemester: String
+  tutors: [Tutor]
+}
+
   type Result {
   id: ID!
   matricNumber: String!
@@ -71,6 +82,7 @@ input CourseInput {
     getStudentByMatric(matricNumber: String!): User
     getMyResults: [Result!]!
     searchStudents(searchTerm: String!): [User]
+    getSystemSettings: Settings
   }
 
   type Mutation {
@@ -87,4 +99,6 @@ input CourseInput {
     updateProgram(userId: ID!, program: String!): User
     submitPaymentProof(userId: ID!, proofUrl: String!): User
   approvePayment(userId: ID!): User
+  updateSemester(semester: String!): Settings
+  updateTutor(department: String!, name: String!): Settings
   }`;

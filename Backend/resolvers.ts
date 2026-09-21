@@ -5,7 +5,19 @@ import bcrypt from 'bcryptjs';
 import Transactions from './models/Transactions';
 import Bill from './bills';
 import Result from './models/Results'
+const Settings = require('./models/Settings');
 
+module.exports = {
+  Query: {
+    getSystemSettings: async () => {
+      return await Settings.findOneAndUpdate(
+        {}, 
+        {}, 
+        { new: true, upsert: true, setDefaultsOnInsert: true }
+      );
+    }
+  },
+};
 export const resolvers = {
   Query: {
    me: async (_parent: any, _args: any, context: any) => {
@@ -214,5 +226,29 @@ updateProgram: async (_parent: any, { userId, program }: any, context: any) => {
     { new: true }
   );
 },
+updateSemester: async (_parent: any, { semester }: any, context: any) => {
+      return await Settings.findOneAndUpdate(
+        {},
+        { activeSemester: semester },
+        { new: true, upsert: true }
+      );
+    },
+    updateTutor: async (_parent: any, { department, name }:any, context: any) => {
+      const settings = await Settings.findOneAndUpdate(
+        {},
+        {},
+        { new: true, upsert: true, setDefaultsOnInsert: true }
+      );
+
+      const existingTutorIndex = settings.tutors.findIndex((t: any) => t.department === department);
+      if (existingTutorIndex > -1) {
+        settings.tutors[existingTutorIndex].name = name;
+      } else {
+        settings.tutors.push({ department, name });
+      }
+
+      await settings.save();
+      return settings;
+    }
   },
 };

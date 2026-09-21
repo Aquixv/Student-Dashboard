@@ -144,3 +144,23 @@ mutation SubmitPaymentProof($userId: ID!, $proofUrl: String!) {
     department
   }
 }`
+export const UPDATE_SEMESTER = gql`
+  mutation UpdateSemester($semester: String!) {
+    updateSemester(semester: $semester) {
+      id
+      activeSemester
+    }
+  }
+`;
+
+export const UPDATE_TUTOR = gql`
+  mutation UpdateTutor($department: String!, $name: String!) {
+    updateTutor(department: $department, name: $name) {
+      id
+      tutors {
+        department
+        name
+      }
+    }
+  }
+`;
