@@ -218,7 +218,7 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
                 color: activeTab === 'SEMESTER' ? '#ffffff' : '#64748b'
               }}
             >
-              <span><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/522439/calendar-1.svg" alt="Semester" /></span> Active Semester
+              <span><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/svg/475952/date" alt="Semester" /></span> Active Semester
             </button>
 
             <button 
@@ -229,7 +229,7 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
                 color: activeTab === 'TUTORS' ? '#ffffff' : '#64748b'
               }}
             >
-              <span><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/475306/teacher.svg" alt="Tutors" /></span> Dept. Tutors
+              <span><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/212746/teacher.svg" alt="Tutors" /></span> Dept. Tutors
             </button>
           </nav>
           {/* Sidebar Footer Link */}
