@@ -7,26 +7,22 @@ import Bill from './bills';
 import Result from './models/Results'
 const Settings = require('./models/Settings');
 
-module.exports = {
+export const resolvers = {
   Query: {
-    getSystemSettings: async () => {
+   getSystemSettings: async () => {
       return await Settings.findOneAndUpdate(
         {}, 
         {}, 
         { new: true, upsert: true, setDefaultsOnInsert: true }
       );
-    }
-  },
-};
-export const resolvers = {
-  Query: {
-   me: async (_parent: any, _args: any, context: any) => {
-    if (!context.user) {
-      throw new Error('Not authenticated');
-    }
-    const user = await User.findById(context.user.id).populate('registeredCourses');
-    return user;
-  },
+    },
+    me: async (_parent: any, _args: any, context: any) => {
+      if (!context.user) {
+        throw new Error('Not authenticated');
+      }
+      const user = await User.findById(context.user.id).populate('registeredCourses');
+      return user;
+    },
     searchStudents: async (_parent: any, { searchTerm }: any, context: any) => {
       return await User.find({
         matricNumber: { $regex: searchTerm, $options: 'i' },

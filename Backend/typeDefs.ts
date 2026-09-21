@@ -86,8 +86,8 @@ input CourseInput {
   }
 
   type Mutation {
-    registerUser(fullName: String!, email: String!, password: String!): AuthPayload!
-    login(email: String!, password: String!): AuthPayload!
+    registerUser(fullName: String!, email: String!, password: String!): AuthPayload
+    login(email: String!, password: String!): AuthPayload
     updateFeeStatus(userId: ID!, status: Boolean!, reference: String!): User!
     registerCourses(courseIds: [ID!]!): User!
     addCourse(code: String!, title: String!, units: Int!, type: String!, department: String!, program: String! ): Course!
