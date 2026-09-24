@@ -146,7 +146,7 @@ mutation SubmitPaymentProof($userId: ID!, $proofUrl: String!) {
 }`
 export const UPDATE_SEMESTER = gql`
   mutation UpdateSemester($semester: String!) {
-    updateSemester(semester: $semester) {
+  updateSemester(semester: $semester) {
       id
       activeSemester
     }

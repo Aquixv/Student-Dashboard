@@ -218,7 +218,7 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
                 color: activeTab === 'SEMESTER' ? '#ffffff' : '#64748b'
               }}
             >
-              <span><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/svg/475952/date.svg" alt="Semester" /></span> Active Semester
+              <span><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/533378/calendar.svg" alt="Semester" /></span> Active Semester
             </button>
 
             <button 
@@ -761,7 +761,7 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
                 <p style={{ color: '#718096', marginBottom: '2rem', fontSize: '0.9rem' }}>Update the active academic session displayed on all student dashboards.</p>
 
                 <form 
-                  onSubmit={(e) => { e.preventDefault(); updateSemester({ variables: { activeSemester: semesterValue }})}} 
+                  onSubmit={(e) => { e.preventDefault(); updateSemester({ variables: { semester: semesterValue }})}} 
                   style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '10px', border: '1px solid #e2e8f0', maxWidth: '500px' }}
                 >
                   <div style={{ marginBottom: '1.25rem' }}>
