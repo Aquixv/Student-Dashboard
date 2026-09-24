@@ -53,9 +53,9 @@ export default function Login() {
     }} 
     onClick={() => navigate("/")}
   />
-  {/*<p style={{ margin: 0, fontSize: '1.1rem', color: '#e2e8f0' }}>
+  {/* <p style={{ margin: 0, fontSize: '1.1rem', color: '#e2e8f0' }}>
     Institute of Technology
-  </p>*/}
+  </p> */}
 </div>
       
       <div className="auth-form-panel">
