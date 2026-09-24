@@ -54,10 +54,10 @@ export default function Signup() {
       cursor: 'pointer' 
     }} 
     onClick={() => navigate("/")}
-  />
-  <p style={{ margin: 0, fontSize: '1.1rem', color: '#e2e8f0' }}>
+  /*>
+  {/<p style={{ margin: 0, fontSize: '1.1rem', color: '#e2e8f0' }}>
     Create an account to become a Student
-  </p>
+  </p>*/}
 </div>
       
       <div className="auth-form-panel">
