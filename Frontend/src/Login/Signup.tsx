@@ -63,7 +63,7 @@ export default function Signup() {
       <div className="auth-form-panel">
         <div className="auth-form-container">
           <h2>Create Account</h2>
-          <p>Register below to generate your portal credentials.</p>
+          <p>Register below</p>
 
           {error && <div className="auth-error" style={{ color: 'red', marginBottom: '1rem' }}>{error.message}</div>}
 
