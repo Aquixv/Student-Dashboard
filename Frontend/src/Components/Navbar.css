@@ -87,7 +87,18 @@
   font-size: 0.95rem;
   color: #2b3674;
 }
-
+.drop {
+  position: absolute;
+  top: 45px;
+  right: 0; 
+  width: 320px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  z-index: 100;
+}
 .avatar {
   width: 43px;
   height: 43px;
@@ -107,9 +118,9 @@
   }
 }
 @media (max-width: 768px) {
-.drop{
-  width: 260px !important; 
-  right: -20px; /* Adjust this slightly if it still pushes too far left or right */
-    max-width: 90vw;
-}
+.drop {
+    width: 280px; 
+    right: 0; /* Never use negative right/left values on mobile viewports */
+    max-width: calc(100vw - 32px); /* Ensures a 16px gap on the left side of small screens */
+  }
 }

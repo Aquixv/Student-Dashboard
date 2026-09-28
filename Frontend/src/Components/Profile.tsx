@@ -183,6 +183,7 @@ export default function Profile() {
 
       {/* The Printable Registered Courses Section */}
       <div className="content-card">
+        <div className="table-responsive-wrapper">
         <div className="card-header" style={{ padding: '1.5rem', borderBottom: '1px solid #edf2f7' }}>
           <h3 style={{ color: '#2b3674' }}>Registered Courses (Harmattan Semester)</h3>
         </div>
@@ -227,6 +228,7 @@ export default function Profile() {
           </div>
         )}
       </div>
+    </div>
     </div>
   );
 }

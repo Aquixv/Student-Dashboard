@@ -38,6 +38,7 @@ export default function Results() {
 
       <div className="content-card">
         <div className="results-table-container">
+          <div className="table-responsive-wrapper">
           <table className="results-table" style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid #e2e8f0', color: '#718096' }}>
@@ -65,7 +66,7 @@ export default function Results() {
             </tbody>
           </table>
         </div>
-
+        </div>
         <div className="results-footer" style={{display: 'flex', 
   justifyContent: 'space-between', 
   alignItems: 'center', 

@@ -99,7 +99,7 @@ const { data: settingsData,  } = useQuery<GetSystemSettingsResponse>(GET_SYSTEM_
                 <div className={`fee-item ${hasPaidFees ? 'settled' : 'pending'}`} key={bill.id}>
                   <div>
                     <h4>{bill.description}</h4>
-                    <p>Mandatory Session Fee</p>
+                    {/* <p>Mandatory Session Fee</p> */}
                   </div>
                   <div className="fee-status">
                     <span className="amount">₦{bill.amount.toLocaleString()}</span>
