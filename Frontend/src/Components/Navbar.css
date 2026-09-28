@@ -118,9 +118,10 @@
   }
 }
 @media (max-width: 768px) {
-.drop {
-    width: 280px; 
-    right: 0; /* Never use negative right/left values on mobile viewports */
-    max-width: calc(100vw - 32px); /* Ensures a 16px gap on the left side of small screens */
+  .drop {
+    width: 300px !important; 
+    /* Push the dropdown 110px to the right of the bell icon */
+    right: -110px !important; 
+    max-width: 95vw !important;
   }
 }

@@ -95,7 +95,18 @@ input:focus, select:focus {
   border-color: #095DC5 !important;
   box-shadow: 0 0 0 3px rgba(9, 93, 197, 0.1);
 }
+.table-responsive-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth swiping on iOS */
+  margin-bottom: 2rem;
+}
 
+.results-table {
+  width: 100%;
+  min-width: 500px; /* This is the secret ingredient. It forces the table to stop shrinking and start scrolling. */
+  border-collapse: collapse; 
+}
 /* 5. Print Styles for Profile Course Form */
 @media print {
   .sidebar, 
