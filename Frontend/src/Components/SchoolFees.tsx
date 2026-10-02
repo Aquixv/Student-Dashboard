@@ -190,7 +190,7 @@ const cloudName = import.meta.env.VITE_CLOUDINARY_NAME;
                   </div>
                 )}
 
-                {paymentMethod === 'remita' && (
+                {/* {paymentMethod === 'remita' && (
                   <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
                     <p style={{ fontSize: '0.85rem', color: '#4a5568', marginBottom: '1rem' }}>
                       Click below to generate your Remita Retrieval Reference (RRR) and proceed to the Remita payment gateway.
@@ -203,7 +203,7 @@ const cloudName = import.meta.env.VITE_CLOUDINARY_NAME;
                       Generate RRR & Pay
                     </button>
                   </div>
-                )}
+                )} */}
 
                 {paymentMethod === 'transfer' && (
                   <div style={{ background: '#eff6ff', padding: '1.25rem', borderRadius: '8px', border: '1px dashed #93c5fd' }}>
