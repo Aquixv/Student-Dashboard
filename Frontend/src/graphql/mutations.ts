@@ -76,8 +76,13 @@ export const LOGIN = gql`
   }
 `;
 export const ADD_BILL = gql`
-  mutation AddBill($description: String!, $amount: Float!) {
-    addBill(description: $description, amount: $amount) { id description amount }
+  mutation AddBill($description: String!, $amount: Float!, $targetDepartment: String) {
+    addBill(description: $description, amount: $amount, targetDepartment: $targetDepartment) {
+      id
+      description
+      amount
+      targetDepartment
+    }
   }
 `;
 

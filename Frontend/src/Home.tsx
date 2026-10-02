@@ -25,12 +25,15 @@ const { data: settingsData,  } = useQuery<GetSystemSettingsResponse>(GET_SYSTEM_
   const hasPaidFees = user?.hasPaidFees || false;
   
   const bills = billsData?.getBills || [];
-  const totalAmount = bills.reduce((sum: number, bill: any) => sum + bill.amount, 0);
+  const applicableBills = bills.filter((bill: any) => 
+  bill.targetDepartment === 'Global' || bill.targetDepartment === user?.department
+);
+  const totalAmount = applicableBills.reduce((sum: number, bill: any) => sum + bill.amount, 0);
 
   const handleDownloadSessionReceipt = () => {
     if (!user) return;
     
-    const dynamicItems = bills.map((bill: any) => ({
+    const dynamicItems = applicableBills.map((bill: any) => ({
       desc: bill.description,
       amount: bill.amount.toLocaleString()
     }));
@@ -46,7 +49,6 @@ const { data: settingsData,  } = useQuery<GetSystemSettingsResponse>(GET_SYSTEM_
   };
 
   const totalUnits = user?.registeredCourses?.reduce((sum: number, course: any) => sum + course.units, 0) || 0;
-
   return (
     <div className="dashboard-container">
       <div className="fees-header">
@@ -57,7 +59,7 @@ const { data: settingsData,  } = useQuery<GetSystemSettingsResponse>(GET_SYSTEM_
         <div className={`stat-card ${!hasPaidFees ? 'alert' : ''}`}>
           <h3>Outstanding Balance</h3>
           <p className={`stat-value ${!hasPaidFees ? 'text-red' : 'text-green'}`}>
-            {hasPaidFees || !settingsData?.getSystemSettings?.isPaymentPortalOpen ? '₦0' : `₦${totalAmount.toLocaleString()}`}
+            {hasPaidFees? '₦0' : `₦${totalAmount.toLocaleString()}`}
           </p>
           <span className="stat-subtitle">
             {hasPaidFees ? 'Fully Paid' : 'Due in 5 days'}
@@ -103,10 +105,10 @@ const { data: settingsData,  } = useQuery<GetSystemSettingsResponse>(GET_SYSTEM_
             
             /* 2. Dynamically render the real bills from MongoDB ONLY if portal is open */
             <div className="fee-list">
-              {bills.length === 0 ? (
+              {applicableBills.length === 0 ? (
                 <p style={{ padding: '1rem', color: '#718096' }}>No fees configured for this session yet.</p>
               ) : (
-                bills.map((bill: any) => (
+                applicableBills.map((bill: any) => (
                   <div className={`fee-item ${hasPaidFees ? 'settled' : 'pending'}`} key={bill.id}>
                     <div>
                       <h4>{bill.description}</h4>

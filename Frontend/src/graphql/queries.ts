@@ -52,7 +52,12 @@ export const SEARCH_STUDENTS = gql`
 `;
 export const GET_BILLS = gql`
   query GetBills {
-    getBills { id description amount }
+    getBills {
+      id
+      description
+      amount
+      targetDepartment # <-- If this is missing, the filter destroys your array
+    }
   }
 `;
 export const GET_MY_RESULTS = gql`
@@ -95,6 +100,7 @@ export const GET_SYSTEM_SETTINGS = gql`
     getSystemSettings {
       id
       activeSemester
+      isPaymentPortalOpen  # <--- If this is missing, the frontend is blind to the portal state
       tutors {
         department
         name

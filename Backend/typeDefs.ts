@@ -39,6 +39,7 @@ type Settings {
   id: ID!
   description: String!
   amount: Float!
+  targetDepartment: String!
 }
 type Transaction {
   id: ID!
@@ -90,7 +91,7 @@ input CourseInput {
     updateFeeStatus(userId: ID!, status: Boolean!, reference: String!): User!
     registerCourses(courseIds: [ID!]!): User!
     addCourse(code: String!, title: String!, units: Int!, type: String!, department: String!, program: String! ): Course!
-    addBill(description: String!, amount: Float!): Bill!
+  addBill(description: String!, amount: Float!, targetDepartment: String): Bill
     deleteBill(id: ID!): ID!
     updateDepartment(userId: ID!, department: String!): User!
     uploadResult(matricNumber: String!, courseCode: String!, score: Int!): Result!

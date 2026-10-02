@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useMutation, useQuery, useLazyQuery } from '@apollo/client/react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -37,7 +37,7 @@ export default function AdminDashboard() {
   refetchQueries: [{ query: GET_SYSTEM_SETTINGS }], // Instantly updates the UI color/disabled state
   onCompleted: () => alert('Portal status updated successfully.')
 });
-
+const [billDept, setBillDept] = useState('Global');
 const [resetSemesterFees] = useMutation(RESET_SEMESTER_FEES, {
   onCompleted: () => {
     alert('Nuclear reset complete. All fees and student payment statuses have been wiped.');
@@ -77,12 +77,16 @@ const [updateProgram] = useMutation(UPDATE_PROGRAM, {
   const [billDesc, setBillDesc] = useState('');
   const [billAmount, setBillAmount] = useState('');
 
-  const handleAddBill = (e: React.FormEvent) => {
-    e.preventDefault();
-    addBill({ variables: { description: billDesc, amount: Number(billAmount) } });
-    setBillDesc('');
-    setBillAmount('');
-  };
+const handleAddBill = (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  addBill({
+    variables: {
+      description: billDesc,
+      amount: parseFloat(billAmount),
+      targetDepartment: billDept // <--- Passing the state to the backend
+    }
+  });
+};
 
   const handleTabSwitch = (tab: any) => {
     setActiveTab(tab);
@@ -439,7 +443,22 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
                         style={{ width: '100%', padding: '0.75rem 0.85rem', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.9rem', backgroundColor: '#ffffff' }}
                       />
                     </div>
-
+                    <div style={{ marginBottom: '1.5rem' }}>
+  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#475569', marginBottom: '0.4rem', textTransform: 'uppercase' }}>
+   Department
+  </label>
+  <select 
+    value={billDept}
+    onChange={e => setBillDept(e.target.value)}
+    style={{ width: '100%', padding: '0.75rem 0.85rem', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.9rem', backgroundColor: '#ffffff' }}
+  >
+    <option value="Global">Global (All Students)</option>
+    <option value="Computer Science">Computer Science</option>
+                      <option value="Computer Engineering">Computer Engineering</option>
+                      <option value="Management and Business">Management and Business</option>
+                      <option value="Professional Studies">Professional Studies</option>
+  </select>
+</div>
                     <button 
     type="submit" 
     className="primary-btn" 
@@ -466,8 +485,8 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
     ⚠️ Administrative Warning:
   </h3>
   <p style={{ color: '#742a2a', fontSize: '0.9rem', lineHeight: '1.5', marginBottom: '1.5rem' }}>
-    <strong>.Do not add or remove fees while the payment period is active.</strong><br/> .Adding or changing fees after students have already begun paying will result in unequal payments.<br/>.Finalize all departmental fees before clicking Publish.
-    <br/>.Only reset use payment reset at the end of the semester.
+    <strong>Do not add or remove fees while the payment period is active.</strong><br/>Adding or changing fees after students have already begun paying will result in unequal payments.<br/>Finalize all departmental fees before clicking Publish.
+    <br/>Only reset use payment reset at the end of the semester.
   </p>
 
   <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>

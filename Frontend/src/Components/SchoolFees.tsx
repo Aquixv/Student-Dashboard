@@ -27,7 +27,10 @@ export default function SchoolFees() {
   const user = data?.me;
   const hasPaidFees = user?.hasPaidFees || false;
   const bills = billsData?.getBills || [];
-  const totalAmount = bills.reduce((sum: number, bill: any) => sum + bill.amount, 0);
+  const applicableBills = bills.filter((bill: any) => 
+  bill.targetDepartment === 'Global' || bill.targetDepartment === user?.department
+);
+  const totalAmount = applicableBills.reduce((sum: number, bill: any) => sum + bill.amount, 0);
 
   // --- 1. Paystack Logic ---
   const paystackConfig = {
@@ -59,7 +62,7 @@ export default function SchoolFees() {
   // --- 2. Receipt Download Logic ---
   const handleDownloadSessionReceipt = () => {
     if (!user) return;
-    const dynamicItems = bills.map((bill: any) => ({ desc: bill.description, amount: bill.amount.toLocaleString() }));
+    const dynamicItems = applicableBills.map((bill: any) => ({ desc: bill.description, amount: bill.amount.toLocaleString() }));
     const invoiceDetails = {
       reference: `INV-2026-${user.matricNumber?.replace(/\//g, '') || 'NEW'}`,
       date: new Date().toLocaleDateString(),
@@ -151,10 +154,10 @@ const cloudName = import.meta.env.VITE_CLOUDINARY_NAME;
   <>
     {/* 1. The Invoice List */}
     <div className="invoice-list">
-      {bills.length === 0 ? (
+      {applicableBills.length === 0 ? (
         <p style={{ padding: '1rem', color: '#718096' }}>No fees have been set for this session yet.</p>
       ) : (
-        bills.map((bill: any) => (
+        applicableBills.map((bill: any) => (
           <div className="invoice-item" key={bill.id}>
             <div className="item-details">
               <h4>{bill.description}</h4>
@@ -197,7 +200,7 @@ const cloudName = import.meta.env.VITE_CLOUDINARY_NAME;
                     <button 
                       className="primary-btn pay-fees-btn" 
                       onClick={() => initializePayment({ onSuccess, onClose })}
-                      disabled={isUpdating || bills.length === 0}
+                      disabled={isUpdating || applicableBills.length === 0}
                     >
                       {isUpdating ? 'Updating Portal...' : `Pay via Paystack`}
                     </button>

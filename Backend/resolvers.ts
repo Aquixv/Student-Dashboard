@@ -83,9 +83,13 @@ uploadResult: async (_parent: any, { matricNumber, courseCode, score }: any, con
     grade
   });
 },
-addBill: async (_parent: any, { description, amount }: any, context: any) => {
+addBill: async (_parent: any, { description, amount, targetDepartment }: any, context: any) => {
   if (!context.user || context.user.role !== 'Admin') throw new Error('Unauthorized');
-  return await Bill.create({ description, amount });
+  return await Bill.create({ 
+    description, 
+    amount, 
+    targetDepartment: targetDepartment || 'Global' 
+  });
 },
 deleteBill: async (_parent: any, { id }: any, context: any) => {
   if (!context.user || context.user.role !== 'Admin') throw new Error('Unauthorized');
