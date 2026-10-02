@@ -85,7 +85,11 @@ export const ADD_BILL = gql`
     }
   }
 `;
-
+export const DELETE_COURSE = gql`
+  mutation DeleteCourse($id: ID!) {
+    deleteCourse(id: $id)
+  }
+`;
 export const DELETE_BILL = gql`
   mutation DeleteBill($id: ID!) {
     deleteBill(id: $id)

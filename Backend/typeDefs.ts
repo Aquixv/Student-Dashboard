@@ -104,4 +104,5 @@ input CourseInput {
   togglePaymentPortal(isOpen: Boolean!): Settings
   resetSemesterFees: String!
   rejectPendingPayment(userId: ID!): User
+  deleteCourse(id: ID!): String
   }`;

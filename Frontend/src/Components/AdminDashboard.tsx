@@ -3,7 +3,7 @@ import { useMutation, useQuery, useLazyQuery } from '@apollo/client/react';
 import { useNavigate } from 'react-router-dom';
 import { 
  SEARCH_STUDENTS,
-  GET_AVAILABLE_COURSES, 
+  GET_AVAILABLE_COURSES,
   GET_BILLS,
   GET_PENDING_PAYMENTS,
   GET_SYSTEM_SETTINGS
@@ -20,9 +20,10 @@ import {
   UPDATE_SEMESTER,
   TOGGLE_PAYMENT_PORTAL,
   RESET_SEMESTER_FEES,
-  REJECT_PENDING_PAYMENT
+  REJECT_PENDING_PAYMENT,
+  DELETE_COURSE
 } from '../graphql/mutations';
-import type { GetBillsResponse, searchStudentsResponse, GetPendingPaymentsResponse,GetSystemSettingsResponse} from '../types';
+import type { GetBillsResponse, searchStudentsResponse, GetPendingPaymentsResponse,GetSystemSettingsResponse, GetAvailableCoursesResponse} from '../types';
 import Logo from '../assets/Logo.png'
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -36,6 +37,10 @@ export default function AdminDashboard() {
   const [togglePaymentPortal] = useMutation(TOGGLE_PAYMENT_PORTAL, {
   refetchQueries: [{ query: GET_SYSTEM_SETTINGS }], // Instantly updates the UI color/disabled state
   onCompleted: () => alert('Portal status updated successfully.')
+});
+  const { data: coursesData, loading: coursesLoading } = useQuery<GetAvailableCoursesResponse>(GET_AVAILABLE_COURSES);
+const [deleteCourse] = useMutation(DELETE_COURSE, {
+  refetchQueries: [{ query: GET_AVAILABLE_COURSES }]
 });
 const [billDept, setBillDept] = useState('Global');
 const [resetSemesterFees] = useMutation(RESET_SEMESTER_FEES, {
@@ -384,6 +389,66 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
                     {courseLoading ? 'Adding Course...' : 'Add Course to Catalog'}
                   </button>
                 </form>
+                <div style={{ 
+  border: '1px solid #e2e8f0', 
+  borderRadius: '10px', 
+  backgroundColor: '#ffffff',
+  marginTop: '2rem' 
+}}>
+  <div style={{ padding: '1.25rem 1.5rem', background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+    <h4 style={{ margin: 0, color: '#1e293b', fontSize: '1rem', fontWeight: 600 }}>Active Courses</h4>
+  </div>
+
+  <div style={{ 
+    maxHeight: '400px', 
+    overflowY: 'auto', 
+    padding: '1rem 1.5rem',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.75rem'
+  }}>
+    {coursesLoading ? (
+      <p style={{ color: '#64748b', textAlign: 'center' }}>Loading courses...</p>
+    ) : !coursesData?.availableCourses || coursesData.availableCourses.length === 0 ? (
+      <p style={{ color: '#94a3b8', fontSize: '0.9rem', textAlign: 'center' }}>No courses to fetch.</p>
+    ) : (
+      coursesData.availableCourses.map((course: any) => (
+        <div key={course.id} style={{ 
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center', 
+          padding: '0.85rem 1rem', border: '1px solid #f1f5f9', borderRadius: '8px',
+          boxShadow: '0 1px 2px rgba(0,0,0,0.02)'
+        }}>
+          <div>
+            <strong style={{ display: 'block', color: '#1e293b', fontSize: '0.95rem' }}>
+              {course.code} - {course.title}
+            </strong>
+            <span style={{ color: '#64748b', fontSize: '0.85rem' }}>
+              {course.department} • {course.units} Units
+            </span>
+          </div>
+          
+          <button 
+            type="button"
+            onClick={() => {
+              if(window.confirm(`Delete ${course.code}? This removes it from all students.`)) {
+                deleteCourse({ variables: { id: course.id } });
+              }
+            }}
+            title="Remove course"
+            style={{ 
+              background: '#fef2f2', border: '1px solid #fecaca', color: '#ef4444', 
+              width: '32px', height: '32px', borderRadius: '6px', display: 'flex', 
+              alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+              fontWeight: 700, transition: 'all 0.2s ease'
+            }}
+          >
+            ✕
+          </button>
+        </div>
+      ))
+    )}
+  </div>
+</div>
               </div>
               
             )}

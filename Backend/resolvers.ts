@@ -272,7 +272,20 @@ updateSemester: async (_parent: any, { semester }: any, context: any) => {
         { new: true, upsert: true }
       );
     },
-
+deleteCourse: async (_parent:any, { id }:any, context:any) => {
+  if (!context.user || context.user.role !== 'Admin') throw new Error('Unauthorized');
+  
+  // 1. Delete the course itself
+  await Course.findByIdAndDelete(id);
+  
+  // 2. Remove this course from the registered array of ANY student who picked it
+  await User.updateMany(
+    {}, 
+    { $pull: { registeredCourses: id } }
+  );
+  
+  return "Course deleted successfully.";
+},
     resetSemesterFees: async (_parent: any, _args: any, context: any) => {
       if (!context.user || context.user.role !== 'Admin') throw new Error('Unauthorized');
 
@@ -288,7 +301,7 @@ updateSemester: async (_parent: any, { semester }: any, context: any) => {
         { 
           $set: { 
             hasPaidFees: false, 
-            paymentStatus: 'Pending', // Or whatever your default string is
+            paymentStatus: 'Unpaid', // Or whatever your default string is
             paymentProofUrl: null 
           } 
         }

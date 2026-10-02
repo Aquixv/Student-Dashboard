@@ -89,7 +89,8 @@ export interface GetMeResponse {
 }
 
 export interface GetAvailableCoursesResponse {
-  availableCourses: Course[];
+  availableCourses: Course[]
+  getAvailableCourses: Course[];
 }
 export interface Bill {
   id: string;
