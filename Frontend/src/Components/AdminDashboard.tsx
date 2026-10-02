@@ -5,7 +5,8 @@ import {
  SEARCH_STUDENTS,
   GET_AVAILABLE_COURSES, 
   GET_BILLS,
-  GET_PENDING_PAYMENTS
+  GET_PENDING_PAYMENTS,
+  GET_SYSTEM_SETTINGS
 } from '../graphql/queries';
 import { 
   ADD_COURSE, 
@@ -16,9 +17,11 @@ import {
   UPLOAD_RESULT,
   APPROVE_PENDING_PAYMENTS,
   UPDATE_TUTOR,
-  UPDATE_SEMESTER
+  UPDATE_SEMESTER,
+  TOGGLE_PAYMENT_PORTAL,
+  RESET_SEMESTER_FEES
 } from '../graphql/mutations';
-import type { GetBillsResponse, searchStudentsResponse, GetPendingPaymentsResponse } from '../types';
+import type { GetBillsResponse, searchStudentsResponse, GetPendingPaymentsResponse,GetSystemSettingsResponse} from '../types';
 import Logo from '../assets/Logo.png'
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -26,10 +29,20 @@ export default function AdminDashboard() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [semesterValue, setSemesterValue] = useState('');
   const [tutorData, setTutorData] = useState({ department: 'Computer Science', name: '' });
-
+  const { data: settingsData,  } = useQuery<GetSystemSettingsResponse>(GET_SYSTEM_SETTINGS);
   const [searchTerm, setSearchTerm] = useState('');
   const [fetchStudents, { data: searchData, loading: searchLoading, error: searchError}] = useLazyQuery<searchStudentsResponse>(SEARCH_STUDENTS);
+  const [togglePaymentPortal] = useMutation(TOGGLE_PAYMENT_PORTAL, {
+  refetchQueries: [{ query: GET_SYSTEM_SETTINGS }], // Instantly updates the UI color/disabled state
+  onCompleted: () => alert('Portal status updated successfully.')
+});
 
+const [resetSemesterFees] = useMutation(RESET_SEMESTER_FEES, {
+  onCompleted: () => {
+    alert('Nuclear reset complete. All fees and student payment statuses have been wiped.');
+    window.location.reload(); // Hard refresh to clear the dashboard
+  }
+});
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchTerm.trim()) {
@@ -376,28 +389,6 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
                       Configure mandatory levies and published session tuition rates.
                     </p>
                   </div>
-
-                  <button 
-                    type="button"
-                    onClick={() => alert('Semester fees published to all student portals!')}
-                    style={{
-                      backgroundColor: '#16a34a',
-                      color: '#ffffff',
-                      border: 'none',
-                      borderRadius: '8px',
-                      padding: '0.65rem 1.25rem',
-                      fontSize: '0.875rem',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      boxShadow: '0 2px 4px rgba(22, 163, 74, 0.2)',
-                      transition: 'background-color 0.2s ease'
-                    }}
-                  >
-                    <span></span> Publish Fees
-                  </button>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'minmax(250px, 340px) 1fr', gap: '2rem', alignItems: 'start' }} className="stats-grid">
@@ -445,12 +436,17 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
                     </div>
 
                     <button 
-                      type="submit" 
-                      className="primary-btn" 
-                      style={{ width: '100%', padding: '0.75rem', fontSize: '0.9rem', borderRadius: '6px' }}
-                    >
-                      + Add to Invoice
-                    </button>
+    type="submit" 
+    className="primary-btn" 
+    disabled={settingsData?.getSystemSettings?.isPaymentPortalOpen}
+    style={{ 
+      width: '100%', padding: '0.75rem', fontSize: '0.9rem', borderRadius: '6px',
+      opacity: settingsData?.getSystemSettings?.isPaymentPortalOpen ? 0.5 : 1,
+      cursor: settingsData?.getSystemSettings?.isPaymentPortalOpen ? 'not-allowed' : 'pointer'
+    }}
+  >
+    {settingsData?.getSystemSettings?.isPaymentPortalOpen ? 'Portal Locked' : '+ Add to Invoice'}
+  </button>
                   </form>
 
                   <div style={{ border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', backgroundColor: '#ffffff' }}>
@@ -460,7 +456,56 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
                         {billsData?.getBills?.length || 0} Items Listed
                       </span>
                     </div>
+                    <div style={{ background: '#fff0f2', border: '1px solid #ffe3e6', padding: '1.5rem', borderRadius: '10px', marginBottom: '2rem' }}>
+  <h3 style={{ color: '#e53e3e', marginTop: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+    ⚠️ Legal & Administrative Warning
+  </h3>
+  <p style={{ color: '#742a2a', fontSize: '0.9rem', lineHeight: '1.5', marginBottom: '1.5rem' }}>
+    <strong>Do not modify fees while the payment session is active.</strong> Adding or changing fees after students have already begun paying will result in unequal billing and unbalanced payments. Finalize all departmental fees before clicking Publish.
+  </p>
 
+  <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+    {/* Publish Button */}
+    <button 
+  onClick={() => {
+    const currentlyOpen = settingsData?.getSystemSettings?.isPaymentPortalOpen;
+    
+    if (currentlyOpen) {
+      if(window.confirm("Are you sure you want to CLOSE the portal? Students will not be able to make payments until you reopen it.")) {
+        togglePaymentPortal({ variables: { isOpen: false } });
+      }
+    } else {
+      if(window.confirm("Are you 100% sure the fees are finalized? Opening the portal locks the current rates.")) {
+        togglePaymentPortal({ variables: { isOpen: true } });
+      }
+    }
+  }}
+  style={{
+    padding: '0.75rem 1.5rem', borderRadius: '8px', fontWeight: 600, border: 'none', cursor: 'pointer',
+    background: settingsData?.getSystemSettings?.isPaymentPortalOpen ? '#e53e3e' : '#10b981',
+    color: 'white'
+  }}
+>
+  {settingsData?.getSystemSettings?.isPaymentPortalOpen ? 'Close Payment Portal' : 'Publish Fees & Open Portal'}
+</button>
+
+  {/* Nuclear Reset Button */}
+  <button 
+    onClick={() => {
+      const doubleCheck = window.prompt("WARNING: This will delete all current fees and reset EVERY student to unpaid. Type 'RESET' to confirm.");
+      if (doubleCheck === 'RESET') {
+        resetSemesterFees();
+      }
+    }}
+    style={{
+      padding: '0.75rem 1.5rem', borderRadius: '8px', fontWeight: 600, cursor: 'pointer',
+      background: 'transparent', border: '2px solid #e53e3e', color: '#e53e3e'
+    }}
+  >
+    End of Semester Reset
+  </button>
+  </div>
+</div>
                     <div style={{ padding: '1rem 1.5rem' }}>
                       {(!billsData?.getBills || billsData.getBills.length === 0) ? (
                         <p style={{ color: '#94a3b8', fontSize: '0.9rem', margin: '1.5rem 0', textAlign: 'center' }}>
@@ -488,27 +533,29 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
                               </div>
                               
                               <button 
-                                type="button"
-                                onClick={() => deleteBill({ variables: { id: bill.id } })}
-                                title="Remove fee"
-                                style={{ 
-                                  background: '#fef2f2', 
-                                  border: '1px solid #fecaca', 
-                                  color: '#ef4444', 
-                                  width: '32px', 
-                                  height: '32px', 
-                                  borderRadius: '6px', 
-                                  display: 'flex', 
-                                  alignItems: 'center', 
-                                  justifyContent: 'center', 
-                                  cursor: 'pointer',
-                                  fontSize: '0.85rem',
-                                  fontWeight: 700,
-                                  transition: 'all 0.2s ease'
-                                }}
-                              >
-                                ✕
-                              </button>
+  type="button"
+  disabled={settingsData?.getSystemSettings?.isPaymentPortalOpen}
+  onClick={() => deleteBill({ variables: { id: bill.id } })}
+  title="Remove fee"
+  style={{ 
+    background: '#fef2f2', 
+    border: '1px solid #fecaca', 
+    color: '#ef4444', 
+    width: '32px', 
+    height: '32px', 
+    borderRadius: '6px', 
+    display: 'flex', 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    cursor: settingsData?.getSystemSettings?.isPaymentPortalOpen ? 'not-allowed' : 'pointer',
+    fontSize: '0.85rem',
+    fontWeight: 700,
+    transition: 'all 0.2s ease',
+    opacity: settingsData?.getSystemSettings?.isPaymentPortalOpen ? 0.4 : 1
+  }}
+>
+  ✕
+</button>
                             </div>
                           ))}
 
@@ -719,7 +766,14 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
         No pending payments to review.
       </div>
     ) : (
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: '1.5rem' }}>
+      <div style={{ 
+  display: 'grid', 
+  gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
+  gap: '1.5rem',
+  maxHeight: 'calc(100vh - 250px)', // Adjust 250px based on your header height
+  overflowY: 'auto',                // Enables vertical scrolling
+  paddingRight: '10px'              // Prevents the scrollbar from overlapping content
+}}>
         {pendingPaymentsData.getPendingPayments.map((student: any) => (
           <div key={student.id} style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
             

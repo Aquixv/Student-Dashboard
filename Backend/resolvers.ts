@@ -245,6 +245,38 @@ updateSemester: async (_parent: any, { semester }: any, context: any) => {
 
       await settings.save();
       return settings;
+    },
+    togglePaymentPortal: async (_parent: any, { isOpen }: any, context: any) => {
+      if (!context.user || context.user.role !== 'Admin') throw new Error('Unauthorized');
+      return await Settings.findOneAndUpdate(
+        {},
+        { isPaymentPortalOpen: isOpen },
+        { new: true, upsert: true }
+      );
+    },
+
+    resetSemesterFees: async (_parent: any, _args: any, context: any) => {
+      if (!context.user || context.user.role !== 'Admin') throw new Error('Unauthorized');
+
+      // 1. Lock the portal immediately
+      await Settings.findOneAndUpdate({}, { isPaymentPortalOpen: false }, { upsert: true });
+
+      // 2. Wipe all current bills from the database
+      await Bill.deleteMany({});
+
+      // 3. Reset EVERY student to unpaid and clear their old receipts
+      await User.updateMany(
+        { role: 'Student' }, 
+        { 
+          $set: { 
+            hasPaidFees: false, 
+            paymentStatus: 'Pending', // Or whatever your default string is
+            paymentProofUrl: null 
+          } 
+        }
+      );
+
+      return "Semester reset complete. All fees cleared.";
     }
   },
 };

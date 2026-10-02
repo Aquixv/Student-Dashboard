@@ -1,17 +1,18 @@
 import { useQuery, useMutation } from '@apollo/client/react';
 import { useState } from 'react';
 import { usePaystackPayment } from 'react-paystack';
-import { GET_ME, GET_BILLS } from '../graphql/queries';
+import { GET_ME, GET_BILLS, GET_SYSTEM_SETTINGS } from '../graphql/queries';
 import { UPDATE_FEE_STATUS, SUBMIT_PAYMENT_PROOF } from '../graphql/mutations';
 import './SchoolFees.css';
-import type { GetBillsResponse, GetMeResponse } from '../types';
+import type { GetBillsResponse, GetMeResponse, GetSystemSettingsResponse } from '../types';
 import { downloadReceipt } from '../utils/generateReceipts';
 
 export default function SchoolFees() {
   const [paymentMethod, setPaymentMethod] = useState<'paystack' | 'remita' | 'transfer'>('paystack');
   const { data, loading } = useQuery<GetMeResponse>(GET_ME);
   const { data: billsData } = useQuery<GetBillsResponse>(GET_BILLS);
-  
+  const { data: settingsData,  } = useQuery<GetSystemSettingsResponse>(GET_SYSTEM_SETTINGS);
+
   const [updateFeeStatus, { loading: isUpdating }] = useMutation(UPDATE_FEE_STATUS, {
     refetchQueries: [{ query: GET_ME }] 
   });
@@ -128,27 +129,41 @@ const cloudName = import.meta.env.VITE_CLOUDINARY_NAME;
           <div className="invoice-header">
             <h3>Session Invoice</h3>
             <span className="total-due-badge">
-              {hasPaidFees ? '₦0' : `₦${totalAmount.toLocaleString()}`}
+              {hasPaidFees || !settingsData?.getSystemSettings?.isPaymentPortalOpen  ? '₦0' : `₦${totalAmount.toLocaleString()}`}
             </span>
           </div>
 
-          {!hasPaidFees ? (
-            <>
-              <div className="invoice-list">
-                {bills.length === 0 ? (
-                  <p style={{ padding: '1rem', color: '#718096' }}>No fees have been set for this session yet.</p>
-                ) : (
-                  bills.map((bill: any) => (
-                    <div className="invoice-item" key={bill.id}>
-                      <div className="item-details">
-                        <h4>{bill.description}</h4>
-                        <p>Mandatory Session Fee</p>
-                      </div>
-                      <span className="item-amount">₦{bill.amount.toLocaleString()}</span>
-                    </div>
-                  ))
-                )}
-              </div>
+          {hasPaidFees || !settingsData?.getSystemSettings?.isPaymentPortalOpen ? (
+  
+  <div style={{ padding: '2rem', textAlign: 'center', backgroundColor: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0', marginTop: '1rem' }}>
+    <h3 style={{ color: '#475569', marginTop: 0, fontSize: '1.2rem' }}>
+      {hasPaidFees ? '✅ Fees Settled' : '🔒 Payments Closed'}
+    </h3>
+    <p style={{ color: '#64748b', marginBottom: 0, fontSize: '0.95rem' }}>
+      {hasPaidFees 
+        ? 'You have successfully paid your fees for this session. Your receipt is available in your history.' 
+        : 'The administration is currently finalizing fees for the session or the payment deadline has passed. Please check back later.'}
+    </p>
+  </div>
+
+) : (
+  
+  <>
+    {/* 1. The Invoice List */}
+    <div className="invoice-list">
+      {bills.length === 0 ? (
+        <p style={{ padding: '1rem', color: '#718096' }}>No fees have been set for this session yet.</p>
+      ) : (
+        bills.map((bill: any) => (
+          <div className="invoice-item" key={bill.id}>
+            <div className="item-details">
+              <h4>{bill.description}</h4>
+            </div>
+            <span className="item-amount">₦{bill.amount.toLocaleString()}</span>
+          </div>
+        ))
+      )}
+    </div>
               <div className="invoice-footer" style={{ textAlign: 'left' }}>
                 <div style={{ marginBottom: '1.5rem' }}>
                   <p style={{ fontSize: '0.9rem', color: '#4a5568', marginBottom: '0.8rem', fontWeight: 600 }}>Select Payment Method:</p>
@@ -206,75 +221,42 @@ const cloudName = import.meta.env.VITE_CLOUDINARY_NAME;
                 )}
 
                 {paymentMethod === 'transfer' && (
-                  <div style={{ background: '#eff6ff', padding: '1.25rem', borderRadius: '8px', border: '1px dashed #93c5fd' }}>
-                    <h4 style={{ color: '#1e3a8a', fontSize: '0.95rem', marginBottom: '0.5rem' }}>Manual Bank Transfer</h4>
-                    <p style={{ fontSize: '0.85rem', color: '#1e3a8a', marginBottom: '0.3rem' }}><strong>Bank:</strong> First Bank Nigeria</p>
-                    <p style={{ fontSize: '0.85rem', color: '#1e3a8a', marginBottom: '0.3rem' }}><strong>Account Name:</strong> EduPortal Fees Collection</p>
-                    <p style={{ fontSize: '0.85rem', color: '#1e3a8a', marginBottom: '1rem' }}><strong>Account Number:</strong> 1234567890</p>
-                    
-                    <div style={{ marginTop: '1rem', padding: '1rem', background: 'white', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
-                      <h5 style={{ margin: '0 0 0.5rem 0', color: '#4a5568', fontSize: '0.85rem' }}>Upload Proof of Payment</h5>
-                      <div style={{ marginBottom: '1.25rem', width: '100%' }}>
-  <label 
-    htmlFor="receipt-upload" 
-    style={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
-      alignItems: 'center', 
-      justifyContent: 'center', 
-      padding: '2rem 1rem', 
-      border: '2px dashed #cbd5e1', 
-      borderRadius: '8px', 
-      backgroundColor: file ? '#eff6ff' : '#f8fafc', 
-      cursor: 'pointer',
-      transition: 'all 0.2s ease',
-      textAlign: 'center'
-    }}
-  >
-    {/* Optional: Drop a small SVG or emoji here */}
-    <span style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>
-      {file ? <img style={{width:'50px', height:'50px'}} src="https://www.svgrepo.com/show/525265/check-circle.svg" alt="Checkmark" /> : <img style={{width:'50px', height:'50px'}} src="https://www.svgrepo.com/show/533441/receipt-alt-1.svg" alt="Receipt" />}
-    </span>
-    
-    <span style={{ fontSize: '0.9rem', fontWeight: 600, color: file ? '#095DC5' : '#475569' }}>
-      {file ? file.name : ' select receipt image'}
-    </span>
-    
-    {!file && (
-      <span style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.3rem' }}>
-        JPEG or PNG (Max 5MB)
-      </span>
-    )}
-  </label>
-
-  {/* The actual input is hidden, but the label triggers it via htmlFor */}
-  <input 
-    id="receipt-upload"
-    type="file" 
-    accept="image/png, image/jpeg" 
-    onChange={(e) => setFile(e.target.files?.[0] || null)} 
-    style={{ display: 'none' }} 
-  />
-</div>
-                      <button 
-                        className="primary-btn" 
-                        style={{ width: '100%', background: isUploading ? '#cbd5e1' : '#095DC5', border: 'none', cursor: isUploading ? 'not-allowed' : 'pointer' }}
-                        onClick={handleUpload}
-                        disabled={isUploading}
-                      >
-                        {isUploading ? 'Uploading...' : 'Submit Receipt'}
-                      </button>
-                    </div>
-                  </div>
-                )}
+          <div style={{ background: '#eff6ff', padding: '1.25rem', borderRadius: '8px', border: '1px dashed #93c5fd', marginTop: '1rem' }}>
+            <h4 style={{ color: '#1e3a8a', fontSize: '0.95rem', marginBottom: '0.5rem' }}>Manual Bank Transfer</h4>
+            <p style={{ fontSize: '0.85rem', color: '#1e3a8a', marginBottom: '0.3rem' }}><strong>Bank:</strong> First Bank Nigeria</p>
+            <p style={{ fontSize: '0.85rem', color: '#1e3a8a', marginBottom: '0.3rem' }}><strong>Account Name:</strong> EduPortal Fees Collection</p>
+            <p style={{ fontSize: '0.85rem', color: '#1e3a8a', marginBottom: '1rem' }}><strong>Account Number:</strong> 1234567890</p>
+            
+            <div style={{ marginTop: '1rem', padding: '1rem', background: 'white', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
+              <h5 style={{ margin: '0 0 0.5rem 0', color: '#4a5568', fontSize: '0.85rem' }}>Upload Proof of Payment</h5>
+              
+              <div style={{ marginBottom: '1.25rem', width: '100%' }}>
+                <label htmlFor="receipt-upload" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem 1rem', border: '2px dashed #cbd5e1', borderRadius: '8px', backgroundColor: file ? '#eff6ff' : '#f8fafc', cursor: 'pointer', textAlign: 'center' }}>
+                  <span style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>
+                    {file ? <img style={{width:'50px', height:'50px'}} src="https://www.svgrepo.com/show/525265/check-circle.svg" alt="Checkmark" /> : <img style={{width:'50px', height:'50px'}} src="https://www.svgrepo.com/show/533441/receipt-alt-1.svg" alt="Receipt" />}
+                  </span>
+                  <span style={{ fontSize: '0.9rem', fontWeight: 600, color: file ? '#095DC5' : '#475569' }}>
+                    {file ? file.name : ' select receipt image'}
+                  </span>
+                  {!file && <span style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.3rem' }}>JPEG or PNG (Max 5MB)</span>}
+                </label>
+                <input id="receipt-upload" type="file" accept="image/png, image/jpeg" onChange={(e) => setFile(e.target.files?.[0] || null)} style={{ display: 'none' }} />
+              </div>
+              
+              <button 
+                className="primary-btn" 
+                style={{ width: '100%', background: isUploading ? '#cbd5e1' : '#095DC5', border: 'none', cursor: isUploading ? 'not-allowed' : 'pointer', padding: '0.75rem', borderRadius: '6px', color: 'white', fontWeight: 600 }}
+                onClick={handleUpload}
+                disabled={isUploading}
+              >
+                {isUploading ? 'Uploading...' : 'Submit Receipt'}
+              </button>
+            </div>
+          </div>
+        )}
               </div>
             </>
-          ) : (
-            <div style={{ padding: '4rem 2rem', textAlign: 'center', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <h3 style={{ color: '#2b3674', fontSize: '1.2rem', marginBottom: '0.5rem' }}>All Mandatory Fees Cleared</h3>
-              <p style={{ color: '#718096', fontSize: '0.95rem' }}>You have no outstanding balance for the current academic session.</p>
-            </div>
-          )}
+)}
         </div>
 
         <div className="history-panel">

@@ -164,3 +164,17 @@ export const UPDATE_TUTOR = gql`
     }
   }
 `;
+export const TOGGLE_PAYMENT_PORTAL = gql`
+  mutation TogglePaymentPortal($isOpen: Boolean!) {
+    togglePaymentPortal(isOpen: $isOpen) {
+      id
+      isPaymentPortalOpen
+    }
+  }
+`;
+
+export const RESET_SEMESTER_FEES = gql`
+  mutation ResetSemesterFees {
+    resetSemesterFees
+  }
+`;

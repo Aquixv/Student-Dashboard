@@ -25,6 +25,7 @@ type Settings {
   id: ID!
   activeSemester: String
   tutors: [Tutor]
+  isPaymentPortalOpen: Boolean
 }
 
   type Result {
@@ -71,10 +72,8 @@ input CourseInput {
 }
 
   type Query {
-    # Fetch the current user to determine if they hit the lockout screen
     me: User
     getBills: [Bill!]!
-    # Fetch available courses for registration
     availableCourses: [Course!]!
     getStudents: [User!]!
     getPendingPayments: [User]
@@ -101,4 +100,6 @@ input CourseInput {
   approvePayment(userId: ID!): User
   updateSemester(semester: String!): Settings
   updateTutor(department: String!, name: String!): Settings
+  togglePaymentPortal(isOpen: Boolean!): Settings
+  resetSemesterFees: String!
   }`;

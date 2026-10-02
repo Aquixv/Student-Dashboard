@@ -57,13 +57,12 @@ const { data: settingsData,  } = useQuery<GetSystemSettingsResponse>(GET_SYSTEM_
         <div className={`stat-card ${!hasPaidFees ? 'alert' : ''}`}>
           <h3>Outstanding Balance</h3>
           <p className={`stat-value ${!hasPaidFees ? 'text-red' : 'text-green'}`}>
-            {hasPaidFees ? '₦0' : `₦${totalAmount.toLocaleString()}`}
+            {hasPaidFees || !settingsData?.getSystemSettings?.isPaymentPortalOpen ? '₦0' : `₦${totalAmount.toLocaleString()}`}
           </p>
           <span className="stat-subtitle">
             {hasPaidFees ? 'Fully Paid' : 'Due in 5 days'}
           </span>
         </div>
-        
         <div className="stat-card">
           <h3>Registered Units</h3>
           <p className="stat-value">{totalUnits} <span className="stat-max">/ 24</span></p>
@@ -90,34 +89,52 @@ const { data: settingsData,  } = useQuery<GetSystemSettingsResponse>(GET_SYSTEM_
             {/* <button className="text-link">View History</button> */}
           </div>
           
-          {/* 2. Dynamically render the real bills from MongoDB */}
-          <div className="fee-list">
-            {bills.length === 0 ? (
-              <p style={{ padding: '1rem', color: '#718096' }}>No fees configured for this session yet.</p>
-            ) : (
-              bills.map((bill: any) => (
-                <div className={`fee-item ${hasPaidFees ? 'settled' : 'pending'}`} key={bill.id}>
-                  <div>
-                    <h4>{bill.description}</h4>
-                    {/* <p>Mandatory Session Fee</p> */}
+          {/* Check if the admin has published the portal */}
+          {!settingsData?.getSystemSettings?.isPaymentPortalOpen ? (
+            
+            <div style={{ padding: '2rem', textAlign: 'center', backgroundColor: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0', marginTop: '1rem' }}>
+              <h3 style={{ color: '#475569', marginTop: 0, fontSize: '1.2rem' }}>🔒 Payments are currently closed</h3>
+              <p style={{ color: '#64748b', marginBottom: 0, fontSize: '0.95rem' }}>
+                The administration is currently finalizing fees for the session or the payment deadline has passed. Please check back later.
+              </p>
+            </div>
+
+          ) : (
+            
+            /* 2. Dynamically render the real bills from MongoDB ONLY if portal is open */
+            <div className="fee-list">
+              {bills.length === 0 ? (
+                <p style={{ padding: '1rem', color: '#718096' }}>No fees configured for this session yet.</p>
+              ) : (
+                bills.map((bill: any) => (
+                  <div className={`fee-item ${hasPaidFees ? 'settled' : 'pending'}`} key={bill.id}>
+                    <div>
+                      <h4>{bill.description}</h4>
+                      {/* <p>Mandatory Session Fee</p> */}
+                    </div>
+                    <div className="fee-status">
+                      <span className="amount">₦{bill.amount.toLocaleString()}</span>
+                      <span className={`badge ${hasPaidFees ? 'badge-paid' : 'badge-unpaid'}`}>
+                        {hasPaidFees ? 'Paid' : 'Pending'}
+                      </span>
+                    </div>
                   </div>
-                  <div className="fee-status">
-                    <span className="amount">₦{bill.amount.toLocaleString()}</span>
-                    <span className={`badge ${hasPaidFees ? 'badge-paid' : 'badge-unpaid'}`}>
-                      {hasPaidFees ? 'Paid' : 'Pending'}
-                    </span>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
+                ))
+              )}
+            </div>
+
+          )}
 
           <div className="card-action-bar">
             <button 
-              className="primary-btn" 
-              disabled={hasPaidFees || bills.length === 0}
-              onClick={() => navigate("/fees")}
-            >
+  disabled={hasPaidFees || !settingsData?.getSystemSettings?.isPaymentPortalOpen}
+  className="primary-btn" // Or whatever class you are using
+  style={{
+    width: '100%', 
+    opacity: (!settingsData?.getSystemSettings?.isPaymentPortalOpen || hasPaidFees) ? 0.6 : 1,
+    cursor: (!settingsData?.getSystemSettings?.isPaymentPortalOpen || hasPaidFees) ? 'not-allowed' : 'pointer'
+  }}
+>
               {hasPaidFees ? 'All Fees Cleared' : `Proceed to Pay ₦${totalAmount.toLocaleString()}`}
             </button>
           </div>

@@ -120,8 +120,10 @@ export interface Settings {
   id: string;
   activeSemester: string;
   tutors: Tutor[];
+ isPaymentPortalOpen: boolean;
 }
 
 export interface GetSystemSettingsResponse {
   getSystemSettings: Settings;
+ 
 }
