@@ -12,10 +12,10 @@ export default function Help() {
         <div className="content-card">
           <h3 className="card-title">Frequently Asked Questions</h3>
           <div className="faq-list">
-            <div className="faq-item">
+            {/* <div className="faq-item">
               <h4>How do I reset my portal password?</h4>
               <p>Go to the Settings page and select 'Change Password', or contact the ICT admin.</p>
-            </div>
+            </div> */}
             <div className="faq-item">
               <h4>Why is my course registration locked?</h4>
               <p>Ensure all outstanding school fees for the current semester are paid in full.</p>

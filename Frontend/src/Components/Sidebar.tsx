@@ -70,7 +70,7 @@ export default function Sidebar({ closeMenu }: { closeMenu?: () => void }) {
         <div className="nav-links">
           <NavLink to="/profile" onClick={closeMenu} className="nav-item">Profile</NavLink>
           <NavLink to="/help" onClick={closeMenu} className="nav-item">Help</NavLink>
-          <NavLink to="/settings" onClick={closeMenu} className="nav-item">Settings</NavLink>
+          {/* <NavLink to="/settings" onClick={closeMenu} className="nav-item">Settings</NavLink> */}
         </div>
         <button onClick={handleLogout} className="nav-item logout-btn">
           Log Out
