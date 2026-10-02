@@ -102,4 +102,5 @@ input CourseInput {
   updateTutor(department: String!, name: String!): Settings
   togglePaymentPortal(isOpen: Boolean!): Settings
   resetSemesterFees: String!
+  rejectPendingPayment(userId: ID!): User
   }`;

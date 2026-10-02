@@ -178,3 +178,12 @@ export const RESET_SEMESTER_FEES = gql`
     resetSemesterFees
   }
 `;
+export const REJECT_PENDING_PAYMENT = gql`
+  mutation RejectPendingPayment($userId: ID!) {
+    rejectPendingPayment(userId: $userId) {
+      id
+      paymentStatus
+      paymentProofUrl
+    }
+  }
+`;

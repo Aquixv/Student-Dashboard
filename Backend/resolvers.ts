@@ -163,6 +163,20 @@ approvePayment: async (_parent: any, { userId }: any) => {
     { new: true }
   );
 },
+rejectPendingPayment: async (_parent: any, { userId }: any, context: any) => {
+  if (!context.user || context.user.role !== 'Admin') throw new Error('Unauthorized');
+  
+  // Resets them to Unpaid and clears the bad receipt URL
+  return await User.findByIdAndUpdate(
+    userId,
+    { 
+      hasPaidFees: false, 
+      paymentStatus: 'Unpaid', 
+      paymentProofUrl: null 
+    },
+    { new: true }
+  );
+},
 addCourse: async (_parent: any, { code, title, units, type, department, program }: any, context: any) => {
   // Ensure the user actually has the Admin token
   if (!context.user || context.user.role !== 'Admin') {

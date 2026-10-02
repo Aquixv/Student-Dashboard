@@ -19,7 +19,8 @@ import {
   UPDATE_TUTOR,
   UPDATE_SEMESTER,
   TOGGLE_PAYMENT_PORTAL,
-  RESET_SEMESTER_FEES
+  RESET_SEMESTER_FEES,
+  REJECT_PENDING_PAYMENT
 } from '../graphql/mutations';
 import type { GetBillsResponse, searchStudentsResponse, GetPendingPaymentsResponse,GetSystemSettingsResponse} from '../types';
 import Logo from '../assets/Logo.png'
@@ -42,6 +43,10 @@ const [resetSemesterFees] = useMutation(RESET_SEMESTER_FEES, {
     alert('Nuclear reset complete. All fees and student payment statuses have been wiped.');
     window.location.reload(); // Hard refresh to clear the dashboard
   }
+});
+const [rejectPayment] = useMutation(REJECT_PENDING_PAYMENT, {
+  refetchQueries: [{ query: GET_PENDING_PAYMENTS }],
+  onCompleted: () => alert('Payment rejected. The student has been reset to Unpaid.')
 });
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -458,10 +463,11 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
                     </div>
                     <div style={{ background: '#fff0f2', border: '1px solid #ffe3e6', padding: '1.5rem', borderRadius: '10px', marginBottom: '2rem' }}>
   <h3 style={{ color: '#e53e3e', marginTop: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-    ⚠️ Legal & Administrative Warning
+    ⚠️ Administrative Warning:
   </h3>
   <p style={{ color: '#742a2a', fontSize: '0.9rem', lineHeight: '1.5', marginBottom: '1.5rem' }}>
-    <strong>Do not modify fees while the payment session is active.</strong> Adding or changing fees after students have already begun paying will result in unequal billing and unbalanced payments. Finalize all departmental fees before clicking Publish.
+    <strong>.Do not add or remove fees while the payment period is active.</strong><br/> .Adding or changing fees after students have already begun paying will result in unequal payments.<br/>.Finalize all departmental fees before clicking Publish.
+    <br/>.Only reset use payment reset at the end of the semester.
   </p>
 
   <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
@@ -792,15 +798,35 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
               <h4 style={{ margin: '0 0 0.3rem 0', color: '#2b3674', fontSize: '1.05rem' }}>{student.fullName}</h4>
               <p style={{ margin: '0 0 1rem 0', color: '#64748b', fontSize: '0.85rem', fontWeight: 600 }}>{student.matricNumber}</p>
               
-              <button 
-                onClick={() => {
-                  approvePayment({ variables: { userId: student.id } });
-                  // Add logic here to filter this student out of the UI or refetch the query
-                }}
-                style={{ width: '100%', padding: '0.75rem', background: '#16a34a', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 600, cursor: 'pointer' }}
-              >
-                Approve Payment
-              </button>
+              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem', width: '100%' }}>
+  <button 
+    onClick={() => {
+      if(window.confirm("Approve this payment?")) {
+        approvePayment({ variables: { userId: student.id } })
+      }
+    }}
+    style={{ 
+      flex: 1, background: '#10b981', color: 'white', padding: '0.75rem', 
+      borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 600 
+    }}
+  >
+    Approve
+  </button>
+  
+  <button 
+    onClick={() => {
+      if(window.confirm("Reject this receipt? The student will need to upload a new one.")) {
+        rejectPayment({ variables: { userId: student.id } });
+      }
+    }}
+    style={{ 
+      flex: 1, background: '#ef4444', color: 'white', padding: '0.75rem', 
+      borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 600 
+    }}
+  >
+    Reject
+  </button>
+</div>
             </div>
 
           </div>
