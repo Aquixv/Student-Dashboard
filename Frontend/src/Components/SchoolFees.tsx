@@ -160,13 +160,13 @@ const cloudName = import.meta.env.VITE_CLOUDINARY_NAME;
                     >
                       <img style={{ height: '30px', width:'50px', objectFit: 'contain' }} src="https://tse4.mm.bing.net/th/id/OIP.5YMLaME3IM0xOl1sn6unmgHaEH?r=0&w=900&h=500&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Paystack" />
                     </button>
-                    <button 
+                    {/* <button 
                       className={`secondary-btn ${paymentMethod === 'remita' ? 'active-tab' : ''}`}
                       onClick={() => setPaymentMethod('remita')}
                       style={{ flex: 1, border: paymentMethod === 'remita' ? '2px solid #095DC5' : '1px solid #e2e8f0' }}
                     >
                       <img style={{ height: '30px', width:'50px', objectFit: 'contain' }} src="https://th.bing.com/th/id/OIP.wLvyScRGylVVkuG_m835cAHaEM?r=0&o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Remita" />
-                    </button>
+                    </button> */}
                     <button 
                       className={`secondary-btn ${paymentMethod === 'transfer' ? 'active-tab' : ''}`}
                       onClick={() => setPaymentMethod('transfer')}
@@ -190,7 +190,7 @@ const cloudName = import.meta.env.VITE_CLOUDINARY_NAME;
                   </div>
                 )}
 
-                {/* {paymentMethod === 'remita' && (
+                {paymentMethod === 'remita' && (
                   <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
                     <p style={{ fontSize: '0.85rem', color: '#4a5568', marginBottom: '1rem' }}>
                       Click below to generate your Remita Retrieval Reference (RRR) and proceed to the Remita payment gateway.
@@ -203,7 +203,7 @@ const cloudName = import.meta.env.VITE_CLOUDINARY_NAME;
                       Generate RRR & Pay
                     </button>
                   </div>
-                )} */}
+                )}
 
                 {paymentMethod === 'transfer' && (
                   <div style={{ background: '#eff6ff', padding: '1.25rem', borderRadius: '8px', border: '1px dashed #93c5fd' }}>
