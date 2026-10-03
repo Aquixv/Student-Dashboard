@@ -1013,7 +1013,7 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
               </div>
             )}
             {activeTab === 'NOTIFICATIONS' && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'minmax(250px, 340px) 1fr', gap: '2rem', alignItems: 'start' }}>
+              <div className="admin-two-col" style={{ gap: '2rem', alignItems: 'start' }}>
   
   {/* The Publisher Form */}
   <form onSubmit={(e) => {
