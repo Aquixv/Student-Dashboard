@@ -196,3 +196,18 @@ export const REJECT_PENDING_PAYMENT = gql`
     }
   }
 `;
+export const ADD_GLOBAL_NOTIFICATION = gql`
+  mutation AddGlobalNotification($message: String!) {
+    addGlobalNotification(message: $message) {
+      id
+      message
+      isGlobal
+    }
+  }
+`;
+
+export const DELETE_NOTIFICATION = gql`
+  mutation DeleteNotification($id: ID!) {
+    deleteNotification(id: $id)
+  }
+`;

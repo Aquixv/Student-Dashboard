@@ -6,7 +6,8 @@ import {
   GET_AVAILABLE_COURSES,
   GET_BILLS,
   GET_PENDING_PAYMENTS,
-  GET_SYSTEM_SETTINGS
+  GET_SYSTEM_SETTINGS,
+  GET_MY_NOTIFICATIONS
 } from '../graphql/queries';
 import { 
   ADD_COURSE, 
@@ -21,13 +22,15 @@ import {
   TOGGLE_PAYMENT_PORTAL,
   RESET_SEMESTER_FEES,
   REJECT_PENDING_PAYMENT,
-  DELETE_COURSE
+  DELETE_COURSE,
+  ADD_GLOBAL_NOTIFICATION,
+  DELETE_NOTIFICATION
 } from '../graphql/mutations';
-import type { GetBillsResponse, searchStudentsResponse, GetPendingPaymentsResponse,GetSystemSettingsResponse, GetAvailableCoursesResponse} from '../types';
+import type { GetBillsResponse, searchStudentsResponse, GetPendingPaymentsResponse,GetSystemSettingsResponse, GetAvailableCoursesResponse, GetMyNotificationsResponse} from '../types';
 import Logo from '../assets/Logo.png'
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'COURSES' | 'BILLING' | 'STUDENTS' | 'RESULTS'| 'PAYMENTS'| 'SEMESTER' | 'TUTORS'>('COURSES');
+  const [activeTab, setActiveTab] = useState<'COURSES' | 'BILLING' | 'STUDENTS' | 'RESULTS'| 'PAYMENTS'| 'SEMESTER' | 'TUTORS'| 'NOTIFICATIONS'>('COURSES');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [semesterValue, setSemesterValue] = useState('');
   const [tutorData, setTutorData] = useState({ department: 'Computer Science', name: '' });
@@ -41,6 +44,21 @@ export default function AdminDashboard() {
   const { data: coursesData, loading: coursesLoading } = useQuery<GetAvailableCoursesResponse>(GET_AVAILABLE_COURSES);
 const [deleteCourse] = useMutation(DELETE_COURSE, {
   refetchQueries: [{ query: GET_AVAILABLE_COURSES }]
+});
+const [alertText, setAlertText] = useState('');
+
+// Fetch the notifications and provide a safe fallback array
+const { data: notificationsData } = useQuery<GetMyNotificationsResponse>(GET_MY_NOTIFICATIONS);
+const notifications = notificationsData?.getMyNotifications || [];
+
+// Setup the mutations to instantly refresh the list
+const [addGlobalNotification] = useMutation(ADD_GLOBAL_NOTIFICATION, {
+  refetchQueries: [{ query: GET_MY_NOTIFICATIONS }],
+  onCompleted: () => alert('Announcement published successfully.')
+});
+
+const [deleteNotification] = useMutation(DELETE_NOTIFICATION, {
+  refetchQueries: [{ query: GET_MY_NOTIFICATIONS }]
 });
 const [billDept, setBillDept] = useState('Global');
 const [resetSemesterFees] = useMutation(RESET_SEMESTER_FEES, {
@@ -257,6 +275,16 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
               }}
             >
               <span><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/212746/teacher.svg" alt="Tutors" /></span> Dept. Tutors
+            </button>
+            <button 
+              onClick={() => handleTabSwitch('NOTIFICATIONS')}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '12px', padding: '0.85rem 1rem', border: 'none', borderRadius: '10px', fontSize: '0.95rem', fontWeight: 600, cursor: 'pointer', textAlign: 'left', transition: 'all 0.15s ease',
+                background: activeTab === 'NOTIFICATIONS' ? '#095DC5' : 'transparent',
+                color: activeTab === 'NOTIFICATIONS' ? '#ffffff' : '#64748b'
+              }}
+            >
+              <span><img style={{ height: '20px', width:'20px'}} src="https://www.svgrepo.com/show/520877/notification-13.svg" alt="Announcements" /></span> Announcements
             </button>
           </nav>
           {/* Sidebar Footer Link */}
@@ -983,6 +1011,50 @@ const [approvePayment, { }] = useMutation(APPROVE_PENDING_PAYMENTS, {
                   </button>
                 </form>
               </div>
+            )}
+            {activeTab === 'NOTIFICATIONS' && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'minmax(250px, 340px) 1fr', gap: '2rem', alignItems: 'start' }}>
+  
+  {/* The Publisher Form */}
+  <form onSubmit={(e) => {
+    e.preventDefault();
+    addGlobalNotification({ variables: { message: alertText } });
+    setAlertText('');
+  }} style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+    <h4 style={{ margin: '0 0 1.25rem 0', color: '#1e293b' }}>Broadcast Announcement</h4>
+    <textarea 
+      required 
+      rows={4}
+      placeholder="e.g. The payment portal closes this Friday at 5 PM."
+      value={alertText} 
+      onChange={e => setAlertText(e.target.value)}
+      style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid #cbd5e1', marginBottom: '1rem' }}
+    />
+    <button type="submit" className="primary-btn" style={{ width: '100%', padding: '0.75rem', borderRadius: '6px' }}>
+      Publish Alert
+    </button>
+  </form>
+
+  {/* The Active Notifications List */}
+  <div style={{ border: '1px solid #e2e8f0', borderRadius: '10px', backgroundColor: '#ffffff' }}>
+    <div style={{ padding: '1.25rem 1.5rem', background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+      <h4 style={{ margin: 0, color: '#1e293b' }}>Active Global Notifications</h4>
+    </div>
+    <div style={{ padding: '1rem 1.5rem' }}>
+      {notifications.filter(n => n.isGlobal).map((note: any) => (
+        <div key={note.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.85rem 1rem', background: '#ffffff', border: '1px solid #f1f5f9', borderRadius: '8px', marginBottom: '0.5rem' }}>
+          <span style={{ color: '#1e293b', fontSize: '0.9rem' }}>{note.message}</span>
+          <button 
+            type="button"
+            onClick={() => deleteNotification({ variables: { id: note.id } })}
+            style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#ef4444', width: '32px', height: '32px', borderRadius: '6px', cursor: 'pointer' }}
+          >✕</button>
+        </div>
+      ))}
+    </div>
+  </div>
+
+</div>
             )}
           </div>
         </main>

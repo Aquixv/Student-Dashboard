@@ -48,7 +48,12 @@ type Transaction {
   description: String!
   createdAt: String!
 }
-
+type Notification {
+  id: ID!
+  message: String!
+  isGlobal: Boolean!
+  createdAt: String!
+}
   type Course {
     id: ID!
     code: String!
@@ -83,6 +88,7 @@ input CourseInput {
     getMyResults: [Result!]!
     searchStudents(searchTerm: String!): [User]
     getSystemSettings: Settings
+    getMyNotifications: [Notification]
   }
 
   type Mutation {
@@ -105,4 +111,6 @@ input CourseInput {
   resetSemesterFees: String!
   rejectPendingPayment(userId: ID!): User
   deleteCourse(id: ID!): String
+  addGlobalNotification(message: String!): Notification
+deleteNotification(id: ID!): String
   }`;

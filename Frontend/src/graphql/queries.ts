@@ -108,3 +108,13 @@ export const GET_SYSTEM_SETTINGS = gql`
     }
   }
 `;
+export const GET_MY_NOTIFICATIONS = gql`
+  query GetMyNotifications {
+    getMyNotifications {
+      id
+      message
+      isGlobal
+      createdAt
+    }
+  }
+`;

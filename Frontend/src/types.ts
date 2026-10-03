@@ -128,3 +128,13 @@ export interface GetSystemSettingsResponse {
   getSystemSettings: Settings;
  
 }
+export interface Notification {
+  id: string;
+  message: string;
+  isGlobal: boolean;
+  createdAt: string;
+}
+
+export interface GetMyNotificationsResponse {
+  getMyNotifications: Notification[];
+}

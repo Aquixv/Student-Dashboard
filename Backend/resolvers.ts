@@ -5,6 +5,7 @@ import bcrypt from 'bcryptjs';
 import Transactions from './models/Transactions';
 import Bill from './bills';
 import Result from './models/Results'
+import Notifications from './models/Notifications';
 const Settings = require('./models/Settings');
 
 export const resolvers = {
@@ -46,6 +47,15 @@ getPendingPayments: async () => {
   },
     availableCourses: async () => await Course.find(),
 getBills: async () => await Bill.find().sort({ createdAt: 1 }),
+
+getMyNotifications: async (_parent:any, _args:any, context:any) => {
+  if (!context.user) throw new Error('Unauthorized');
+  
+  // Fetch global alerts PLUS any private alerts for this specific user
+  return await Notifications.find({
+    $or: [{ isGlobal: true }, { targetUser: context.user.id }]
+  }).sort({ createdAt: -1 }); 
+}
   },    
 
   Mutation: {
@@ -161,17 +171,28 @@ deleteBill: async (_parent: any, { id }: any, context: any) => {
       };
     },
 approvePayment: async (_parent: any, { userId }: any) => {
-  return await User.findByIdAndUpdate(
+  // 1. Await the update and save it to the updatedUser variable
+  const updatedUser = await User.findByIdAndUpdate(
     userId, 
     { hasPaidFees: true, paymentStatus: 'Verified' }, 
     { new: true }
   );
+
+  // 2. Execute the notification creation as a separate statement
+  await Notifications.create({
+    message: "Your fee payment has been verified and approved. You may now register for courses.",
+    isGlobal: false,
+    targetUser: userId
+  });
+  
+  // 3. Return the variable
+  return updatedUser;
 },
 rejectPendingPayment: async (_parent: any, { userId }: any, context: any) => {
   if (!context.user || context.user.role !== 'Admin') throw new Error('Unauthorized');
   
   // Resets them to Unpaid and clears the bad receipt URL
-  return await User.findByIdAndUpdate(
+ const updatedUser = await User.findByIdAndUpdate(
     userId,
     { 
       hasPaidFees: false, 
@@ -180,6 +201,13 @@ rejectPendingPayment: async (_parent: any, { userId }: any, context: any) => {
     },
     { new: true }
   );
+  await Notifications.create({
+    message: "Your recent payment receipt was rejected. Please ensure the image is clear and the transaction is valid before re-uploading.",
+    isGlobal: false,
+    targetUser: userId
+  });
+  
+  return updatedUser;
 },
 addCourse: async (_parent: any, { code, title, units, type, department, program }: any, context: any) => {
   // Ensure the user actually has the Admin token
@@ -308,6 +336,16 @@ deleteCourse: async (_parent:any, { id }:any, context:any) => {
       );
 
       return "Semester reset complete. All fees cleared.";
-    }
+    },
+    addGlobalNotification: async (_parent:any, { message }:any, context:any) => {
+  if (!context.user || context.user.role !== 'Admin') throw new Error('Unauthorized');
+  return await Notifications.create({ message, isGlobal: true });
+},
+
+deleteNotification: async (_parent:any, { id }:any, context:any) => {
+  if (!context.user || context.user.role !== 'Admin') throw new Error('Unauthorized');
+  await Notifications.findByIdAndDelete(id);
+  return "Notification deleted";
+}, 
   },
 };
