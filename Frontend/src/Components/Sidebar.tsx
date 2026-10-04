@@ -49,13 +49,13 @@ export default function Sidebar({ closeMenu }: { closeMenu?: () => void }) {
           Course Registration
         </NavLink>
         
-        <NavLink 
+        {/* <NavLink 
           to="/timetable" 
           onClick={closeMenu}
           className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}
         >
           Timetable
-        </NavLink>
+        </NavLink> */}
         
         <NavLink 
           to="/results" 
